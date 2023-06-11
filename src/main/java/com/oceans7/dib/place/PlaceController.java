@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "place", description = "관광 정보 API")
 @RestController
 @RequestMapping("/place")
-@@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class PlaceController {
 
     private final PlaceService placeService;
