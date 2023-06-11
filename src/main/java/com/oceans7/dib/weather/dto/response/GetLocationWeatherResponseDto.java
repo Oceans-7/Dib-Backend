@@ -45,6 +45,18 @@ public class GetLocationWeatherResponseDto {
         @ArraySchema(schema = @Schema(description = "조수 정보", implementation = TideEvent.class))
         private TideEvent[] tideEvents;
 
+        public static WeatherInformation of(LocalDate date, String weatherImageUrl, float temperature, float waterTemperature, float windSpeed, int UVIndex, TideEvent[] tideEvents) {
+            WeatherInformation weatherInformation = new WeatherInformation();
+            weatherInformation.date = date;
+            weatherInformation.weatherImageUrl = weatherImageUrl;
+            weatherInformation.temperature = temperature;
+            weatherInformation.waterTemperature = waterTemperature;
+            weatherInformation.windSpeed = windSpeed;
+            weatherInformation.UVIndex = UVIndex;
+            weatherInformation.tideEvents = tideEvents;
+            return weatherInformation;
+        }
+
     }
 
     @Getter
@@ -59,6 +71,14 @@ public class GetLocationWeatherResponseDto {
 
         @Schema(description = "조수 타입(만조, 간조)", example = "HIGH")
         private TideType type;
+
+        public static TideEvent of(LocalDateTime time, float height, TideType type) {
+            TideEvent tideEvent = new TideEvent();
+            tideEvent.time = time;
+            tideEvent.height = height;
+            tideEvent.type = type;
+            return tideEvent;
+        }
 
     }
 
