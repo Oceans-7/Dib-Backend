@@ -7,6 +7,7 @@ import com.oceans7.dib.place.dto.response.SearchPlaceResponseDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,15 +20,17 @@ public class PlaceController {
 
     private final PlaceService placeService;
 
+    @GetMapping()
     public ResponseEntity<SearchPlaceResponseDto> searchPlace(@ModelAttribute SearchPlaceRequestDto searchPlaceRequestDto) {
         {
-            return null;
+            return ResponseEntity.ok(placeService.searchPlace(searchPlaceRequestDto));
         }
     }
 
+    @GetMapping("/detail")
     public ResponseEntity<DetailPlaceInformationResponseDto> getPlaceDetail(@ModelAttribute GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
         {
-            return null;
+            return ResponseEntity.ok(placeService.getPlaceDetail(getPlaceDetailRequestDto));
         }
     }
 }

@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class WeatherController {
 
+    private final WeatherService weatherService;
+
     @Operation(summary = "위치 기반 날씨 정보 조회", description = "위도와 경도를 받아 해당 지역의 날씨 정보를 조회한다.")
     @GetMapping()
     public ResponseEntity<GetLocationWeatherResponseDto> getWeather(
             @Validated @ModelAttribute GetLocationWeatherRequestDto getLocationWeatherRequestDto
     ) {
-            return null;
+            return ResponseEntity.ok(weatherService.getWeather(getLocationWeatherRequestDto))
     }
 }
