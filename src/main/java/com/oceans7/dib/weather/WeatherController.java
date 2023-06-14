@@ -25,6 +25,6 @@ public class WeatherController {
     public ResponseEntity<GetLocationWeatherResponseDto> getWeather(
             @Validated @ModelAttribute GetLocationWeatherRequestDto getLocationWeatherRequestDto
     ) {
-            return ResponseEntity.ok(weatherService.getWeather(getLocationWeatherRequestDto))
+            return ResponseEntity.ok(weatherService.getWeather(getLocationWeatherRequestDto));
     }
 }
