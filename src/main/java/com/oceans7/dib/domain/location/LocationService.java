@@ -1,7 +1,7 @@
-package com.oceans7.dib.location;
+package com.oceans7.dib.domain.location;
 
-import com.oceans7.dib.location.dto.request.SearchLocationRequestDto;
-import com.oceans7.dib.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
+import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

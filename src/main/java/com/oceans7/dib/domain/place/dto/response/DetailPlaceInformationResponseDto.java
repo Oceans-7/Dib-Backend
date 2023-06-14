@@ -1,13 +1,10 @@
-package com.oceans7.dib.place.dto.response;
+package com.oceans7.dib.domain.place.dto.response;
 
-import com.oceans7.dib.place.ContentType;
-import com.oceans7.dib.place.FacilityType;
-import com.oceans7.dib.place.ServiceType;
+import com.oceans7.dib.domain.place.ContentType;
+import com.oceans7.dib.domain.place.FacilityType;
+import com.oceans7.dib.domain.place.ServiceType;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class DetailPlaceInformationResponseDto {
 

@@ -1,4 +1,4 @@
-package com.oceans7.dib.location.dto.response;
+package com.oceans7.dib.domain.location.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

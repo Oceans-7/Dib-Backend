@@ -1,8 +1,7 @@
-package com.oceans7.dib.location;
+package com.oceans7.dib.domain.location;
 
-import com.oceans7.dib.location.dto.request.SearchLocationRequestDto;
-import com.oceans7.dib.location.dto.response.LocationResponseDto;
-import com.oceans7.dib.place.PlaceService;
+import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
+import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

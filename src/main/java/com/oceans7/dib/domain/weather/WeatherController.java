@@ -1,7 +1,7 @@
-package com.oceans7.dib.weather;
+package com.oceans7.dib.domain.weather;
 
-import com.oceans7.dib.weather.dto.request.GetLocationWeatherRequestDto;
-import com.oceans7.dib.weather.dto.response.GetLocationWeatherResponseDto;
+import com.oceans7.dib.domain.weather.dto.request.GetLocationWeatherRequestDto;
+import com.oceans7.dib.domain.weather.dto.response.GetLocationWeatherResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

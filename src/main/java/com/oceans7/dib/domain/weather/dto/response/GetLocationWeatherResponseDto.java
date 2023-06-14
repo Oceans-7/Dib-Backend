@@ -1,6 +1,6 @@
-package com.oceans7.dib.weather.dto.response;
+package com.oceans7.dib.domain.weather.dto.response;
 
-import com.oceans7.dib.weather.TideType;
+import com.oceans7.dib.domain.weather.TideType;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

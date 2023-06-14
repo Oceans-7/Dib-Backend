@@ -1,7 +1,7 @@
-package com.oceans7.dib.place.dto.request;
+package com.oceans7.dib.domain.place.dto.request;
 
-import com.oceans7.dib.place.ContentType;
-import com.oceans7.dib.place.ServiceType;
+import com.oceans7.dib.domain.place.ContentType;
+import com.oceans7.dib.domain.place.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

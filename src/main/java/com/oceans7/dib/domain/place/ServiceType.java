@@ -1,4 +1,4 @@
-package com.oceans7.dib.place;
+package com.oceans7.dib.domain.place;
 
 public enum ServiceType {
     LITERATURE_ART_TOUR,

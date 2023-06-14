@@ -1,4 +1,4 @@
-package com.oceans7.dib.location.dto.request;
+package com.oceans7.dib.domain.location.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

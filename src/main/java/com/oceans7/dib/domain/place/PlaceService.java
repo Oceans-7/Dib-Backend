@@ -1,11 +1,10 @@
-package com.oceans7.dib.place;
+package com.oceans7.dib.domain.place;
 
-import com.oceans7.dib.place.dto.request.GetPlaceDetailRequestDto;
-import com.oceans7.dib.place.dto.request.SearchPlaceRequestDto;
-import com.oceans7.dib.place.dto.response.DetailPlaceInformationResponseDto;
-import com.oceans7.dib.place.dto.response.SearchPlaceResponseDto;
+import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
+import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto;
+import com.oceans7.dib.domain.place.dto.response.SearchPlaceResponseDto;
+import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
