@@ -1,0 +1,10 @@
+### swagger
+springdoc:
+  swagger-ui:
+    path: '/api-docs-ui'
+    enabled: true
+    # 확장하지 않기
+    docExpansion: 'none'
+    # request, response media type
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
