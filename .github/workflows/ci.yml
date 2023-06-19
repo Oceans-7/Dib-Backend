@@ -1,0 +1,69 @@
+name: 'DIB CI'
+
+# develop 브랜치로 pr 시
+on:
+  pull_request:
+    branches: [ develop ]
+
+permissions: write-all #테스트 결과 작성을 위한 쓰기권한
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      # JDK 세팅
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'adopt'
+
+      # gradle 캐싱
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # gradlew 권한
+      - name: Grant Execute Permission For Gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      # 프로젝트 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      #test를 위한 mysql설정
+      - name: Start MySQL
+        uses: samin/mysql-action@v1.3
+        with:
+          host port: 3303
+          container port: 3303
+          mysql database: 'dib_test_db'
+          mysql user: 'dib_test'
+          mysql password: 'dib_test_pw2023!'
+
+      #테스트를 위한 test yml 설정
+      - name: Make application-test.yml
+        run: |
+          cd ./src/test/resources
+          touch ./application-test.yml
+          echo "${{ secrets.PROPERTIES_TEST }}" > ./application-test.yml
+        shell: bash
+
+      # 테스트 코드 빌드
+      - name: Test with Gradle
+        run: ./gradlew test --no-daemon
+
+      # 테스트 결과 파일 생성
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: ${{ always() }}
+        with:
+          files: build/test-results/**/*.xml
