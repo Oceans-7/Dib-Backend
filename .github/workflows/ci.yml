@@ -32,11 +32,12 @@ jobs:
 
       # gradlew 권한
       - name: Grant Execute Permission For Gradlew
-          run: chmod +x gradlew
+        run: chmod +x ./gradlew
+        shell: bash
 
       # 프로젝트 빌드
       - name: Build with Gradle
-          run: ./gradlew clean build
+        run: ./gradlew clean build
 
       #test를 위한 mysql설정
       - name: Start MySQL
