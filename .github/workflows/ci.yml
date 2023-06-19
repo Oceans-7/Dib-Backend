@@ -67,13 +67,3 @@ jobs:
         if: ${{ always() }}
         with:
           files: build/test-results/**/*.xml
-
-      # 테스트 커버리지 레포트 생성
-      - name: Generate Jacoco Report
-        run: ./gradlew jacocoTestReport
-
-      - name: Archive Jacoco Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: jacoco-report
-          path: build/reports/jacoco/test/html/index.html
