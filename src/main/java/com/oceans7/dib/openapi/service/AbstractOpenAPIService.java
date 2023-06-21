@@ -1,5 +1,7 @@
 package com.oceans7.dib.openapi.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public abstract class AbstractOpenAPIService {
-    abstract <T> T parsingJsonObject(String result);
 
     String connectApi(String urlStr) {
         HttpURLConnection urlConnection = null;
@@ -63,5 +64,18 @@ public abstract class AbstractOpenAPIService {
         br.close();
 
         return result.toString();
+    }
+
+    <T> T parsingJsonObject(String json, Class<T> valueType) {
+        T result = null;
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            result = mapper.readValue(json, valueType);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }
