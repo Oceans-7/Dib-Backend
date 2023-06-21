@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi;
+package com.oceans7.dib.openapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.global.util.EncoderUtil;
@@ -25,7 +25,7 @@ public class TourAPIService extends AbstractOpenAPIService {
     private String mobileApp;
 
     // 위치 기반 서비스 API 호출
-    public String fetchDataFromLocationBasedApi(double mapX, double mapY, String contentTypeId) {
+    public LocationBasedList fetchDataFromLocationBasedApi(double mapX, double mapY, String contentTypeId) {
         String api = "/locationBasedList1";
         int radius = 20000;
 
@@ -39,11 +39,12 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&radius=" + radius +
                 "&contentTypeId=" + contentTypeId;
 
-        return connectApi(urlStr);
+        String result = connectApi(urlStr);
+        return parsingJsonObject(result);
     }
 
     // 키워드 기반 서비스 API 호출
-    public String fetchDataFromSearchKeywordApi(String keyword) {
+    public LocationBasedList fetchDataFromSearchKeywordApi(String keyword) {
         String api = "/searchKeyword1";
 
         String urlStr = callbackUrl + api +
@@ -53,7 +54,8 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&_type=" + dataType +
                 "&keyword=" + EncoderUtil.toURLEncodeUtf8(keyword);
 
-        return connectApi(urlStr);
+        String result = connectApi(urlStr);
+        return parsingJsonObject(result);
     }
 
     @Override

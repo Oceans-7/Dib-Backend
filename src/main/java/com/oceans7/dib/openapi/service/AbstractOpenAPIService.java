@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi;
+package com.oceans7.dib.openapi.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,6 +1,7 @@
 package com.oceans7.dib.openapi;
 
 import com.oceans7.dib.openapi.dto.response.LocationBasedList;
+import com.oceans7.dib.openapi.service.TourAPIService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class TourAPIServiceTest {
-    @Autowired TourAPIService tourAPIService;
+    @Autowired
+    TourAPIService tourAPIService;
 
     @Test
     @DisplayName("위치 기반 서비스 API 통신 테스트")
@@ -23,8 +25,7 @@ public class TourAPIServiceTest {
         String contentTypeId = "12";
 
         // when
-        String result = tourAPIService.fetchDataFromLocationBasedApi(mapX, mapY, contentTypeId);
-        LocationBasedList list = tourAPIService.parsingJsonObject(result);
+        LocationBasedList list = tourAPIService.fetchDataFromLocationBasedApi(mapX, mapY, contentTypeId);
 
         // then
         assertThat(list.getLocationBasedItems().size()).isEqualTo(10);
@@ -37,8 +38,7 @@ public class TourAPIServiceTest {
         String keyword = "강원";
 
         // when
-        String result = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
-        LocationBasedList list = tourAPIService.parsingJsonObject(result);
+        LocationBasedList list = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
 
         // then
         assertThat(list.getLocationBasedItems().size()).isEqualTo(10);
