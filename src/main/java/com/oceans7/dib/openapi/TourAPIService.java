@@ -1,15 +1,10 @@
 package com.oceans7.dib.openapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.global.util.EncoderUtil;
 import com.oceans7.dib.openapi.dto.response.LocationBasedList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 
 @Service
 public class TourAPIService extends AbstractOpenAPIService {
@@ -30,14 +25,9 @@ public class TourAPIService extends AbstractOpenAPIService {
     private String mobileApp;
 
     // 위치 기반 서비스 API 호출
-    public String fetchDataFromLocationBasedApi(double mapX, double mapY,
-                                                String contentTypeId) {
+    public String fetchDataFromLocationBasedApi(double mapX, double mapY, String contentTypeId) {
         String api = "/locationBasedList1";
         int radius = 20000;
-
-        HttpURLConnection urlConnection = null;
-        InputStream stream = null;
-        String result = null;
 
         String urlStr = callbackUrl + api +
                 "?serviceKey=" + serviceKey +
@@ -49,24 +39,21 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&radius=" + radius +
                 "&contentTypeId=" + contentTypeId;
 
-        try {
-            URL url = new URL(urlStr);
+        return connectApi(urlStr);
+    }
 
-            urlConnection = (HttpURLConnection) url.openConnection();
-            stream = getNetworkConnection(urlConnection);
-            result = readStreamToString(stream);
+    // 키워드 기반 서비스 API 호출
+    public String fetchDataFromSearchKeywordApi(String keyword) {
+        String api = "/searchKeyword1";
 
-            if (stream != null) {
-                stream.close();
-            }
-        } catch(IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-        }
-        return result;
+        String urlStr = callbackUrl + api +
+                "?serviceKey=" + serviceKey +
+                "&MobileOS=" + mobileOS +
+                "&MobileApp=" + mobileApp +
+                "&_type=" + dataType +
+                "&keyword=" + EncoderUtil.toURLEncodeUtf8(keyword);
+
+        return connectApi(urlStr);
     }
 
     @Override
@@ -82,4 +69,5 @@ public class TourAPIService extends AbstractOpenAPIService {
 
         return result;
     }
+
 }
