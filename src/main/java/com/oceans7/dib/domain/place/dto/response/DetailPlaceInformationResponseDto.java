@@ -5,7 +5,12 @@ import com.oceans7.dib.domain.place.FacilityType;
 import com.oceans7.dib.domain.place.ServiceType;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DetailPlaceInformationResponseDto {
 
     @Schema(description = "장소 이름", example = "해남문학관")
