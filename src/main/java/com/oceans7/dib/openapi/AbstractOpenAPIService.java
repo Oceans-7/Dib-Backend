@@ -5,9 +5,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
 public abstract class AbstractOpenAPIService {
     abstract <T> T parsingJsonObject(String result);
+
+    String connectApi(String urlStr) {
+        HttpURLConnection urlConnection = null;
+        InputStream stream = null;
+        String result = null;
+
+        try {
+            URL url = new URL(urlStr);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            stream = getNetworkConnection(urlConnection);
+            result = readStreamToString(stream);
+
+            if (stream != null) {
+                stream.close();
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return result;
+    }
 
     /* URLConnection 을 전달받아 연결정보 설정 후 연결, 연결 후 수신한 InputStream 반환 */
     InputStream getNetworkConnection(HttpURLConnection urlConnection) throws IOException {
