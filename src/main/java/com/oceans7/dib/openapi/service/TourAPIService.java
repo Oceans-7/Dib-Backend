@@ -2,6 +2,7 @@ package com.oceans7.dib.openapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.global.util.EncoderUtil;
+import com.oceans7.dib.openapi.dto.response.AreaCodeList;
 import com.oceans7.dib.openapi.dto.response.LocationBasedList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&contentTypeId=" + contentTypeId;
 
         String result = connectApi(urlStr);
-        return parsingJsonObject(result);
+        return parsingJsonObject(result, LocationBasedList.class);
     }
 
     // 키워드 기반 서비스 API 호출
@@ -55,21 +56,23 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&keyword=" + EncoderUtil.toURLEncodeUtf8(keyword);
 
         String result = connectApi(urlStr);
-        return parsingJsonObject(result);
+        return parsingJsonObject(result, LocationBasedList.class);
     }
 
-    @Override
-    LocationBasedList parsingJsonObject(String json) {
-        LocationBasedList result = null;
+    // 지역 코드 조회 API 호출
+    public AreaCodeList fetchDataFromAreaCodeApi(String areaCode) {
+        String api = "/areaCode1";
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            result = mapper.readValue(json, LocationBasedList.class);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        String urlStr = callbackUrl + api +
+                "?serviceKey=" + serviceKey +
+                "&MobileOS=" + mobileOS +
+                "&MobileApp=" + mobileApp +
+                "&_type=" + dataType +
+                "&numOfRows=" + 50 +
+                "&areaCode=" + areaCode;
 
-        return result;
+        String result = connectApi(urlStr);
+        return parsingJsonObject(result, AreaCodeList.class);
     }
 
 }
