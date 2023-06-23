@@ -42,14 +42,14 @@ public class DetailIntroItemResponse {
         private String useTime;
     }
 
-    public static class EventItemResponse extends DetailIntroItemResponse {
+    public static class CultureItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
         @JsonProperty("infocenterculture")
         private String infoCenter;
 
         // 시설 정보
         @JsonProperty("parkingculture")
-        private String parkingCulture;
+        private String checkParking;
 
         @JsonProperty("chkbabycarriageculture")
         private String checkBabyCarriage;
@@ -63,7 +63,9 @@ public class DetailIntroItemResponse {
         // 이용 시간
         @JsonProperty("usetimeculture")
         private String useTime;
+    }
 
+    public static class EventItemResponse extends DetailIntroItemResponse {
         // 예매처
         @JsonProperty("bookingplace")
         private String bookingPlace;
@@ -75,6 +77,13 @@ public class DetailIntroItemResponse {
         // 주최자 연락처
         @JsonProperty("sponsor1tel")
         private String sponsor1Tel;
+
+        // 행사 시작일 - 종료일
+        @JsonProperty("eventstartdate")
+        private String eventStartDate;
+
+        @JsonProperty("eventenddate")
+        private String eventEndDate;
     }
 
     public static class TourCourseItemResponse extends DetailIntroItemResponse {

@@ -192,6 +192,9 @@ public class TourAPIService extends AbstractOpenAPIService {
             case TOURIST_SPOT -> {
                 return parsingJsonObject(result, SpotIntroResponse.class);
             }
+            case CULTURAL_SITE -> {
+                return parsingJsonObject(result, CultureIntroResponse.class);
+            }
             case EVENT -> {
                 return parsingJsonObject(result, EventIntroResponse.class);
             }
