@@ -18,4 +18,13 @@ public enum ContentType {
     }
 
     public int getCode() { return code; }
+
+    public static ContentType getContentTypeByCode(int desiredCode) {
+        for (ContentType contentType : ContentType.values()) {
+            if (contentType.getCode() == desiredCode) {
+                return contentType;
+            }
+        }
+        return null;
+    }
 }
