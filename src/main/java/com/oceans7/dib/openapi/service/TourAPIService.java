@@ -3,8 +3,8 @@ package com.oceans7.dib.openapi.service;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.util.EncoderUtil;
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
-import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoListResponse;
-import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroListResponse;
+import com.oceans7.dib.openapi.dto.response.detail.info.*;
+import com.oceans7.dib.openapi.dto.response.detail.intro.*;
 import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
 import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
@@ -34,6 +34,7 @@ public class TourAPIService extends AbstractOpenAPIService {
     // 위치 기반 서비스 API 호출
     // TODO : 정렬 구분 & 지역/시군구 코드 추가
     // TODO : 페이지네이션 추가
+    // TODO : 각 응답에 totalCount도 읽어들이도록 추가
     public TourAPICommonListResponse fetchDataFromLocationBasedApi(double mapX, double mapY, ContentType contentType) {
         String api = "/locationBasedList1";
         int radius = 20000;
@@ -140,7 +141,7 @@ public class TourAPIService extends AbstractOpenAPIService {
      * @param contentType
      * @return
      */
-    public DetailIntroListResponse fetchDataFromIntroApi(Long contentId, ContentType contentType) {
+    public DetailIntroInterface fetchDataFromIntroApi(Long contentId, ContentType contentType) {
         String api = "/detailIntro1";
 
         String urlStr = callbackUrl + api +
@@ -153,7 +154,32 @@ public class TourAPIService extends AbstractOpenAPIService {
 
         String result = connectApi(urlStr);
         System.out.println(result);
-        return parsingJsonObject(result, DetailIntroListResponse.class);
+
+        switch(contentType) {
+            case TOURIST_SPOT -> {
+                return parsingJsonObject(result, SpotIntroResponse.class);
+            }
+            case EVENT -> {
+                return parsingJsonObject(result, EventIntroResponse.class);
+            }
+            case TOUR_COURSE -> {
+                return parsingJsonObject(result, TourCourseIntroResponse.class);
+            }
+            case LEPORTS -> {
+                return parsingJsonObject(result, LeportsIntroResponse.class);
+            }
+            case ACCOMMODATION -> {
+                return parsingJsonObject(result, AccommodationIntroResponse.class);
+            }
+            case SHOPPING -> {
+                return parsingJsonObject(result, ShoppingIntroResponse.class);
+            }
+            case RESTAURANT -> {
+                return parsingJsonObject(result, RestaurantIntroResponse.class);
+            }
+        }
+
+        return null;
     }
 
     /**

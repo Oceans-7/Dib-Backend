@@ -18,7 +18,7 @@ public class DetailIntroItemResponse {
     private int contentTypeId;
 
     // 관광지
-    public class SpotItemResponse extends DetailIntroItemResponse {
+    public static class SpotItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
         @JsonProperty("infocenter")
         private String infoCenter;
@@ -42,7 +42,7 @@ public class DetailIntroItemResponse {
         private String useTime;
     }
 
-    public class EventItemResponse extends DetailIntroItemResponse {
+    public static class EventItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
         @JsonProperty("infocenterculture")
         private String infoCenter;
@@ -77,7 +77,7 @@ public class DetailIntroItemResponse {
         private String sponsor1Tel;
     }
 
-    public class TourCourseItemResponse extends DetailIntroItemResponse {
+    public static class TourCourseItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
         @JsonProperty("infocentertourcourse")
         private String infoCenter;
@@ -85,7 +85,7 @@ public class DetailIntroItemResponse {
         // TODO : 이용시간과 관련하여 필드 추가 필요
     }
 
-    public class LeportsItemResponse extends DetailIntroItemResponse {
+    public static class LeportsItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkbabycarriageleports")
         private String checkBabyCarriage;
@@ -108,7 +108,7 @@ public class DetailIntroItemResponse {
         private String useTime;
     }
 
-    public class AccommodationItemResponse extends DetailIntroItemResponse {
+    public static class AccommodationItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkcooking")
         private String checkCooking;
@@ -137,7 +137,7 @@ public class DetailIntroItemResponse {
         private String reservationUrl;
     }
 
-    public class ShoppingItemResponse extends DetailIntroItemResponse {
+    public static class ShoppingItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkbabycarriageshopping")
         private String checkBabyCarriage;
@@ -163,7 +163,7 @@ public class DetailIntroItemResponse {
         private String openTime;
     }
 
-    public class RestaurantItemResponse extends DetailIntroItemResponse {
+    public static class RestaurantItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkcreditcardfood")
         private String checkCreditCard;
