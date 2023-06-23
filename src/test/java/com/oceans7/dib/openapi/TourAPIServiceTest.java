@@ -3,6 +3,7 @@ package com.oceans7.dib.openapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
+import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.intro.*;
 import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
 import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
@@ -146,12 +147,26 @@ public class TourAPIServiceTest {
     @Test
     @DisplayName("반복 정보 조회 API 통신 테스트")
     public void callDetailInfoAPITest() {
+        //given
+        String keyword = "백범김구선생상";
 
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
+        Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
+        int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
+        ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
+
+        //then
+        DetailInfoListResponse detailInfoListResponse = tourAPIService.fetchDataFromInfoApi(contentId, contentType);
+
+        // when
+        assertThat(detailInfoListResponse.getDetailInfoItemResponses().get(0).getContentId()).isEqualTo(contentId);
+        assertThat(detailInfoListResponse.getDetailInfoItemResponses().get(0).getContentTypeId()).isEqualTo(contentTypeId);
     }
 
     @Test
     @DisplayName("이미지 조회 API 통신 테스트")
     public void callImageAPITest() {
+
 
     }
 }
