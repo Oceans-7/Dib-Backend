@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response;
+package com.oceans7.dib.openapi.dto.response.simple;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,15 +11,15 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public class TourAPICommonListResponse {
+public class AreaCodeList {
     @JsonProperty("item")
-    private List<TourAPICommonItemResponse> tourAPICommonItemResponseList;
+    private List<AreaCodeItem> areaCodeItems;
 
     @JsonCreator
-    public TourAPICommonListResponse(@JsonProperty("response")JsonNode rootNode) throws JsonProcessingException {
+    public AreaCodeList(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         JsonNode itemNode = rootNode.findValue("item");
-        this.tourAPICommonItemResponseList = Arrays.stream(objectMapper.treeToValue(itemNode, TourAPICommonItemResponse[].class)).toList();
+        this.areaCodeItems = Arrays.stream(objectMapper.treeToValue(itemNode, AreaCodeItem[].class)).toList();
     }
 }

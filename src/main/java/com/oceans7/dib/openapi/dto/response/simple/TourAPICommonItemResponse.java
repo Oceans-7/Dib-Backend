@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response;
+package com.oceans7.dib.openapi.dto.response.simple;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -67,9 +67,13 @@ public class TourAPICommonItemResponse {
     @JsonProperty("modifiedtime")
     private String modifiedTime;
 
-    // 중심 좌표로부터 거리 (m)
+    // 위치 기반 : 중심 좌표로부터 거리 (m)
     @JsonProperty("dist")
     private String dist;
+
+    // 지역 기반 : 우편번호
+    @JsonProperty("zipcode")
+    private String zipcode;
 
     // 교과서 속 여행지 여부
     @JsonProperty("booktour")

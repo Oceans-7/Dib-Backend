@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response;
+package com.oceans7.dib.openapi.dto.response.simple;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
