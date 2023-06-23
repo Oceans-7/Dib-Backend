@@ -1,7 +1,9 @@
 package com.oceans7.dib.openapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
+import com.oceans7.dib.openapi.dto.response.detail.intro.*;
 import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
 import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.service.TourAPIService;
@@ -80,8 +82,10 @@ public class TourAPIServiceTest {
         int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
         ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
 
+        // when
         DetailCommonListResponse detailCommonList = tourAPIService.fetchDataFromCommonApi(contentId, contentType);
 
+        //then
         assertThat(detailCommonList.getDetailCommonItemResponse().getContentId()).isEqualTo(contentId);
         assertThat(detailCommonList.getDetailCommonItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
     }
@@ -89,7 +93,54 @@ public class TourAPIServiceTest {
     @Test
     @DisplayName("소개 정보 조회 API 통신 테스트")
     public void callDetailIntroAPITest() {
+        //given
+        String keyword = "강원";
 
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
+        Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
+        int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
+        ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
+
+        // when
+        DetailIntroInterface detailIntroItem = tourAPIService.fetchDataFromIntroApi(contentId, contentType);
+
+        // then
+        if(detailIntroItem instanceof SpotIntroResponse) {
+            SpotIntroResponse result = (SpotIntroResponse) detailIntroItem;
+
+            assertThat(result.getSpotItemResponses().getContentId()).isEqualTo(contentId);
+            assertThat(result.getSpotItemResponses().getContentTypeId()).isEqualTo(contentTypeId);
+        } else if(detailIntroItem instanceof EventIntroResponse) {
+            EventIntroResponse result = (EventIntroResponse) detailIntroItem;
+
+            assertThat(result.getEventItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getEventItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+        } else if(detailIntroItem instanceof TourCourseIntroResponse) {
+            TourCourseIntroResponse result = (TourCourseIntroResponse) detailIntroItem;
+
+            assertThat(result.getTourCourseItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getTourCourseItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+        } else if(detailIntroItem instanceof LeportsIntroResponse) {
+            LeportsIntroResponse result = (LeportsIntroResponse) detailIntroItem;
+
+            assertThat(result.getLeportsItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getLeportsItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+        } else if(detailIntroItem instanceof AccommodationIntroResponse) {
+            AccommodationIntroResponse result = (AccommodationIntroResponse) detailIntroItem;
+
+            assertThat(result.getAccommodationItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getAccommodationItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+        } else if(detailIntroItem instanceof ShoppingIntroResponse) {
+            ShoppingIntroResponse result = (ShoppingIntroResponse) detailIntroItem;
+
+            assertThat(result.getShoppingItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getShoppingItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+        } else if(detailIntroItem instanceof RestaurantIntroResponse) {
+            RestaurantIntroResponse result = (RestaurantIntroResponse) detailIntroItem;
+
+            assertThat(result.getRestaurantItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getRestaurantItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+        }
     }
 
     @Test
