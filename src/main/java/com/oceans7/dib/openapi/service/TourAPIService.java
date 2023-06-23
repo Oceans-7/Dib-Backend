@@ -218,7 +218,8 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&MobileOS=" + mobileOS +
                 "&MobileApp=" + mobileApp +
                 "&_type=" + dataType +
-                "&contentId=" + contentId;
+                "&contentId=" + contentId +
+                "&subImageYN=" + YES_OPTION;
 
         String result = connectApi(urlStr);
         System.out.println(result);
