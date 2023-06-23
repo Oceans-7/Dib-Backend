@@ -1,6 +1,7 @@
 package com.oceans7.dib.openapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.domain.place.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
@@ -27,13 +28,19 @@ public class TourAPIServiceTest {
         // given
         double mapX = 126.9779692;
         double mapY = 37.566535;
-        ContentType contentType = ContentType.TOURIST_SPOT;
+        String contentTypeCode = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        String arrangeTypeName = ArrangeType.E.name();
+
+        int page = 1;
+        int pageSize = 20;
 
         // when
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromLocationBasedApi(mapX, mapY, contentType);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromLocationBasedApi(mapX, mapY, contentTypeCode, arrangeTypeName, page, pageSize);
 
         // then
-        assertThat(list.getTourAPICommonItemResponseList().size()).isEqualTo(10);
+        assertThat(list.getTourAPICommonItemResponseList().size()).isEqualTo(pageSize);
+        assertThat(list.getPage()).isEqualTo(page);
+        assertThat(list.getPageSize()).isEqualTo(pageSize);
     }
 
     @Test
@@ -67,8 +74,10 @@ public class TourAPIServiceTest {
         // given : '서울시 강북구' 지역
         String areaCode = "1";
         String sigunguCode = "3";
+        String contentTypeCode = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        String arrangeTypeName = ArrangeType.A.name();
 
-        TourAPICommonListResponse tourAPICommonList = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode);
+        TourAPICommonListResponse tourAPICommonList = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode, contentTypeCode, arrangeTypeName);
 
         assertThat(tourAPICommonList.getTourAPICommonItemResponseList().size()).isEqualTo(10);
     }

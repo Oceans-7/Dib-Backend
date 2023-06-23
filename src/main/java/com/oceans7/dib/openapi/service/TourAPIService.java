@@ -1,6 +1,8 @@
 package com.oceans7.dib.openapi.service;
 
+import com.oceans7.dib.domain.place.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
+import com.oceans7.dib.domain.place.ServiceType;
 import com.oceans7.dib.global.util.EncoderUtil;
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.info.*;
@@ -31,11 +33,18 @@ public class TourAPIService extends AbstractOpenAPIService {
 
     private final String YES_OPTION = "Y";
 
-    // 위치 기반 서비스 API 호출
-    // TODO : 정렬 구분 & 지역/시군구 코드 추가
-    // TODO : 페이지네이션 추가
-    // TODO : 각 응답에 totalCount도 읽어들이도록 추가
-    public TourAPICommonListResponse fetchDataFromLocationBasedApi(double mapX, double mapY, ContentType contentType) {
+    /**
+     * 위치 기반 서비스 API 호출
+     * @param mapX
+     * @param mapY
+     * @param contentType
+     * @param arrangeType
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public TourAPICommonListResponse fetchDataFromLocationBasedApi(double mapX, double mapY, String contentType,
+                                                                    String arrangeType, int page, int pageSize) {
         String api = "/locationBasedList1";
         int radius = 20000;
 
@@ -47,7 +56,10 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&mapX=" + mapX +
                 "&mapY=" + mapY +
                 "&radius=" + radius +
-                "&contentTypeId=" + contentType.getCode();
+                "&contentTypeId=" + contentType +
+                "&pageNo=" + page +
+                "&numOfRows=" + pageSize +
+                "&arrange=" + arrangeType;
 
         String result = connectApi(urlStr);
         System.out.println(result);
@@ -94,7 +106,8 @@ public class TourAPIService extends AbstractOpenAPIService {
      * @param sigunguCode
      * @return
      */
-    public TourAPICommonListResponse fetchDataFromAreaBasedApi(String areaCode, String sigunguCode) {
+    public TourAPICommonListResponse fetchDataFromAreaBasedApi(String areaCode, String sigunguCode,
+                                                               String contentTypeName, String arrangeTypeCode) {
         String api = "/areaBasedList1";
 
         String urlStr = callbackUrl + api +
@@ -103,7 +116,9 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&MobileApp=" + mobileApp +
                 "&_type=" + dataType +
                 "&areaCode=" + areaCode +
-                "&sigunguCode=" + sigunguCode;
+                "&sigunguCode=" + sigunguCode +
+                "&contentTypeId=" + contentTypeName +
+                "&arrange=" + arrangeTypeCode;
 
         String result = connectApi(urlStr);
         System.out.println(result);

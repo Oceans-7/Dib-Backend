@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.domain.place.ContentType;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -21,5 +22,14 @@ public class AreaCodeList {
 
         JsonNode itemNode = rootNode.findValue("item");
         this.areaCodeItems = Arrays.stream(objectMapper.treeToValue(itemNode, AreaCodeItem[].class)).toList();
+    }
+
+    public String getAreaCodeByName(String name) {
+        for (AreaCodeItem areaCode : areaCodeItems) {
+            if (areaCode.getName().equals(name)) {
+                return areaCode.getCode();
+            }
+        }
+        return null;
     }
 }

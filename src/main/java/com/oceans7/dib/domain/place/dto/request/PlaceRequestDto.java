@@ -10,6 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PlaceRequestDto {
+    @Schema(description = "사용자 위도", example = "126.9779692")
+    private double mapX;
+
+    @Schema(description = "사용자 경도", example = "37.566535")
+    private double mapY;
+
     @Schema(description = "관광지 타입", example = "TOURIST_SPOT")
     private ContentType contentType;
 
@@ -20,9 +26,9 @@ public class PlaceRequestDto {
     private String area;
 
     @Schema(description = "시군구", example = "성북구")
-    private String areaDepth;
+    private String sigungu;
 
-    @Schema(description = "정렬 구분", example = "O")
+    @Schema(description = "정렬 구분", example = "A")
     private ArrangeType arrangeType;
 
     @Schema(description = "페이지 번호", example = "1")

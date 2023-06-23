@@ -69,7 +69,7 @@ public class TourAPICommonItemResponse {
 
     // 위치 기반 : 중심 좌표로부터 거리 (m)
     @JsonProperty("dist")
-    private String dist;
+    private float dist;
 
     // 지역 기반 : 우편번호
     @JsonProperty("zipcode")
