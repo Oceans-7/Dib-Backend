@@ -3,6 +3,7 @@ package com.oceans7.dib.openapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
+import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.intro.*;
 import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
@@ -166,7 +167,18 @@ public class TourAPIServiceTest {
     @Test
     @DisplayName("이미지 조회 API 통신 테스트")
     public void callImageAPITest() {
+        // given
+        Long contentId = (long) 128553;
 
+        // then
+        DetailImageListResponse detailImageListResponse = tourAPIService.fetchImageDataFromApi(contentId);
+
+        // when
+        assertThat(detailImageListResponse.getDetailImageItemResponses().get(0).getContentId()).isEqualTo(contentId);
+        assertThat(detailImageListResponse.getDetailImageItemResponses().size()).isEqualTo(10);
+        String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif)$";
+
+        assertThat(detailImageListResponse.getDetailImageItemResponses().get(0).getOriginImageUrl().matches(urlPattern)).isEqualTo(true);
 
     }
 }
