@@ -11,10 +11,10 @@ import lombok.Getter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailInfoItemResponse {
     @JsonProperty("contentid")
-    private String contentId;
+    private Long contentId;
 
     @JsonProperty("contenttypeid")
-    private String contentTypeId;
+    private int contentTypeId;
 
     @JsonProperty("infoname")
     private String infoName;

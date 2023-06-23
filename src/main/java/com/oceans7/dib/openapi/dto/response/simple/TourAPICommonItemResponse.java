@@ -9,11 +9,11 @@ import lombok.Getter;
 public class TourAPICommonItemResponse {
     // 콘텐츠 ID
     @JsonProperty("contentid")
-    private String contentId;
+    private Long contentId;
 
     // 콘텐츠 타입 ID
     @JsonProperty("contenttypeid")
-    private String contentTypeId;
+    private int contentTypeId;
 
     // 제목
     @JsonProperty("title")

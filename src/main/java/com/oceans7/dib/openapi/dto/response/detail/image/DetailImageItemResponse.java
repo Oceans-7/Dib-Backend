@@ -9,7 +9,7 @@ import lombok.Getter;
 public class DetailImageItemResponse {
     // 콘텐츠 ID
     @JsonProperty("contentid")
-    private String contentId;
+    private Long contentId;
 
     // 원본 이미지
     @JsonProperty("originimgurl")

@@ -15,7 +15,7 @@ public class DetailIntroItemResponse {
     private Long contentId;
 
     @JsonProperty("contenttypeid")
-    private String contentTypeId;
+    private int contentTypeId;
 
     // 관광지
     public class SpotItemResponse extends DetailIntroItemResponse {
