@@ -11,6 +11,11 @@ public enum ContentType {
     RESTAURANT(39),
     ;
 
+    private int code;
+
     ContentType(int code) {
+        this.code = code;
     }
+
+    public int getCode() { return code; }
 }

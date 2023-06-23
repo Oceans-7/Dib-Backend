@@ -66,6 +66,7 @@ public abstract class AbstractOpenAPIService {
         return result.toString();
     }
 
+    /* json 형태의 문자열을 valueType.class로 parsing 후 반환 */
     <T> T parsingJsonObject(String json, Class<T> valueType) {
         T result = null;
 

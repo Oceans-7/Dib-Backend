@@ -9,10 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SearchPlaceRequestDto {
-    @Schema(description = "키워드", example = "전라남도 해남")
-    private String keyword;
-
+public class PlaceRequestDto {
     @Schema(description = "관광지 타입", example = "TOURIST_SPOT")
     private ContentType contentType;
 
