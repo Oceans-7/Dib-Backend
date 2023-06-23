@@ -28,7 +28,9 @@ public class SecurityConfig {
                                         "/api-docs-ui",
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
-                                        "/v3/api-docs/**").permitAll()
+                                        "/v3/api-docs/**",
+                                        "/places", "/places/**"
+                                        ).permitAll()
                                 .anyRequest().authenticated()
                 );
         return http.build();

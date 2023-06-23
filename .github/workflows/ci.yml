@@ -37,7 +37,7 @@ jobs:
 
       # 프로젝트 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
 
       #test를 위한 mysql설정
       - name: Start MySQL

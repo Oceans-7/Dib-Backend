@@ -2,10 +2,13 @@ package com.oceans7.dib.domain.place.dto.response;
 
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.ServiceType;
+import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonItemResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.oceans7.dib.domain.place.ContentType.getContentTypeByCode;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -18,7 +21,7 @@ public class SimplePlaceInformationDto {
     private String address;
 
     @Schema(description = "컨텐츠 아이디, 위치 기반 조회시 확인 가능", example = "126508")
-    private String contentId;
+    private Long contentId;
 
     @Schema(description = "컨텐츠 타입", example = "TOURIST_SPOT")
     private ContentType contentType;
@@ -33,6 +36,18 @@ public class SimplePlaceInformationDto {
     private String firstImage;
 
     @Schema(description = "전화번호", example = "061-532-1000")
-    private String phoneNumber;
+    private String tel;
+
+    public SimplePlaceInformationDto (TourAPICommonItemResponse item) {
+        this.title = item.getTitle();
+        this.address = item.getAddress1() + item.getAddress2();
+        this.contentId = item.getContentId();
+        this.contentType = getContentTypeByCode(item.getContentTypeId());
+        // TODO : 서비스 분류 추가
+        this.distance = item.getDist();
+        this.firstImage = item.getFirstImage();
+        this.tel = item.getTel();
+    }
+
 
 }
