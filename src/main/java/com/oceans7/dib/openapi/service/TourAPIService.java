@@ -66,9 +66,17 @@ public class TourAPIService extends AbstractOpenAPIService {
         return parsingJsonObject(result, TourAPICommonListResponse.class);
     }
 
-    // 키워드 기반 서비스 API 호출
-    // TODO : 정렬 구분 & 지역/시군구 코드 추가
-    public TourAPICommonListResponse fetchDataFromSearchKeywordApi(String keyword) {
+    /**
+     * 키워드 기반 서비스 API 호출
+     * @param keyword
+     * @param areaCode
+     * @param sigunguCode
+     * @param contentTypeName
+     * @param arrangeTypeCode
+     * @return
+     */
+    public TourAPICommonListResponse fetchDataFromSearchKeywordApi(String keyword, String areaCode, String sigunguCode,
+                                                                   String contentTypeName, String arrangeTypeCode) {
         String api = "/searchKeyword1";
 
         String urlStr = callbackUrl + api +
@@ -76,14 +84,22 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&MobileOS=" + mobileOS +
                 "&MobileApp=" + mobileApp +
                 "&_type=" + dataType +
-                "&keyword=" + EncoderUtil.toURLEncodeUtf8(keyword);
+                "&keyword=" + EncoderUtil.toURLEncodeUtf8(keyword) +
+                "&areaCode=" + areaCode +
+                "&sigunguCode=" + sigunguCode +
+                "&contentTypeId=" + contentTypeName +
+                "&arrange=" + arrangeTypeCode;
 
         String result = connectApi(urlStr);
         System.out.println(result);
         return parsingJsonObject(result, TourAPICommonListResponse.class);
     }
 
-    // 지역 코드 조회 API 호출
+    /**
+     *  지역 코드 조회 API 호출
+     * @param areaCode
+     * @return
+     */
     public AreaCodeList fetchDataFromAreaCodeApi(String areaCode) {
         String api = "/areaCode1";
 
@@ -104,6 +120,8 @@ public class TourAPIService extends AbstractOpenAPIService {
      * 지역 기반 관광정보 조회
      * @param areaCode
      * @param sigunguCode
+     * @param contentTypeName
+     * @param arrangeTypeCode
      * @return
      */
     public TourAPICommonListResponse fetchDataFromAreaBasedApi(String areaCode, String sigunguCode,

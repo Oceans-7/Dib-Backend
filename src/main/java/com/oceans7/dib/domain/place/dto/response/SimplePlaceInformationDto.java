@@ -49,4 +49,5 @@ public class SimplePlaceInformationDto {
         this.tel = item.getTel();
     }
 
+
 }

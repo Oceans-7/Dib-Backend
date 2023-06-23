@@ -50,7 +50,7 @@ public class TourAPIServiceTest {
         String keyword = "강원";
 
         // when
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "");
 
         // then
         assertThat(list.getTourAPICommonItemResponseList().size()).isEqualTo(10);
@@ -86,9 +86,13 @@ public class TourAPIServiceTest {
     @DisplayName("공통 정보 조회 API 통신 테스트")
     public void callDetailCommonAPITest() {
         //given
-        String keyword = "강원";
+        String keyword = "서울";
+        String areaCode = "1";
+        String sigunguCode = "3";
+        String contentTypeCode = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        String arrangeTypeName = ArrangeType.A.name();
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, areaCode, sigunguCode, contentTypeCode, arrangeTypeName);
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
         int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
         ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
@@ -107,7 +111,7 @@ public class TourAPIServiceTest {
         //given
         String keyword = "강원";
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "");
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
         int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
         ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
@@ -160,7 +164,7 @@ public class TourAPIServiceTest {
         //given
         String keyword = "백범김구선생상";
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "");
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
         int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
         ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);

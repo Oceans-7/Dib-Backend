@@ -48,7 +48,6 @@ public class PlaceService {
             String areaName = request.getArea();
             AreaCodeList list = tourAPIService.fetchDataFromAreaCodeApi("");
             String areaCode = list.getAreaCodeByName(areaName);
-            System.out.println(areaCode);
             String sigunguCode = "";
 
             // sigunguCode 조회
@@ -68,8 +67,38 @@ public class PlaceService {
         return new PlaceResponseDto(simpleDto, apiResponse);
     }
 
-    public SearchPlaceResponseDto searchPlace(SearchPlaceRequestDto searchPlaceRequestDto) {
-        return null;
+    public SearchPlaceResponseDto searchPlace(SearchPlaceRequestDto request) {
+        TourAPICommonListResponse apiResponse = null;
+        String contentTypeCode = "";
+        String arrangeTypeName = "";
+        String areaCode = "";
+        String sigunguCode = "";
+
+        // 필터링 확인
+        if(ValidatorUtil.isNotEmpty(request.getContentType())) {
+            contentTypeCode = String.valueOf(request.getContentType().getCode());
+        }
+        if(ValidatorUtil.isNotEmpty(request.getArrangeType())) {
+            arrangeTypeName = request.getArrangeType().name();
+        }
+        if(ValidatorUtil.isNotEmpty(request.getArea())) {
+            String areaName = request.getArea();
+            AreaCodeList list = tourAPIService.fetchDataFromAreaCodeApi("");
+            areaCode = list.getAreaCodeByName(areaName);
+        }
+        if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
+            String sigunguName = request.getSigungu();
+            AreaCodeList sigunguList = tourAPIService.fetchDataFromAreaCodeApi(areaCode);
+            sigunguCode = sigunguList.getAreaCodeByName(sigunguName);
+        }
+
+        apiResponse = tourAPIService.fetchDataFromSearchKeywordApi(request.getKeyword(), areaCode, sigunguCode, contentTypeCode, arrangeTypeName);
+
+        SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
+                .map(SimplePlaceInformationDto :: new)
+                .toArray(SimplePlaceInformationDto[]::new);
+
+        return new SearchPlaceResponseDto(request.getKeyword(), simpleDto, apiResponse);
     }
 
     public DetailPlaceInformationResponseDto getPlaceDetail(GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
