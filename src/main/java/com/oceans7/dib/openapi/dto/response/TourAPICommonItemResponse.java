@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LocationBasedItem {
+public class TourAPICommonItemResponse {
     // 콘텐츠 ID
     @JsonProperty("contentid")
     private String contentId;
@@ -82,7 +82,6 @@ public class LocationBasedItem {
     // 지역 코드
     @JsonProperty("areacode")
     private String areaCode;
-
 
     // 대분류
     @JsonProperty("cat1")
