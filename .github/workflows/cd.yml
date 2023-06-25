@@ -33,8 +33,8 @@ jobs:
       - name: Make application-prod.yml
         run: |
           cd ./src/main/resources
-          touch ./application-prod.properties
-          echo "${{ secrets.PROPERTIES_PROD }}" > ./application-prod.properties
+          touch ./application-prod.yml
+          echo "${{ secrets.PROPERTIES_PROD }}" > ./application-prod.yml
         shell: bash
 
       #테스트를 위한 test yml 설정
