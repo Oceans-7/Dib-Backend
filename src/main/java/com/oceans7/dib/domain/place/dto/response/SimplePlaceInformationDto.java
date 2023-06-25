@@ -1,7 +1,6 @@
 package com.oceans7.dib.domain.place.dto.response;
 
 import com.oceans7.dib.domain.place.ContentType;
-import com.oceans7.dib.domain.place.ServiceType;
 import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonItemResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -26,9 +25,6 @@ public class SimplePlaceInformationDto {
     @Schema(description = "컨텐츠 타입", example = "TOURIST_SPOT")
     private ContentType contentType;
 
-    @Schema(description = "서비스 분류", example = "LITERATURE_ART_TOUR")
-    private ServiceType serviceType;
-
     @Schema(description = "거리", example = "21.0")
     private float distance;
 
@@ -43,11 +39,8 @@ public class SimplePlaceInformationDto {
         this.address = item.getAddress1() + item.getAddress2();
         this.contentId = item.getContentId();
         this.contentType = getContentTypeByCode(item.getContentTypeId());
-        // TODO : 서비스 분류 추가
         this.distance = item.getDist();
         this.firstImage = item.getFirstImage();
         this.tel = item.getTel();
     }
-
-
 }
