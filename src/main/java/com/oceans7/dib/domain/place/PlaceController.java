@@ -1,7 +1,7 @@
 package com.oceans7.dib.domain.place;
 
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
-import com.oceans7.dib.domain.place.dto.request.PlaceRequestDto;
+import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto;
 import com.oceans7.dib.domain.place.dto.response.PlaceResponseDto;
@@ -25,7 +25,7 @@ public class PlaceController {
 
     @Operation(summary = "관광 정보 조회", description = "사용자 위치(위도, 경도) 기반 관련 정보를 조회한다. (옵션 : 필터링 적용) \n지역 필터링 적용시 사용자 위치는 무시됩니다.")
     @GetMapping()
-    public ResponseEntity<PlaceResponseDto> searchPlace(@ModelAttribute PlaceRequestDto placeRequestDto) {
+    public ResponseEntity<PlaceResponseDto> searchPlace(@ModelAttribute GetPlaceRequestDto placeRequestDto) {
         {
             return ResponseEntity.ok(placeService.getPlace(placeRequestDto));
         }

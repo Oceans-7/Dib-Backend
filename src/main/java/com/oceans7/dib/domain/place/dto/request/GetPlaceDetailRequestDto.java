@@ -12,10 +12,10 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GetPlaceDetailRequestDto {
 
-    @Schema(description = "컨텐츠 아이디, 위치 기반 조회시 확인 가능", example = "126508")
-    private String contentId;
+    @Schema(description = "컨텐츠 아이디(필수), 관광 리스트 조회시 확인 가능", example = "126508")
+    private Long contentId;
 
-    @Schema(description = "컨텐츠 타입", example = "TOURIST_SPOT")
+    @Schema(description = "컨텐츠 타입(필수), 관광 정보 리스트 시 확인 가능", example = "TOURIST_SPOT")
     private ContentType contentType;
 
 }

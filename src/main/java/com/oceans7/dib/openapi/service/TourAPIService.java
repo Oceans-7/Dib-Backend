@@ -1,8 +1,6 @@
 package com.oceans7.dib.openapi.service;
 
-import com.oceans7.dib.domain.place.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
-import com.oceans7.dib.domain.place.ServiceType;
 import com.oceans7.dib.global.util.EncoderUtil;
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.info.*;
@@ -37,14 +35,15 @@ public class TourAPIService extends AbstractOpenAPIService {
      * 위치 기반 서비스 API 호출
      * @param mapX
      * @param mapY
-     * @param contentType
+     * @param contentTypeId
      * @param arrangeType
      * @param page
      * @param pageSize
      * @return
      */
-    public TourAPICommonListResponse fetchDataFromLocationBasedApi(double mapX, double mapY, String contentType,
-                                                                    String arrangeType, int page, int pageSize) {
+    public TourAPICommonListResponse fetchDataFromLocationBasedApi(double mapX, double mapY,
+                                                                   String contentTypeId, String arrangeType,
+                                                                   int page, int pageSize) {
         String api = "/locationBasedList1";
         int radius = 20000;
 
@@ -56,7 +55,7 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&mapX=" + mapX +
                 "&mapY=" + mapY +
                 "&radius=" + radius +
-                "&contentTypeId=" + contentType +
+                "&contentTypeId=" + contentTypeId +
                 "&pageNo=" + page +
                 "&numOfRows=" + pageSize +
                 "&arrange=" + arrangeType;
@@ -71,12 +70,13 @@ public class TourAPIService extends AbstractOpenAPIService {
      * @param keyword
      * @param areaCode
      * @param sigunguCode
-     * @param contentTypeName
+     * @param contentTypeId
      * @param arrangeTypeCode
      * @return
      */
-    public TourAPICommonListResponse fetchDataFromSearchKeywordApi(String keyword, String areaCode, String sigunguCode,
-                                                                   String contentTypeName, String arrangeTypeCode) {
+    public TourAPICommonListResponse fetchDataFromSearchKeywordApi(String keyword,
+                                                                   String areaCode, String sigunguCode,
+                                                                   String contentTypeId, String arrangeTypeCode) {
         String api = "/searchKeyword1";
 
         String urlStr = callbackUrl + api +
@@ -87,7 +87,7 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&keyword=" + EncoderUtil.toURLEncodeUtf8(keyword) +
                 "&areaCode=" + areaCode +
                 "&sigunguCode=" + sigunguCode +
-                "&contentTypeId=" + contentTypeName +
+                "&contentTypeId=" + contentTypeId +
                 "&arrange=" + arrangeTypeCode;
 
         String result = connectApi(urlStr);
@@ -120,12 +120,12 @@ public class TourAPIService extends AbstractOpenAPIService {
      * 지역 기반 관광정보 조회
      * @param areaCode
      * @param sigunguCode
-     * @param contentTypeName
+     * @param contentTypeId
      * @param arrangeTypeCode
      * @return
      */
     public TourAPICommonListResponse fetchDataFromAreaBasedApi(String areaCode, String sigunguCode,
-                                                               String contentTypeName, String arrangeTypeCode) {
+                                                               String contentTypeId, String arrangeTypeCode) {
         String api = "/areaBasedList1";
 
         String urlStr = callbackUrl + api +
@@ -135,7 +135,7 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&_type=" + dataType +
                 "&areaCode=" + areaCode +
                 "&sigunguCode=" + sigunguCode +
-                "&contentTypeId=" + contentTypeName +
+                "&contentTypeId=" + contentTypeId +
                 "&arrange=" + arrangeTypeCode;
 
         String result = connectApi(urlStr);
@@ -146,10 +146,10 @@ public class TourAPIService extends AbstractOpenAPIService {
     /**
      * 공통 정보 조회 (상세 조회용1)
      * @param contentId
-     * @param contentType
+     * @param contentTypeId
      * @return
      */
-    public DetailCommonListResponse fetchDataFromCommonApi(Long contentId, ContentType contentType) {
+    public DetailCommonListResponse fetchDataFromCommonApi(Long contentId, String contentTypeId) {
         String api = "/detailCommon1";
 
         String urlStr = callbackUrl + api +
@@ -158,7 +158,7 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&MobileApp=" + mobileApp +
                 "&_type=" + dataType +
                 "&contentId=" + contentId +
-                "&contentTypeId=" + contentType.getCode() +
+                "&contentTypeId=" + contentTypeId +
                 "&defaultYN=" + YES_OPTION + "&firstImageYN=" + YES_OPTION +
                 "&areacodeYN=" + YES_OPTION + "&addrinfoYN=" + YES_OPTION +
                 "&mapinfoYN=" + YES_OPTION + "&overviewYN=" + YES_OPTION;
@@ -171,10 +171,10 @@ public class TourAPIService extends AbstractOpenAPIService {
     /**
      * 소개 정보 조회 (상세 조회용2)
      * @param contentId
-     * @param contentType
+     * @param contentTypeId
      * @return
      */
-    public DetailIntroInterface fetchDataFromIntroApi(Long contentId, ContentType contentType) {
+    public DetailIntroInterface fetchDataFromIntroApi(Long contentId, String contentTypeId) {
         String api = "/detailIntro1";
 
         String urlStr = callbackUrl + api +
@@ -183,12 +183,12 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&MobileApp=" + mobileApp +
                 "&_type=" + dataType +
                 "&contentId=" + contentId +
-                "&contentTypeId=" + contentType.getCode();
+                "&contentTypeId=" + contentTypeId;
 
         String result = connectApi(urlStr);
         System.out.println(result);
 
-        switch(contentType) {
+        switch(ContentType.getContentTypeByCode(Integer.parseInt(contentTypeId))) {
             case TOURIST_SPOT -> {
                 return parsingJsonObject(result, SpotIntroResponse.class);
             }
@@ -222,10 +222,10 @@ public class TourAPIService extends AbstractOpenAPIService {
      * 반복 정보 조회 (상세 조회용3 - 시설 정보)
      * 관광지 - 시설 정보
      * @param contentId
-     * @param contentType
+     * @param contentTypeId
      * @return
      */
-    public DetailInfoListResponse fetchDataFromInfoApi(Long contentId, ContentType contentType) {
+    public DetailInfoListResponse fetchDataFromInfoApi(Long contentId, String contentTypeId) {
         String api = "/detailInfo1";
 
         String urlStr = callbackUrl + api +
@@ -234,7 +234,7 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&MobileApp=" + mobileApp +
                 "&_type=" + dataType +
                 "&contentId=" + contentId +
-                "&contentTypeId=" + contentType.getCode();
+                "&contentTypeId=" + contentTypeId;
 
         String result = connectApi(urlStr);
         System.out.println(result);

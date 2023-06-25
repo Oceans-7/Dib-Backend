@@ -19,9 +19,9 @@ public enum ContentType {
 
     public int getCode() { return code; }
 
-    public static ContentType getContentTypeByCode(int desiredCode) {
+    public static ContentType getContentTypeByCode(int code) {
         for (ContentType contentType : ContentType.values()) {
-            if (contentType.getCode() == desiredCode) {
+            if (contentType.getCode() == code) {
                 return contentType;
             }
         }
