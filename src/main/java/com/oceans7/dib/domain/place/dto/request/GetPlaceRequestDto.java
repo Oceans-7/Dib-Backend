@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PlaceRequestDto {
+public class GetPlaceRequestDto {
     @Schema(description = "사용자 위도 (필수)", example = "126.9779692")
     private double mapX;
 
