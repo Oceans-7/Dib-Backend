@@ -6,6 +6,7 @@ import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListRespon
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.intro.*;
+import com.oceans7.dib.openapi.dto.response.detail.intro.AbstractDetailIntroResponse.*;
 import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
 import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.service.TourAPIService;
@@ -115,7 +116,7 @@ public class TourAPIServiceTest {
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
 
         // when
-        DetailIntroInterface detailIntroItem = tourAPIService.fetchDataFromIntroApi(contentId, contentTypeId);
+        AbstractDetailIntroResponse detailIntroItem = tourAPIService.fetchDataFromIntroApi(contentId, contentTypeId);
 
         // then
         if(detailIntroItem instanceof SpotIntroResponse) {
