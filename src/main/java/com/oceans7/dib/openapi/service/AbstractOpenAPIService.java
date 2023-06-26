@@ -1,6 +1,9 @@
 package com.oceans7.dib.openapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,7 +76,10 @@ public abstract class AbstractOpenAPIService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             result = mapper.readValue(json, valueType);
-        } catch(Exception e) {
+        } catch (ValueInstantiationException e) {
+            throw new ApplicationException(ErrorCode.INVALID_USER_LOCATION_EXCEPTION);
+        }
+        catch(Exception e) {
             e.printStackTrace();
         }
 
