@@ -124,7 +124,13 @@ public class TourAPIServiceTest {
 
             assertThat(result.getSpotItemResponses().getContentId()).isEqualTo(contentId);
             assertThat(result.getSpotItemResponses().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
-        } else if(detailIntroItem instanceof EventIntroResponse) {
+        } else if(detailIntroItem instanceof CultureIntroResponse) {
+            CultureIntroResponse result = (CultureIntroResponse) detailIntroItem;
+
+            assertThat(result.getCultureItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getCultureItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
+        }
+        else if(detailIntroItem instanceof EventIntroResponse) {
             EventIntroResponse result = (EventIntroResponse) detailIntroItem;
 
             assertThat(result.getEventItemResponse().getContentId()).isEqualTo(contentId);
