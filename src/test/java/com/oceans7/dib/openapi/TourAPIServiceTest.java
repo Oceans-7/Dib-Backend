@@ -6,9 +6,9 @@ import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListRespon
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.intro.*;
-import com.oceans7.dib.openapi.dto.response.detail.intro.AbstractDetailIntroResponse.*;
-import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
-import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
+import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse.*;
+import com.oceans7.dib.openapi.dto.response.list.AreaCodeList;
+import com.oceans7.dib.openapi.dto.response.list.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.service.TourAPIService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -116,7 +116,7 @@ public class TourAPIServiceTest {
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
 
         // when
-        AbstractDetailIntroResponse detailIntroItem = tourAPIService.fetchDataFromIntroApi(contentId, contentTypeId);
+        DetailIntroResponse detailIntroItem = tourAPIService.fetchDataFromIntroApi(contentId, contentTypeId);
 
         // then
         if(detailIntroItem instanceof SpotIntroResponse) {
@@ -135,11 +135,6 @@ public class TourAPIServiceTest {
 
             assertThat(result.getEventItemResponse().getContentId()).isEqualTo(contentId);
             assertThat(result.getEventItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
-        } else if(detailIntroItem instanceof TourCourseIntroResponse) {
-            TourCourseIntroResponse result = (TourCourseIntroResponse) detailIntroItem;
-
-            assertThat(result.getTourCourseItemResponse().getContentId()).isEqualTo(contentId);
-            assertThat(result.getTourCourseItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
         } else if(detailIntroItem instanceof LeportsIntroResponse) {
             LeportsIntroResponse result = (LeportsIntroResponse) detailIntroItem;
 

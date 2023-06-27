@@ -4,9 +4,10 @@ import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.util.EncoderUtil;
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.info.*;
-import com.oceans7.dib.openapi.dto.response.detail.intro.*;
-import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
-import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
+import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse;
+import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse.*;
+import com.oceans7.dib.openapi.dto.response.list.AreaCodeList;
+import com.oceans7.dib.openapi.dto.response.list.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -174,7 +175,7 @@ public class TourAPIService extends AbstractOpenAPIService {
      * @param contentTypeId
      * @return
      */
-    public DetailIntroInterface fetchDataFromIntroApi(Long contentId, String contentTypeId) {
+    public DetailIntroResponse fetchDataFromIntroApi(Long contentId, String contentTypeId) {
         String api = "/detailIntro1";
 
         String urlStr = callbackUrl + api +
@@ -197,9 +198,6 @@ public class TourAPIService extends AbstractOpenAPIService {
             }
             case EVENT -> {
                 return parsingJsonObject(result, EventIntroResponse.class);
-            }
-            case TOUR_COURSE -> {
-                return parsingJsonObject(result, TourCourseIntroResponse.class);
             }
             case LEPORTS -> {
                 return parsingJsonObject(result, LeportsIntroResponse.class);
