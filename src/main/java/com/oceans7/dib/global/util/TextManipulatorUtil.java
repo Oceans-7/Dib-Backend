@@ -33,25 +33,44 @@ public class TextManipulatorUtil {
         return null;
     }
 
+    public static String prefix(String str, String prefix) {
+        if(ValidatorUtil.isNotEmpty(str) && ValidatorUtil.isNotEmpty(prefix)) {
+            return prefix + str;
+        }
+        return null;
+    }
+
     public static String concatenateStrings(String str1, String str2, String prefix) {
-        return str1 + prefix + str2;
+        if(ValidatorUtil.isNotEmpty(str1) && ValidatorUtil.isNotEmpty(str2)) {
+            return str1 + prefix + str2;
+        }
+        return null;
     }
 
     public static String concatenateStrings(String str1, String str2, String prefix1, String prefix2) {
-        return prefix1 + str1 + prefix2 + str2;
+        if(ValidatorUtil.isNotEmpty(str1) && ValidatorUtil.isNotEmpty(str2)) {
+            return prefix1 + str1 + prefix2 + str2;
+        }
+        return null;
     }
 
     public static String convertDateRangeFormat(String startDate, String endDate) {
-        LocalDate parsedStartDate = LocalDate.parse(startDate, INPUT_DATE_FORMATTER);
-        LocalDate parsedEndDate = LocalDate.parse(endDate, INPUT_DATE_FORMATTER);
+        if(ValidatorUtil.isNotEmpty(startDate) && ValidatorUtil.isNotEmpty(endDate)) {
+            LocalDate parsedStartDate = LocalDate.parse(startDate, INPUT_DATE_FORMATTER);
+            LocalDate parsedEndDate = LocalDate.parse(endDate, INPUT_DATE_FORMATTER);
 
-        String formattedStartDate = parsedStartDate.format(OUTPUT_DATE_FORMATTER);
-        String formattedEndDate = parsedEndDate.format(OUTPUT_DATE_FORMATTER);
+            String formattedStartDate = parsedStartDate.format(OUTPUT_DATE_FORMATTER);
+            String formattedEndDate = parsedEndDate.format(OUTPUT_DATE_FORMATTER);
 
-        return concatenateStrings(formattedStartDate, formattedEndDate, "~");
+            return concatenateStrings(formattedStartDate, formattedEndDate, "기간 : ", "~");
+        }
+        return null;
     }
 
     public static String replaceBrWithNewLine(String input) {
-        return input.replace("<br>", "\n");
+        if(ValidatorUtil.isNotEmpty(input)) {
+            return input.replace("<br>", "\n");
+        }
+        return null;
     }
 }
