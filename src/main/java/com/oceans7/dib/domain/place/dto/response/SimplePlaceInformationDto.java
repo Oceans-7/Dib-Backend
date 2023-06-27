@@ -1,7 +1,7 @@
 package com.oceans7.dib.domain.place.dto.response;
 
 import com.oceans7.dib.domain.place.ContentType;
-import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonItemResponse;
+import com.oceans7.dib.openapi.dto.response.list.TourAPICommonItemResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;

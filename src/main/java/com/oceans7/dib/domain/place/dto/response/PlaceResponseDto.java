@@ -1,10 +1,9 @@
 package com.oceans7.dib.domain.place.dto.response;
 
-import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
+import com.oceans7.dib.openapi.dto.response.list.TourAPICommonListResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
