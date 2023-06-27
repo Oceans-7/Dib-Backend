@@ -4,7 +4,6 @@ public enum ContentType {
     TOURIST_SPOT(12),
     CULTURAL_SITE(14),
     EVENT(15),
-    TOUR_COURSE(25),
     LEPORTS(28),
     ACCOMMODATION(32),
     SHOPPING(38),
@@ -19,9 +18,9 @@ public enum ContentType {
 
     public int getCode() { return code; }
 
-    public static ContentType getContentTypeByCode(int desiredCode) {
+    public static ContentType getContentTypeByCode(int code) {
         for (ContentType contentType : ContentType.values()) {
-            if (contentType.getCode() == desiredCode) {
+            if (contentType.getCode() == code) {
                 return contentType;
             }
         }

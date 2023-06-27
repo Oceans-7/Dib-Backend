@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response.simple;
+package com.oceans7.dib.openapi.dto.response.list;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -49,15 +49,11 @@ public class TourAPICommonItemResponse {
 
     // GPS X좌표
     @JsonProperty("mapx")
-    private String mapX;
+    private double mapX;
 
     // GPS Y좌표
     @JsonProperty("mapy")
-    private String mapY;
-
-    // Map Level
-    @JsonProperty("mlevel")
-    private String mLevel;
+    private double mapY;
 
     // 콘텐츠 최초 등록일
     @JsonProperty("createdtime")

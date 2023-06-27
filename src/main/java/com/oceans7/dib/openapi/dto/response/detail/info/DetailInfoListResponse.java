@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +20,13 @@ public class DetailInfoListResponse {
     public DetailInfoListResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        JsonNode itemNode = rootNode.findValue("item");
-        this.detailInfoItemResponses = Arrays.stream(objectMapper.treeToValue(itemNode, DetailInfoItemResponse[].class)).toList();
+        JsonNode itemRootNode = rootNode.findValue("items");
+
+        if(itemRootNode.has("item")) {
+            JsonNode itemNode = rootNode.findValue("item");
+            this.detailInfoItemResponses = Arrays.stream(objectMapper.treeToValue(itemNode, DetailInfoItemResponse[].class)).toList();
+        } else {
+            this.detailInfoItemResponses = new ArrayList<>();
+        }
     }
 }

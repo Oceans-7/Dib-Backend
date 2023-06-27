@@ -1,10 +1,13 @@
-package com.oceans7.dib.openapi.dto.response.simple;
+package com.oceans7.dib.openapi.dto.response.list;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -27,6 +30,7 @@ public class TourAPICommonListResponse {
     @JsonCreator
     public TourAPICommonListResponse(@JsonProperty("response")JsonNode rootNode) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
+
 
         JsonNode itemNode = rootNode.findValue("item");
         JsonNode totalCountNode = rootNode.findValue("totalCount");

@@ -21,7 +21,7 @@ public class DetailCommonListResponse {
 
         JsonNode itemNode = rootNode.findValue("item");
         List<DetailCommonItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailCommonItemResponse[].class)).toList();
-        this.detailCommonItemResponse = tmp != null && !tmp.isEmpty() ? tmp.get(0) : null;
+        this.detailCommonItemResponse = tmp.get(0);
     }
 
 }

@@ -1,14 +1,14 @@
 package com.oceans7.dib.openapi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.place.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoListResponse;
 import com.oceans7.dib.openapi.dto.response.detail.intro.*;
-import com.oceans7.dib.openapi.dto.response.simple.AreaCodeList;
-import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonListResponse;
+import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse.*;
+import com.oceans7.dib.openapi.dto.response.list.AreaCodeList;
+import com.oceans7.dib.openapi.dto.response.list.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.service.TourAPIService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,14 +30,14 @@ public class TourAPIServiceTest {
         // given
         double mapX = 126.9779692;
         double mapY = 37.566535;
-        String contentTypeCode = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         String arrangeTypeName = ArrangeType.E.name();
 
         int page = 1;
         int pageSize = 20;
 
         // when
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromLocationBasedApi(mapX, mapY, contentTypeCode, arrangeTypeName, page, pageSize);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromLocationBasedApi(mapX, mapY, contentTypeId, arrangeTypeName, page, pageSize);
 
         // then
         assertThat(list.getTourAPICommonItemResponseList().size()).isEqualTo(pageSize);
@@ -76,10 +76,10 @@ public class TourAPIServiceTest {
         // given : '서울시 강북구' 지역
         String areaCode = "1";
         String sigunguCode = "3";
-        String contentTypeCode = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         String arrangeTypeName = ArrangeType.A.name();
 
-        TourAPICommonListResponse tourAPICommonList = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode, contentTypeCode, arrangeTypeName);
+        TourAPICommonListResponse tourAPICommonList = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode, contentTypeId, arrangeTypeName);
 
         assertThat(tourAPICommonList.getTourAPICommonItemResponseList().size()).isEqualTo(10);
     }
@@ -91,20 +91,18 @@ public class TourAPIServiceTest {
         String keyword = "서울";
         String areaCode = "1";
         String sigunguCode = "3";
-        String contentTypeCode = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         String arrangeTypeName = ArrangeType.A.name();
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, areaCode, sigunguCode, contentTypeCode, arrangeTypeName);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, areaCode, sigunguCode, contentTypeId, arrangeTypeName);
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
-        int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
-        ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
 
         // when
-        DetailCommonListResponse detailCommonList = tourAPIService.fetchDataFromCommonApi(contentId, contentType);
+        DetailCommonListResponse detailCommonList = tourAPIService.fetchDataFromCommonApi(contentId, contentTypeId);
 
         //then
         assertThat(detailCommonList.getDetailCommonItemResponse().getContentId()).isEqualTo(contentId);
-        assertThat(detailCommonList.getDetailCommonItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+        assertThat(detailCommonList.getDetailCommonItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
     }
 
     @Test
@@ -112,51 +110,51 @@ public class TourAPIServiceTest {
     public void callDetailIntroAPITest() {
         //given
         String keyword = "강원";
+        String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "");
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", contentTypeId, "");
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
-        int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
-        ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
 
         // when
-        DetailIntroInterface detailIntroItem = tourAPIService.fetchDataFromIntroApi(contentId, contentType);
+        DetailIntroResponse detailIntroItem = tourAPIService.fetchDataFromIntroApi(contentId, contentTypeId);
 
         // then
         if(detailIntroItem instanceof SpotIntroResponse) {
             SpotIntroResponse result = (SpotIntroResponse) detailIntroItem;
 
             assertThat(result.getSpotItemResponses().getContentId()).isEqualTo(contentId);
-            assertThat(result.getSpotItemResponses().getContentTypeId()).isEqualTo(contentTypeId);
-        } else if(detailIntroItem instanceof EventIntroResponse) {
+            assertThat(result.getSpotItemResponses().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
+        } else if(detailIntroItem instanceof CultureIntroResponse) {
+            CultureIntroResponse result = (CultureIntroResponse) detailIntroItem;
+
+            assertThat(result.getCultureItemResponse().getContentId()).isEqualTo(contentId);
+            assertThat(result.getCultureItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
+        }
+        else if(detailIntroItem instanceof EventIntroResponse) {
             EventIntroResponse result = (EventIntroResponse) detailIntroItem;
 
             assertThat(result.getEventItemResponse().getContentId()).isEqualTo(contentId);
-            assertThat(result.getEventItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
-        } else if(detailIntroItem instanceof TourCourseIntroResponse) {
-            TourCourseIntroResponse result = (TourCourseIntroResponse) detailIntroItem;
-
-            assertThat(result.getTourCourseItemResponse().getContentId()).isEqualTo(contentId);
-            assertThat(result.getTourCourseItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+            assertThat(result.getEventItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
         } else if(detailIntroItem instanceof LeportsIntroResponse) {
             LeportsIntroResponse result = (LeportsIntroResponse) detailIntroItem;
 
             assertThat(result.getLeportsItemResponse().getContentId()).isEqualTo(contentId);
-            assertThat(result.getLeportsItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+            assertThat(result.getLeportsItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
         } else if(detailIntroItem instanceof AccommodationIntroResponse) {
             AccommodationIntroResponse result = (AccommodationIntroResponse) detailIntroItem;
 
             assertThat(result.getAccommodationItemResponse().getContentId()).isEqualTo(contentId);
-            assertThat(result.getAccommodationItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+            assertThat(result.getAccommodationItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
         } else if(detailIntroItem instanceof ShoppingIntroResponse) {
             ShoppingIntroResponse result = (ShoppingIntroResponse) detailIntroItem;
 
             assertThat(result.getShoppingItemResponse().getContentId()).isEqualTo(contentId);
-            assertThat(result.getShoppingItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+            assertThat(result.getShoppingItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
         } else if(detailIntroItem instanceof RestaurantIntroResponse) {
             RestaurantIntroResponse result = (RestaurantIntroResponse) detailIntroItem;
 
             assertThat(result.getRestaurantItemResponse().getContentId()).isEqualTo(contentId);
-            assertThat(result.getRestaurantItemResponse().getContentTypeId()).isEqualTo(contentTypeId);
+            assertThat(result.getRestaurantItemResponse().getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
         }
     }
 
@@ -168,15 +166,16 @@ public class TourAPIServiceTest {
 
         TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "");
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
-        int contentTypeId = list.getTourAPICommonItemResponseList().get(0).getContentTypeId();
-        ContentType contentType = ContentType.getContentTypeByCode(contentTypeId);
+        String contentTypeId = String.valueOf(
+                list.getTourAPICommonItemResponseList().get(0).getContentTypeId()
+        );
 
         //then
-        DetailInfoListResponse detailInfoListResponse = tourAPIService.fetchDataFromInfoApi(contentId, contentType);
+        DetailInfoListResponse detailInfoListResponse = tourAPIService.fetchDataFromInfoApi(contentId, contentTypeId);
 
         // when
         assertThat(detailInfoListResponse.getDetailInfoItemResponses().get(0).getContentId()).isEqualTo(contentId);
-        assertThat(detailInfoListResponse.getDetailInfoItemResponses().get(0).getContentTypeId()).isEqualTo(contentTypeId);
+        assertThat(detailInfoListResponse.getDetailInfoItemResponses().get(0).getContentTypeId()).isEqualTo(Integer.parseInt(contentTypeId));
     }
 
     @Test

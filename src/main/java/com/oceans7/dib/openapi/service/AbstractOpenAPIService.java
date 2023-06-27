@@ -1,12 +1,16 @@
 package com.oceans7.dib.openapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 public abstract class AbstractOpenAPIService {
@@ -43,9 +47,14 @@ public abstract class AbstractOpenAPIService {
         urlConnection.setRequestMethod("GET");
         urlConnection.setDoInput(true);
 
-        if(urlConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new IOException("HTTP error code : " + urlConnection.getResponseCode());
+        try {
+            if(urlConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new ApplicationException(ErrorCode.SOCKET_TIMEOUT_EXCEPTION);
+            }
+        } catch (SocketTimeoutException e) {
+            throw new ApplicationException(ErrorCode.SOCKET_TIMEOUT_EXCEPTION);
         }
+
 
         return urlConnection.getInputStream();
     }
@@ -73,6 +82,8 @@ public abstract class AbstractOpenAPIService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             result = mapper.readValue(json, valueType);
+        } catch (ValueInstantiationException e) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION);
         } catch(Exception e) {
             e.printStackTrace();
         }

@@ -2,14 +2,13 @@ package com.oceans7.dib.domain.place.dto.request;
 
 import com.oceans7.dib.domain.place.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
-import com.oceans7.dib.domain.place.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class PlaceRequestDto {
+public class GetPlaceRequestDto {
     @Schema(description = "사용자 위도 (필수)", example = "126.9779692")
     private double mapX;
 
@@ -18,9 +17,6 @@ public class PlaceRequestDto {
 
     @Schema(description = "관광지 타입 (선택)", example = "TOURIST_SPOT")
     private ContentType contentType;
-
-    @Schema(description = "서비스 분류 (선택)", example = "LITERATURE_ART_TOUR")
-    private ServiceType serviceType;
 
     @Schema(description = "지역 (선택)", example = "서울")
     private String area;
