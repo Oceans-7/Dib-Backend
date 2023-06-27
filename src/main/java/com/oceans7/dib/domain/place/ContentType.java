@@ -4,7 +4,6 @@ public enum ContentType {
     TOURIST_SPOT(12),
     CULTURAL_SITE(14),
     EVENT(15),
-    TOUR_COURSE(25),
     LEPORTS(28),
     ACCOMMODATION(32),
     SHOPPING(38),
