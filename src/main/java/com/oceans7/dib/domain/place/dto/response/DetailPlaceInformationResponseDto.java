@@ -56,6 +56,6 @@ public class DetailPlaceInformationResponseDto {
     @ArraySchema(schema = @Schema(description = "시설", example = "RESTROOM", implementation = FacilityType.class))
     private List<FacilityType> availableFacilities;
 
-    @Schema(description = "이미지 리스트", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg")
+    @ArraySchema(schema = @Schema(description = "이미지 리스트", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg"))
     private List<String> images;
 }

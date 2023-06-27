@@ -83,7 +83,7 @@ public abstract class AbstractOpenAPIService {
             ObjectMapper mapper = new ObjectMapper();
             result = mapper.readValue(json, valueType);
         } catch (ValueInstantiationException e) {
-            throw new ApplicationException(ErrorCode.INVALID_USER_LOCATION_EXCEPTION);
+            throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION);
         } catch(Exception e) {
             e.printStackTrace();
         }
