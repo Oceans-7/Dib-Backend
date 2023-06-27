@@ -173,7 +173,7 @@ public class PlaceService {
                     commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
                     commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
                     TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()),
-                    introItem.getPlayTime(), TextManipulatorUtil.extractTel(introItem.getSponsor1Tel()), introItem.getBookingPlace(), null,
+                    TextManipulatorUtil.prefix("공연 시간 : ", introItem.getPlayTime()), TextManipulatorUtil.extractTel(introItem.getSponsor1Tel()), introItem.getBookingPlace(), null,
                     TextManipulatorUtil.convertDateRangeFormat(introItem.getEventStartDate(), introItem.getEventEndDate()), availableFacilities, images);
         }
         else if(request.getContentType() == ContentType.LEPORTS) {
