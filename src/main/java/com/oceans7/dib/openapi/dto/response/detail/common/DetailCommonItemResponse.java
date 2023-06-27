@@ -1,7 +1,7 @@
 package com.oceans7.dib.openapi.dto.response.detail.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oceans7.dib.openapi.dto.response.simple.TourAPICommonItemResponse;
+import com.oceans7.dib.openapi.dto.response.list.TourAPICommonItemResponse;
 import lombok.Getter;
 
 /**
@@ -9,6 +9,10 @@ import lombok.Getter;
  */
 @Getter
 public class DetailCommonItemResponse extends TourAPICommonItemResponse {
+
+    // 홈페이지 URL
+    @JsonProperty("homepage")
+    private String homepageUrl;
 
     // 개요
     @JsonProperty("overview")

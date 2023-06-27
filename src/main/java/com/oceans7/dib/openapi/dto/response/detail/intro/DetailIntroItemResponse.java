@@ -17,7 +17,7 @@ public class DetailIntroItemResponse {
     @JsonProperty("contenttypeid")
     private int contentTypeId;
 
-    // 관광지
+    @Getter
     public static class SpotItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
         @JsonProperty("infocenter")
@@ -33,15 +33,16 @@ public class DetailIntroItemResponse {
         @JsonProperty("chkpet")
         private String checkPet;
 
-        // 이용 기간
-        @JsonProperty("useseason")
-        private String useSeason;
+        // 쉬는 날
+        @JsonProperty("restdate")
+        private String restDate;
 
         // 이용 시간
         @JsonProperty("usetime")
         private String useTime;
     }
 
+    @Getter
     public static class CultureItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
         @JsonProperty("infocenterculture")
@@ -60,11 +61,16 @@ public class DetailIntroItemResponse {
         @JsonProperty("chkpetculture")
         private String checkPet;
 
+        // 쉬는 날
+        @JsonProperty("restdateculture")
+        private String restDate;
+
         // 이용 시간
         @JsonProperty("usetimeculture")
         private String useTime;
     }
 
+    @Getter
     public static class EventItemResponse extends DetailIntroItemResponse {
         // 예매처
         @JsonProperty("bookingplace")
@@ -84,16 +90,13 @@ public class DetailIntroItemResponse {
 
         @JsonProperty("eventenddate")
         private String eventEndDate;
+
+        // 공연 시간
+        @JsonProperty("playtime")
+        private String playTime;
     }
 
-    public static class TourCourseItemResponse extends DetailIntroItemResponse {
-        // 문의 및 안내
-        @JsonProperty("infocentertourcourse")
-        private String infoCenter;
-
-        // TODO : 이용시간과 관련하여 필드 추가 필요
-    }
-
+    @Getter
     public static class LeportsItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkbabycarriageleports")
@@ -102,7 +105,7 @@ public class DetailIntroItemResponse {
         @JsonProperty("chkcreditcardleports")
         private String checkCreditCard;
 
-        @JsonProperty("chkpetculture")
+        @JsonProperty("chkpetleports")
         private String checkPet;
 
         @JsonProperty("parkingleports")
@@ -115,8 +118,13 @@ public class DetailIntroItemResponse {
         // 이용 시간
         @JsonProperty("usetimeleports")
         private String useTime;
+
+        // 쉬는날
+        @JsonProperty("restdateleports")
+        private String restDate;
     }
 
+    @Getter
     public static class AccommodationItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkcooking")
@@ -137,6 +145,13 @@ public class DetailIntroItemResponse {
         @JsonProperty("sauna")
         private String checkSauna;
 
+        // 입퇴실 시간
+        @JsonProperty("checkintime")
+        private String checkInTime;
+
+        @JsonProperty("checkouttime")
+        private String checkOutTime;
+
         // 문의 및 안내
         @JsonProperty("infocenterlodging")
         private String infoCenter;
@@ -146,6 +161,7 @@ public class DetailIntroItemResponse {
         private String reservationUrl;
     }
 
+    @Getter
     public static class ShoppingItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkbabycarriageshopping")
@@ -170,8 +186,13 @@ public class DetailIntroItemResponse {
         // 영업 시간
         @JsonProperty("opentime")
         private String openTime;
+
+        // 쉬는 날
+        @JsonProperty("restdateshopping")
+        private String restDate;
     }
 
+    @Getter
     public static class RestaurantItemResponse extends DetailIntroItemResponse {
         // 시설 정보
         @JsonProperty("chkcreditcardfood")
@@ -194,5 +215,9 @@ public class DetailIntroItemResponse {
         // 영업 시간
         @JsonProperty("opentimefood")
         private String openTime;
+
+        // 쉬는 날
+        @JsonProperty("restdatefood")
+        private String restDate;
     }
 }

@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     // Open API
     INVALID_USER_LOCATION_EXCEPTION(HttpStatus.BAD_REQUEST, "O0000", "사용자의 위치에 대한 관광 정보를 검색할 수 없습니다."),
+    SOCKET_TIMEOUT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "O0001", "Open API 서버 연결에 실패하였습니다."),
     ;
 
     private HttpStatus httpStatus;
