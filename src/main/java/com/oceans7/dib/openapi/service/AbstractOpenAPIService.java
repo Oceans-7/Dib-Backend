@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 public abstract class AbstractOpenAPIService {
@@ -46,9 +47,14 @@ public abstract class AbstractOpenAPIService {
         urlConnection.setRequestMethod("GET");
         urlConnection.setDoInput(true);
 
-        if(urlConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new IOException("HTTP error code : " + urlConnection.getResponseCode());
+        try {
+            if(urlConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new ApplicationException(ErrorCode.SOCKET_TIMEOUT_EXCEPTION);
+            }
+        } catch (SocketTimeoutException e) {
+            throw new ApplicationException(ErrorCode.SOCKET_TIMEOUT_EXCEPTION);
         }
+
 
         return urlConnection.getInputStream();
     }
@@ -78,8 +84,7 @@ public abstract class AbstractOpenAPIService {
             result = mapper.readValue(json, valueType);
         } catch (ValueInstantiationException e) {
             throw new ApplicationException(ErrorCode.INVALID_USER_LOCATION_EXCEPTION);
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
 
