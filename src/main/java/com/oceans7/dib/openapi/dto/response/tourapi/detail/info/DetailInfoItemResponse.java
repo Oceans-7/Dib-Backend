@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response.detail.info;
+package com.oceans7.dib.openapi.dto.response.tourapi.detail.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

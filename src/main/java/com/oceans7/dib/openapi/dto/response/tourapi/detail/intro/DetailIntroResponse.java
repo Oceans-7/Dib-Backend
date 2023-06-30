@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response.detail.intro;
+package com.oceans7.dib.openapi.dto.response.tourapi.detail.intro;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroItemResponse.*;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -18,7 +17,7 @@ public class DetailIntroResponse {
     @Getter
     public static class SpotIntroResponse extends DetailIntroResponse {
         @JsonProperty("item")
-        private SpotItemResponse spotItemResponses;
+        private DetailIntroItemResponse.SpotItemResponse spotItemResponses;
 
         @JsonCreator
         public SpotIntroResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
@@ -29,10 +28,10 @@ public class DetailIntroResponse {
             if(itemRootNode.has("item")) {
                 JsonNode itemNode = rootNode.findValue("item");
 
-                List<SpotItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, SpotItemResponse[].class)).toList();
+                List<DetailIntroItemResponse.SpotItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailIntroItemResponse.SpotItemResponse[].class)).toList();
                 this.spotItemResponses = tmp.get(0);
             } else {
-                this.spotItemResponses = new SpotItemResponse();
+                this.spotItemResponses = new DetailIntroItemResponse.SpotItemResponse();
             }
         }
     }
@@ -40,7 +39,7 @@ public class DetailIntroResponse {
     @Getter
     public static class CultureIntroResponse  extends DetailIntroResponse {
         @JsonProperty("item")
-        private CultureItemResponse cultureItemResponse;
+        private DetailIntroItemResponse.CultureItemResponse cultureItemResponse;
 
         @JsonCreator
         public CultureIntroResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
@@ -51,10 +50,10 @@ public class DetailIntroResponse {
             if(itemRootNode.has("item")) {
                 JsonNode itemNode = rootNode.findValue("item");
 
-                List<CultureItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, CultureItemResponse[].class)).toList();
+                List<DetailIntroItemResponse.CultureItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailIntroItemResponse.CultureItemResponse[].class)).toList();
                 this.cultureItemResponse = tmp.get(0);
             } else {
-                this.cultureItemResponse = new CultureItemResponse();
+                this.cultureItemResponse = new DetailIntroItemResponse.CultureItemResponse();
             }
         }
     }
@@ -62,7 +61,7 @@ public class DetailIntroResponse {
     @Getter
     public static class EventIntroResponse extends DetailIntroResponse {
         @JsonProperty("item")
-        private EventItemResponse eventItemResponse;
+        private DetailIntroItemResponse.EventItemResponse eventItemResponse;
 
         @JsonCreator
         public EventIntroResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
@@ -73,10 +72,10 @@ public class DetailIntroResponse {
             if(itemRootNode.has("item")) {
                 JsonNode itemNode = rootNode.findValue("item");
 
-                List<EventItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, EventItemResponse[].class)).toList();
+                List<DetailIntroItemResponse.EventItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailIntroItemResponse.EventItemResponse[].class)).toList();
                 this.eventItemResponse = tmp.get(0);
             } else {
-                this.eventItemResponse = new EventItemResponse();
+                this.eventItemResponse = new DetailIntroItemResponse.EventItemResponse();
             }
         }
     }
@@ -84,7 +83,7 @@ public class DetailIntroResponse {
     @Getter
     public static class LeportsIntroResponse extends DetailIntroResponse {
         @JsonProperty("item")
-        private LeportsItemResponse leportsItemResponse;
+        private DetailIntroItemResponse.LeportsItemResponse leportsItemResponse;
 
         @JsonCreator
         public LeportsIntroResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
@@ -95,10 +94,10 @@ public class DetailIntroResponse {
             if(itemRootNode.has("item")) {
                 JsonNode itemNode = rootNode.findValue("item");
 
-                List<LeportsItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, LeportsItemResponse[].class)).toList();
+                List<DetailIntroItemResponse.LeportsItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailIntroItemResponse.LeportsItemResponse[].class)).toList();
                 this.leportsItemResponse = tmp.get(0);
             } else {
-                this.leportsItemResponse = new LeportsItemResponse();
+                this.leportsItemResponse = new DetailIntroItemResponse.LeportsItemResponse();
             }
         }
     }
@@ -106,7 +105,7 @@ public class DetailIntroResponse {
     @Getter
     public static class AccommodationIntroResponse extends DetailIntroResponse {
         @JsonProperty("item")
-        private AccommodationItemResponse accommodationItemResponse;
+        private DetailIntroItemResponse.AccommodationItemResponse accommodationItemResponse;
 
         @JsonCreator
         public AccommodationIntroResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
@@ -117,10 +116,10 @@ public class DetailIntroResponse {
             if(itemRootNode.has("item")) {
                 JsonNode itemNode = rootNode.findValue("item");
 
-                List<AccommodationItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, AccommodationItemResponse[].class)).toList();
+                List<DetailIntroItemResponse.AccommodationItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailIntroItemResponse.AccommodationItemResponse[].class)).toList();
                 this.accommodationItemResponse = tmp.get(0);
             } else {
-                this.accommodationItemResponse = new AccommodationItemResponse();
+                this.accommodationItemResponse = new DetailIntroItemResponse.AccommodationItemResponse();
             }
         }
     }
@@ -128,7 +127,7 @@ public class DetailIntroResponse {
     @Getter
     public static class ShoppingIntroResponse extends DetailIntroResponse {
         @JsonProperty("item")
-        private ShoppingItemResponse shoppingItemResponse;
+        private DetailIntroItemResponse.ShoppingItemResponse shoppingItemResponse;
 
         @JsonCreator
         public ShoppingIntroResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
@@ -139,10 +138,10 @@ public class DetailIntroResponse {
             if(itemRootNode.has("item")) {
                 JsonNode itemNode = rootNode.findValue("item");
 
-                List<ShoppingItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, ShoppingItemResponse[].class)).toList();
+                List<DetailIntroItemResponse.ShoppingItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailIntroItemResponse.ShoppingItemResponse[].class)).toList();
                 this.shoppingItemResponse = tmp.get(0);
             } else {
-                this.shoppingItemResponse = new ShoppingItemResponse();
+                this.shoppingItemResponse = new DetailIntroItemResponse.ShoppingItemResponse();
             }
         }
     }
@@ -150,7 +149,7 @@ public class DetailIntroResponse {
     @Getter
     public static class RestaurantIntroResponse extends DetailIntroResponse {
         @JsonProperty("item")
-        private RestaurantItemResponse restaurantItemResponse;
+        private DetailIntroItemResponse.RestaurantItemResponse restaurantItemResponse;
 
         @JsonCreator
         public RestaurantIntroResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
@@ -161,10 +160,10 @@ public class DetailIntroResponse {
             if(itemRootNode.has("item")) {
                 JsonNode itemNode = rootNode.findValue("item");
 
-                List<RestaurantItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, RestaurantItemResponse[].class)).toList();
+                List<DetailIntroItemResponse.RestaurantItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailIntroItemResponse.RestaurantItemResponse[].class)).toList();
                 this.restaurantItemResponse = tmp.get(0);
             } else {
-                this.restaurantItemResponse = new RestaurantItemResponse();
+                this.restaurantItemResponse = new DetailIntroItemResponse.RestaurantItemResponse();
             }
         }
     }

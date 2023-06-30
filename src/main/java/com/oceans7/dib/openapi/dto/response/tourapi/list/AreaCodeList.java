@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response.list;
+package com.oceans7.dib.openapi.dto.response.tourapi.list;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

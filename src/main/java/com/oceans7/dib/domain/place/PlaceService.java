@@ -9,15 +9,15 @@ import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.response.SimplePlaceInformationDto;
 import com.oceans7.dib.global.util.TextManipulatorUtil;
 import com.oceans7.dib.global.util.ValidatorUtil;
-import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonItemResponse;
-import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageItemResponse;
-import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoItemResponse;
-import com.oceans7.dib.openapi.dto.response.detail.info.DetailInfoListResponse;
-import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse;
-import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse.*;
-import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroItemResponse.*;
-import com.oceans7.dib.openapi.dto.response.list.AreaCodeList;
-import com.oceans7.dib.openapi.dto.response.list.TourAPICommonListResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.common.DetailCommonItemResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.image.DetailImageItemResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.info.DetailInfoItemResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.info.DetailInfoListResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResponse.*;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroItemResponse.*;
+import com.oceans7.dib.openapi.dto.response.tourapi.list.AreaCodeList;
+import com.oceans7.dib.openapi.dto.response.tourapi.list.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.service.TourAPIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class PlaceService {
     private final TourAPIService tourAPIService;
 
     public PlaceResponseDto getPlace(GetPlaceRequestDto request) {
-        TourAPICommonListResponse apiResponse = null;
+        TourAPICommonListResponse apiResponse;
         String contentTypeId = "";
         String arrangeTypeName = "";
 
@@ -78,7 +78,7 @@ public class PlaceService {
     }
 
     public SearchPlaceResponseDto searchPlace(SearchPlaceRequestDto request) {
-        TourAPICommonListResponse apiResponse = null;
+        TourAPICommonListResponse apiResponse;
         String contentTypeId = "";
         String arrangeTypeName = "";
         String areaCode = "";

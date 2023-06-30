@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi.dto.response.detail.image;
+package com.oceans7.dib.openapi.dto.response.tourapi.detail.image;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

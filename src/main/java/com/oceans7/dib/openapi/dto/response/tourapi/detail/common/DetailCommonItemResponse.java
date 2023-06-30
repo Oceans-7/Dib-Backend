@@ -1,7 +1,7 @@
-package com.oceans7.dib.openapi.dto.response.detail.common;
+package com.oceans7.dib.openapi.dto.response.tourapi.detail.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oceans7.dib.openapi.dto.response.list.TourAPICommonItemResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.list.TourAPICommonItemResponse;
 import lombok.Getter;
 
 /**

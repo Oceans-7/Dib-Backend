@@ -2,32 +2,32 @@ package com.oceans7.dib.openapi.service;
 
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.util.EncoderUtil;
-import com.oceans7.dib.openapi.dto.response.detail.image.DetailImageListResponse;
-import com.oceans7.dib.openapi.dto.response.detail.info.*;
-import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse;
-import com.oceans7.dib.openapi.dto.response.detail.intro.DetailIntroResponse.*;
-import com.oceans7.dib.openapi.dto.response.list.AreaCodeList;
-import com.oceans7.dib.openapi.dto.response.list.TourAPICommonListResponse;
-import com.oceans7.dib.openapi.dto.response.detail.common.DetailCommonListResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.image.DetailImageListResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.info.DetailInfoListResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResponse.*;
+import com.oceans7.dib.openapi.dto.response.tourapi.list.AreaCodeList;
+import com.oceans7.dib.openapi.dto.response.tourapi.list.TourAPICommonListResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.common.DetailCommonListResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TourAPIService extends AbstractOpenAPIService {
 
-    @Value("${open-api.data-go-kr.service-key}")
+    @Value("${open-api.data-go-kr.tour-api.service-key}")
     private String serviceKey;
 
-    @Value("${open-api.data-go-kr.callback-url}")
+    @Value("${open-api.data-go-kr.tour-api.callback-url}")
     private String callbackUrl;
 
-    @Value("${open-api.data-go-kr.data-type}")
+    @Value("${open-api.data-go-kr.tour-api.data-type}")
     private String dataType;
 
-    @Value("${open-api.data-go-kr.mobile-os}")
+    @Value("${open-api.data-go-kr.tour-api.mobile-os}")
     private String mobileOS;
 
-    @Value("${open-api.data-go-kr.mobile-app}")
+    @Value("${open-api.data-go-kr.tour-api.mobile-app}")
     private String mobileApp;
 
     private final String YES_OPTION = "Y";
