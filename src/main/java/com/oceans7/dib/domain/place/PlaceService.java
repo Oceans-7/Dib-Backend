@@ -44,7 +44,7 @@ public class PlaceService {
             contentTypeId = String.valueOf(request.getContentType().getCode());
         }
         if(ValidatorUtil.isNotEmpty(request.getArrangeType())) {
-            arrangeTypeName = request.getArrangeType().name();
+            arrangeTypeName = request.getArrangeType().getCode();
         }
 
         if(ValidatorUtil.isEmpty(request.getArea())) {
@@ -89,7 +89,7 @@ public class PlaceService {
             contentTypeId = String.valueOf(request.getContentType().getCode());
         }
         if(ValidatorUtil.isNotEmpty(request.getArrangeType())) {
-            arrangeTypeName = request.getArrangeType().name();
+            arrangeTypeName = request.getArrangeType().getCode();
         }
         if(ValidatorUtil.isNotEmpty(request.getArea())) {
             String areaName = request.getArea();

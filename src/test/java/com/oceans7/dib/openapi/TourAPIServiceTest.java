@@ -31,7 +31,7 @@ public class TourAPIServiceTest {
         double mapX = 126.9779692;
         double mapY = 37.566535;
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
-        String arrangeTypeName = ArrangeType.E.name();
+        String arrangeTypeName = ArrangeType.DISTANCE.getCode();
 
         int page = 1;
         int pageSize = 20;
@@ -77,7 +77,7 @@ public class TourAPIServiceTest {
         String areaCode = "1";
         String sigunguCode = "3";
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
-        String arrangeTypeName = ArrangeType.A.name();
+        String arrangeTypeName = ArrangeType.TITLE.getCode();
 
         TourAPICommonListResponse tourAPICommonList = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode, contentTypeId, arrangeTypeName);
 
@@ -92,7 +92,7 @@ public class TourAPIServiceTest {
         String areaCode = "1";
         String sigunguCode = "3";
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
-        String arrangeTypeName = ArrangeType.A.name();
+        String arrangeTypeName = ArrangeType.TITLE.getCode();
 
         TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, areaCode, sigunguCode, contentTypeId, arrangeTypeName);
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
