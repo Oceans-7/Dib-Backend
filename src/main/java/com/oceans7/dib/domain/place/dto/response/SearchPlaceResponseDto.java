@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.place.dto.response;
 
+import com.oceans7.dib.domain.place.ArrangeType;
 import com.oceans7.dib.openapi.dto.response.tourapi.list.TourAPICommonListResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,12 +27,21 @@ public class SearchPlaceResponseDto {
     @Schema(description = "페이지 크기", example = "10")
     private int pageSize;
 
-    public SearchPlaceResponseDto(String keyword, SimplePlaceInformationDto[] simpleDto, TourAPICommonListResponse list) {
-        this.keyword = keyword;
-        this.places = simpleDto;
-        this.count = list.getTotalCount();
-        this.page = list.getPage();
-        this.pageSize = list.getPageSize();
+    @Schema(description = "정렬 형식", example = "TITLE")
+    private ArrangeType arrangeType;
+
+    public static SearchPlaceResponseDto of(String keyword, SimplePlaceInformationDto[] simpleDto, TourAPICommonListResponse list,
+                                            ArrangeType arrangeType) {
+        SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
+
+        searchPlaceResponse.keyword = keyword;
+        searchPlaceResponse.places = simpleDto;
+        searchPlaceResponse.count = list.getTotalCount();
+        searchPlaceResponse.page = list.getPage();
+        searchPlaceResponse.pageSize = list.getPageSize();
+        searchPlaceResponse.arrangeType = arrangeType;
+
+        return searchPlaceResponse;
     }
 
 }

@@ -34,13 +34,17 @@ public class SimplePlaceInformationDto {
     @Schema(description = "전화번호", example = "061-532-1000")
     private String tel;
 
-    public SimplePlaceInformationDto (TourAPICommonItemResponse item) {
-        this.title = item.getTitle();
-        this.address = item.getAddress1() + item.getAddress2();
-        this.contentId = item.getContentId();
-        this.contentType = getContentTypeByCode(item.getContentTypeId());
-        this.distance = item.getDist();
-        this.firstImage = item.getFirstImage();
-        this.tel = item.getTel();
+    public static SimplePlaceInformationDto of(TourAPICommonItemResponse item) {
+        SimplePlaceInformationDto simplePlaceInformation = new SimplePlaceInformationDto();
+
+        simplePlaceInformation.title = item.getTitle();
+        simplePlaceInformation.address = item.getAddress1() + item.getAddress2();
+        simplePlaceInformation.contentId = item.getContentId();
+        simplePlaceInformation.contentType = getContentTypeByCode(item.getContentTypeId());
+        simplePlaceInformation.distance = item.getDist();
+        simplePlaceInformation.firstImage = item.getFirstImage();
+        simplePlaceInformation.tel = item.getTel();
+
+        return simplePlaceInformation;
     }
 }
