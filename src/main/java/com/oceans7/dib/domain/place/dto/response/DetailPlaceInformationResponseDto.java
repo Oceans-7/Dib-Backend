@@ -2,16 +2,20 @@ package com.oceans7.dib.domain.place.dto.response;
 
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.FacilityType;
+import com.oceans7.dib.global.util.TextManipulatorUtil;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.common.DetailCommonItemResponse;
+
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
 
+import static com.oceans7.dib.domain.place.ContentType.getContentTypeByCode;
+
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
 public class DetailPlaceInformationResponseDto {
 
     @Schema(description = "컨텐츠 아이디, 위치 기반 조회시 확인 가능", example = "126508")
@@ -53,9 +57,53 @@ public class DetailPlaceInformationResponseDto {
     @Schema(description = "축제 기간", example = "2023/07/01~2023/08/09")
     private String eventDate;
 
-    @ArraySchema(schema = @Schema(description = "시설", example = "RESTROOM", implementation = FacilityType.class))
-    private List<FacilityType> availableFacilities;
+    @ArraySchema(schema = @Schema(description = "시설 이용 정보", implementation = FacilityInfo.class))
+    private List<FacilityInfo> facilityInfo;
 
     @ArraySchema(schema = @Schema(description = "이미지 리스트", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg"))
     private List<String> images;
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class FacilityInfo {
+        @Schema(description = "시설 정보 타입", example = "PARKING")
+        private FacilityType type;
+
+        @Schema(description = "시설 이용 가능 여부", example = "true")
+        private boolean availability;
+
+        public static FacilityInfo of(FacilityType type, boolean availability) {
+            FacilityInfo facilityInfo = new FacilityInfo();
+            facilityInfo.type = type;
+            facilityInfo.availability = availability;
+            return facilityInfo;
+        }
+    }
+    public static DetailPlaceInformationResponseDto of(DetailCommonItemResponse commonItem, List<String> images) {
+        DetailPlaceInformationResponseDto response = new DetailPlaceInformationResponseDto();
+        response.contentId = commonItem.getContentId();
+        response.contentType = getContentTypeByCode(commonItem.getContentTypeId());
+        response.title = commonItem.getTitle();
+        response.address = TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " ");
+        response.mapX = commonItem.getMapX();
+        response.mapY = commonItem.getMapY();
+        response.introduce = TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview());
+        response.homepageUrl = TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl());
+
+        response.images = images;
+
+        return response;
+    }
+
+    public void updateItem(String useTime, String tel, String restDate,
+                           String reservationUrl, String eventDate,
+                           List<FacilityInfo> facilityInfo) {
+        this.useTime = useTime;
+        this.tel = tel;
+        this.restDate = restDate;
+        this.reservationUrl = reservationUrl;
+        this.eventDate = eventDate;
+        this.facilityInfo = facilityInfo;
+    }
+
 }

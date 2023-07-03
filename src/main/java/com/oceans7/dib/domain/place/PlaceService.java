@@ -3,6 +3,7 @@ package com.oceans7.dib.domain.place;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto;
+import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto.FacilityInfo;
 import com.oceans7.dib.domain.place.dto.response.PlaceResponseDto;
 import com.oceans7.dib.domain.place.dto.response.SearchPlaceResponseDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
@@ -12,10 +13,9 @@ import com.oceans7.dib.global.util.ValidatorUtil;
 import com.oceans7.dib.openapi.dto.response.tourapi.detail.common.DetailCommonItemResponse;
 import com.oceans7.dib.openapi.dto.response.tourapi.detail.image.DetailImageItemResponse;
 import com.oceans7.dib.openapi.dto.response.tourapi.detail.info.DetailInfoItemResponse;
-import com.oceans7.dib.openapi.dto.response.tourapi.detail.info.DetailInfoListResponse;
+import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResponse;
 import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResponse.*;
-import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.openapi.dto.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.openapi.dto.response.tourapi.list.TourAPICommonListResponse;
 import com.oceans7.dib.openapi.service.TourAPIService;
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.oceans7.dib.domain.place.ContentType.getContentTypeByCode;
 
 @Service
 @RequiredArgsConstructor
@@ -117,9 +116,22 @@ public class PlaceService {
                 .fetchDataFromCommonApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
                 .getDetailCommonItemResponse();
 
+        // 소개 정보
+        DetailIntroResponse introApiResponse = tourAPIService
+                .fetchDataFromIntroApi(request.getContentId(), String.valueOf(request.getContentType().getCode()));
+
+        // 반복 정보
+        List<DetailInfoItemResponse> infoItems = null;
+        if(request.getContentType() == ContentType.TOURIST_SPOT) {
+            infoItems = tourAPIService
+                    .fetchDataFromInfoApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
+                    .getDetailInfoItemResponses();
+        }
+
         // 이미지 정보
         List<String> images = null;
-        List<DetailImageItemResponse> imageItem =  tourAPIService.fetchImageDataFromApi(request.getContentId())
+        List<DetailImageItemResponse> imageItem =  tourAPIService
+                .fetchImageDataFromApi(request.getContentId())
                 .getDetailImageItemResponses();
 
         if(ValidatorUtil.isNotEmpty(imageItem)) {
@@ -127,131 +139,129 @@ public class PlaceService {
                     .map(image -> image.getOriginImageUrl())
                     .collect(Collectors.toList());
         }
-        // 소개 정보
-        DetailIntroResponse introApiResponse = tourAPIService.fetchDataFromIntroApi(request.getContentId(), String.valueOf(request.getContentType().getCode()));
 
-        // 시설 정보
-        List<FacilityType> availableFacilities = new ArrayList<>();
-
-        if(request.getContentType() == ContentType.TOURIST_SPOT) {
-            SpotItemResponse introItem = ((SpotIntroResponse) introApiResponse).getSpotItemResponses();
-
-            if(ValidatorUtil.checkAvailability(introItem.getCheckBabyCarriage()) == true) availableFacilities.add(FacilityType.BABY_CARRIAGE);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckCreditCard()) == true) availableFacilities.add(FacilityType.CREDIT_CARD);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckPet()) == true) availableFacilities.add(FacilityType.PET);
-
-            // 반복 정보
-            DetailInfoListResponse infoApiResponse = tourAPIService.fetchDataFromInfoApi(request.getContentId(), String.valueOf(request.getContentType().getCode()));
-            checkFacilityTypeAvailability(infoApiResponse, availableFacilities);
-
-            return new DetailPlaceInformationResponseDto(commonItem.getContentId(), getContentTypeByCode(commonItem.getContentTypeId()),
-                    commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
-                    commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
-                    TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()), TextManipulatorUtil.replaceBrWithNewLine(introItem.getUseTime()),
-                    TextManipulatorUtil.extractTel(introItem.getInfoCenter()), null, TextManipulatorUtil.replaceBrWithNewLine(introItem.getRestDate()), null,
-                    availableFacilities, images);
-
-        } else if(request.getContentType() == ContentType.CULTURAL_SITE) {
-            CultureItemResponse introItem = ((CultureIntroResponse) introApiResponse).getCultureItemResponse();
-
-            if(ValidatorUtil.checkAvailability(introItem.getCheckBabyCarriage()) == true) availableFacilities.add(FacilityType.BABY_CARRIAGE);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckCreditCard()) == true) availableFacilities.add(FacilityType.CREDIT_CARD);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckParking()) == true) availableFacilities.add(FacilityType.PARKING);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckPet()) == true) availableFacilities.add(FacilityType.PET);
-
-            return new DetailPlaceInformationResponseDto(commonItem.getContentId(), getContentTypeByCode(commonItem.getContentTypeId()),
-                    commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
-                    commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
-                    TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()), TextManipulatorUtil.replaceBrWithNewLine(introItem.getUseTime()),
-                    TextManipulatorUtil.extractTel(introItem.getInfoCenter()), null, TextManipulatorUtil.replaceBrWithNewLine(introItem.getRestDate()), null,
-                    availableFacilities, images);
-
-        } else if(request.getContentType() == ContentType.EVENT) {
-            EventItemResponse introItem = ((EventIntroResponse) introApiResponse).getEventItemResponse();
-
-            return new DetailPlaceInformationResponseDto(commonItem.getContentId(), getContentTypeByCode(commonItem.getContentTypeId()),
-                    commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
-                    commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
-                    TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()),
-                    TextManipulatorUtil.prefix("공연 시간 : ", introItem.getPlayTime()), TextManipulatorUtil.extractTel(introItem.getSponsor1Tel()), introItem.getBookingPlace(), null,
-                    TextManipulatorUtil.convertDateRangeFormat(introItem.getEventStartDate(), introItem.getEventEndDate()), availableFacilities, images);
-        }
-        else if(request.getContentType() == ContentType.LEPORTS) {
-            LeportsItemResponse introItem  = ((LeportsIntroResponse) introApiResponse).getLeportsItemResponse();
-
-            if(ValidatorUtil.checkAvailability(introItem.getCheckBabyCarriage()) == true) availableFacilities.add(FacilityType.BABY_CARRIAGE);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckCreditCard()) == true) availableFacilities.add(FacilityType.CREDIT_CARD);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckParking()) == true) availableFacilities.add(FacilityType.PARKING);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckPet()) == true) availableFacilities.add(FacilityType.PET);
-
-            return new DetailPlaceInformationResponseDto(commonItem.getContentId(), getContentTypeByCode(commonItem.getContentTypeId()),
-                    commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
-                    commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
-                    TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()), TextManipulatorUtil.replaceBrWithNewLine(introItem.getUseTime()),
-                    TextManipulatorUtil.extractTel(introItem.getInfoCenter()), null, TextManipulatorUtil.replaceBrWithNewLine(introItem.getRestDate()), null,
-                    availableFacilities, images);
-
-        } else if(request.getContentType() == ContentType.ACCOMMODATION) {
-            AccommodationItemResponse introItem = ((AccommodationIntroResponse) introApiResponse).getAccommodationItemResponse();
-
-            if(ValidatorUtil.checkAvailability(introItem.getCheckBarbecue()) == true) availableFacilities.add(FacilityType.BARBECUE);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckBarbecue()) == true) availableFacilities.add(FacilityType.BEVERAGE);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckCooking()) == true) availableFacilities.add(FacilityType.COOKING);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckParking()) == true) availableFacilities.add(FacilityType.PARKING);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckPickup()) == true) availableFacilities.add(FacilityType.PICK_UP_SERVICE);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckSauna()) == true) availableFacilities.add(FacilityType.SAUNA);
-
-            return new DetailPlaceInformationResponseDto(commonItem.getContentId(), getContentTypeByCode(commonItem.getContentTypeId()),
-                    commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
-                    commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
-                    TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()), TextManipulatorUtil.concatenateStrings(introItem.getCheckInTime(),
-                    introItem.getCheckOutTime(), "체크인 : ", ", 체크아웃 : "),
-                    introItem.getInfoCenter(), introItem.getReservationUrl(), null, null,
-                    availableFacilities, images);
-
-        } else if(request.getContentType() == ContentType.SHOPPING) {
-            ShoppingItemResponse introItem = ((ShoppingIntroResponse) introApiResponse).getShoppingItemResponse();
-
-            if(ValidatorUtil.checkAvailability(introItem.getCheckBabyCarriage()) == true) availableFacilities.add(FacilityType.BABY_CARRIAGE);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckCreditCard()) == true) availableFacilities.add(FacilityType.CREDIT_CARD);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckParking()) == true) availableFacilities.add(FacilityType.PARKING);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckPet()) == true) availableFacilities.add(FacilityType.PET);
-
-            return new DetailPlaceInformationResponseDto(commonItem.getContentId(), getContentTypeByCode(commonItem.getContentTypeId()),
-                    commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
-                    commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
-                    TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()), TextManipulatorUtil.replaceBrWithNewLine(introItem.getOpenTime()),
-                    introItem.getInfoCenter(), null, TextManipulatorUtil.replaceBrWithNewLine(introItem.getRestDate()), null,
-                    availableFacilities, images);
-
-        } else if(request.getContentType() == ContentType.RESTAURANT) {
-            RestaurantItemResponse introItem = ((RestaurantIntroResponse) introApiResponse).getRestaurantItemResponse();
-
-            if(ValidatorUtil.checkAvailability(introItem.getCheckCreditCard()) == true) availableFacilities.add(FacilityType.CREDIT_CARD);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckParking()) == true) availableFacilities.add(FacilityType.PARKING);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckKidsFacility()) == true) availableFacilities.add(FacilityType.KIDS_FACILITY);
-            if(ValidatorUtil.checkAvailability(introItem.getCheckSmoking()) == true) availableFacilities.add(FacilityType.SMOKING);
-
-            return new DetailPlaceInformationResponseDto(commonItem.getContentId(), getContentTypeByCode(commonItem.getContentTypeId()),
-                    commonItem.getTitle(), TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "),
-                    commonItem.getMapX(), commonItem.getMapY(), TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview()),
-                    TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl()), TextManipulatorUtil.replaceBrWithNewLine(introItem.getOpenTime()),
-                    introItem.getInfoCenter(), null, TextManipulatorUtil.replaceBrWithNewLine(introItem.getRestDate()), null,
-                    availableFacilities, images);
-        }
-        return null;
+        return handleApiResponse(introApiResponse, infoItems,
+                DetailPlaceInformationResponseDto.of(commonItem, images));
     }
 
+    /**
+     * content type에 따라 intro item을 설정한다.
+     * @param introApiResponse
+     * @param infoItems
+     * @param response
+     * @return
+     */
+    private DetailPlaceInformationResponseDto handleApiResponse(DetailIntroResponse introApiResponse, List<DetailInfoItemResponse> infoItems, DetailPlaceInformationResponseDto response) {
+        String useTime = null;
+        String tel = null;
+        String restDate = null;
+        String reservationUrl = null;
+        String eventDate = null;
+        List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
 
-    private void checkFacilityTypeAvailability (DetailInfoListResponse infoListResponse, List<FacilityType> availableFacilities) {
-        for(DetailInfoItemResponse item : infoListResponse.getDetailInfoItemResponses()) {
-            if(item.getInfoName().contains("화장실")) {
-                availableFacilities.add(FacilityType.RESTROOM);
+        if (introApiResponse instanceof SpotIntroResponse) {
+            SpotItemResponse spotItem = ((SpotIntroResponse) introApiResponse).getSpotItemResponses();
+
+            useTime = TextManipulatorUtil.replaceBrWithNewLine(spotItem.getUseTime());
+            tel = TextManipulatorUtil.extractTel(spotItem.getInfoCenter());
+            restDate = TextManipulatorUtil.replaceBrWithNewLine(spotItem.getRestDate());
+
+            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(spotItem.getCheckBabyCarriage())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(spotItem.getCheckCreditCard())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(spotItem.getCheckPet())));
+
+            if(ValidatorUtil.isNotEmpty(infoItems)) {
+                boolean flagOfRestroom = false;
+                boolean flagOfDisable = false;
+
+                for(DetailInfoItemResponse item : infoItems) {
+                    if(item.getInfoName().contains("화장실")) {
+                        flagOfRestroom = true;
+                    }
+                    if(item.getInfoName().contains("장애인 편의시설")) {
+                        flagOfDisable = true;
+                    }
+                }
+
+                facilityInfo.add(FacilityInfo.of(FacilityType.RESTROOM, flagOfRestroom));
+                facilityInfo.add(FacilityInfo.of(FacilityType.DISABLED_PERSON_FACILITY, flagOfDisable));
             }
-            if(item.getInfoName().contains("장애인 편의시설")) {
-                availableFacilities.add(FacilityType.DISABLED_PERSON_FACILITY);
-            }
+        } else if (introApiResponse instanceof CultureIntroResponse) {
+            CultureItemResponse cultureItem = ((CultureIntroResponse) introApiResponse).getCultureItemResponse();
+
+            useTime = TextManipulatorUtil.replaceBrWithNewLine(cultureItem.getUseTime());
+            tel = TextManipulatorUtil.extractTel(cultureItem.getInfoCenter());
+            restDate = TextManipulatorUtil.replaceBrWithNewLine(cultureItem.getRestDate());
+
+            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(cultureItem.getCheckBabyCarriage())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(cultureItem.getCheckCreditCard())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(cultureItem.getCheckParking())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(cultureItem.getCheckPet())));
+
+        } else if (introApiResponse instanceof EventIntroResponse) {
+            EventItemResponse eventItem = ((EventIntroResponse) introApiResponse).getEventItemResponse();
+
+            useTime = TextManipulatorUtil.prefix("공연 시간 : ", eventItem.getPlayTime());
+            tel = TextManipulatorUtil.extractTel(eventItem.getSponsor1Tel());
+            reservationUrl = eventItem.getBookingPlace();
+            eventDate = TextManipulatorUtil.convertDateRangeFormat(eventItem.getEventStartDate(), eventItem.getEventEndDate());
+
+        } else if (introApiResponse instanceof LeportsIntroResponse) {
+            LeportsItemResponse leportsItem = ((LeportsIntroResponse) introApiResponse).getLeportsItemResponse();
+
+            useTime = TextManipulatorUtil.replaceBrWithNewLine(leportsItem.getUseTime());
+            tel = TextManipulatorUtil.extractTel(leportsItem.getInfoCenter());
+            restDate = TextManipulatorUtil.replaceBrWithNewLine(leportsItem.getRestDate());
+
+            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(leportsItem.getCheckBabyCarriage())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(leportsItem.getCheckCreditCard())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(leportsItem.getCheckParking())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(leportsItem.getCheckPet())));
+
+        } else if (introApiResponse instanceof AccommodationIntroResponse) {
+            AccommodationItemResponse accommodationItem = ((AccommodationIntroResponse) introApiResponse).getAccommodationItemResponse();
+
+            useTime = TextManipulatorUtil.concatenateStrings(
+                    accommodationItem.getCheckInTime(),
+                    accommodationItem.getCheckOutTime(), "체크인 : ", ", 체크아웃 : ");
+            tel = accommodationItem.getInfoCenter();
+            reservationUrl = accommodationItem.getReservationUrl();
+
+            facilityInfo.add(FacilityInfo.of(FacilityType.BARBECUE, ValidatorUtil.checkAvailability(accommodationItem.getCheckBarbecue())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.BEVERAGE, ValidatorUtil.checkAvailability(accommodationItem.getCheckBeverage())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.COOKING, ValidatorUtil.checkAvailability(accommodationItem.getCheckCooking())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(accommodationItem.getCheckParking())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PICK_UP_SERVICE, ValidatorUtil.checkAvailability(accommodationItem.getCheckPickup())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.SAUNA, ValidatorUtil.checkAvailability(accommodationItem.getCheckSauna())));
+
+        } else if (introApiResponse instanceof ShoppingIntroResponse) {
+            ShoppingItemResponse shoppingItem = ((ShoppingIntroResponse) introApiResponse).getShoppingItemResponse();
+
+            useTime = TextManipulatorUtil.replaceBrWithNewLine(shoppingItem.getOpenTime());
+            tel = TextManipulatorUtil.extractTel(shoppingItem.getInfoCenter());
+            restDate = TextManipulatorUtil.replaceBrWithNewLine(shoppingItem.getRestDate());
+
+            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(shoppingItem.getCheckBabyCarriage())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(shoppingItem.getCheckCreditCard())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(shoppingItem.getCheckParking())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(shoppingItem.getCheckPet())));
+
+        } else if (introApiResponse instanceof RestaurantIntroResponse) {
+            RestaurantItemResponse restaurantItem = ((RestaurantIntroResponse) introApiResponse).getRestaurantItemResponse();
+
+            useTime = TextManipulatorUtil.replaceBrWithNewLine(restaurantItem.getOpenTime());
+            tel = TextManipulatorUtil.extractTel(restaurantItem.getInfoCenter());
+            restDate = TextManipulatorUtil.replaceBrWithNewLine(restaurantItem.getRestDate());
+
+            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(restaurantItem.getCheckCreditCard())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(restaurantItem.getCheckParking())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.KIDS_FACILITY, ValidatorUtil.checkAvailability(restaurantItem.getCheckKidsFacility())));
+            facilityInfo.add(FacilityInfo.of(FacilityType.SMOKING, ValidatorUtil.checkAvailability(restaurantItem.getCheckSmoking())));
         }
+
+        response.updateItem(useTime, tel, restDate, reservationUrl, eventDate, facilityInfo);
+
+        return response;
     }
 
 }
