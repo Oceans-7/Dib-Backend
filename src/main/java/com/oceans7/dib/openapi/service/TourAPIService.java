@@ -77,7 +77,8 @@ public class TourAPIService extends AbstractOpenAPIService {
      */
     public TourAPICommonListResponse fetchDataFromSearchKeywordApi(String keyword,
                                                                    String areaCode, String sigunguCode,
-                                                                   String contentTypeId, String arrangeTypeCode) {
+                                                                   String contentTypeId, String arrangeTypeCode,
+                                                                   int page, int pageSize) {
         String api = "/searchKeyword1";
 
         String urlStr = callbackUrl + api +
@@ -89,6 +90,8 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&areaCode=" + areaCode +
                 "&sigunguCode=" + sigunguCode +
                 "&contentTypeId=" + contentTypeId +
+                "&pageNo=" + page +
+                "&numOfRows=" + pageSize +
                 "&arrange=" + arrangeTypeCode;
 
         String result = connectApi(urlStr);
@@ -126,7 +129,8 @@ public class TourAPIService extends AbstractOpenAPIService {
      * @return
      */
     public TourAPICommonListResponse fetchDataFromAreaBasedApi(String areaCode, String sigunguCode,
-                                                               String contentTypeId, String arrangeTypeCode) {
+                                                               String contentTypeId, String arrangeTypeCode,
+                                                               int page, int pageSize) {
         String api = "/areaBasedList1";
 
         String urlStr = callbackUrl + api +
@@ -137,6 +141,8 @@ public class TourAPIService extends AbstractOpenAPIService {
                 "&areaCode=" + areaCode +
                 "&sigunguCode=" + sigunguCode +
                 "&contentTypeId=" + contentTypeId +
+                "&pageNo=" + page +
+                "&numOfRows=" + pageSize +
                 "&arrange=" + arrangeTypeCode;
 
         String result = connectApi(urlStr);

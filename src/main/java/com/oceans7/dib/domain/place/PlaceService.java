@@ -66,14 +66,16 @@ public class PlaceService {
                 sigunguCode = sigunguList.getAreaCodeByName(sigunguName);
             }
 
-            apiResponse = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode, contentTypeId, arrangeTypeName);
+            apiResponse = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode,
+                    contentTypeId, arrangeTypeName,
+                    request.getPage(), request.getPageSize());
         }
 
         SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
-                .map(SimplePlaceInformationDto :: new)
+                .map(SimplePlaceInformationDto :: of)
                 .toArray(SimplePlaceInformationDto[]::new);
 
-        return new PlaceResponseDto(simpleDto, apiResponse);
+        return PlaceResponseDto.of(simpleDto, apiResponse, request.getArrangeType());
     }
 
     public SearchPlaceResponseDto searchPlace(SearchPlaceRequestDto request) {
@@ -101,13 +103,15 @@ public class PlaceService {
             sigunguCode = sigunguList.getAreaCodeByName(sigunguName);
         }
 
-        apiResponse = tourAPIService.fetchDataFromSearchKeywordApi(request.getKeyword(), areaCode, sigunguCode, contentTypeId, arrangeTypeName);
+        apiResponse = tourAPIService.fetchDataFromSearchKeywordApi(request.getKeyword(), areaCode, sigunguCode,
+                contentTypeId, arrangeTypeName,
+                request.getPage(), request.getPageSize());
 
         SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
-                .map(SimplePlaceInformationDto :: new)
+                .map(SimplePlaceInformationDto :: of)
                 .toArray(SimplePlaceInformationDto[]::new);
 
-        return new SearchPlaceResponseDto(request.getKeyword(), simpleDto, apiResponse);
+        return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, apiResponse, request.getArrangeType());
     }
 
     public DetailPlaceInformationResponseDto getPlaceDetail(GetPlaceDetailRequestDto request) {

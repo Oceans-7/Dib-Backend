@@ -34,7 +34,7 @@ public class TourAPIServiceTest {
         String arrangeTypeName = ArrangeType.DISTANCE.getCode();
 
         int page = 1;
-        int pageSize = 20;
+        int pageSize = 4;
 
         // when
         TourAPICommonListResponse list = tourAPIService.fetchDataFromLocationBasedApi(mapX, mapY, contentTypeId, arrangeTypeName, page, pageSize);
@@ -51,8 +51,11 @@ public class TourAPIServiceTest {
         // given
         String keyword = "강원";
 
+        int page = 1;
+        int pageSize = 4;
+
         // when
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "");
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "", page, pageSize);
 
         // then
         assertThat(list.getTourAPICommonItemResponseList().size()).isEqualTo(10);
@@ -77,9 +80,11 @@ public class TourAPIServiceTest {
         String areaCode = "1";
         String sigunguCode = "3";
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        int page = 1;
+        int pageSize = 4;
         String arrangeTypeName = ArrangeType.TITLE.getCode();
 
-        TourAPICommonListResponse tourAPICommonList = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode, contentTypeId, arrangeTypeName);
+        TourAPICommonListResponse tourAPICommonList = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode, contentTypeId, arrangeTypeName, page, pageSize);
 
         assertThat(tourAPICommonList.getTourAPICommonItemResponseList().size()).isEqualTo(10);
     }
@@ -92,9 +97,11 @@ public class TourAPIServiceTest {
         String areaCode = "1";
         String sigunguCode = "3";
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        int page = 1;
+        int pageSize = 4;
         String arrangeTypeName = ArrangeType.TITLE.getCode();
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, areaCode, sigunguCode, contentTypeId, arrangeTypeName);
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, areaCode, sigunguCode, contentTypeId, arrangeTypeName, page, pageSize);
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
 
         // when
@@ -111,8 +118,10 @@ public class TourAPIServiceTest {
         //given
         String keyword = "강원";
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
+        int page = 1;
+        int pageSize = 4;
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", contentTypeId, "");
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", contentTypeId, "", page, pageSize);
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
 
         // when
@@ -163,8 +172,10 @@ public class TourAPIServiceTest {
     public void callDetailInfoAPITest() {
         //given
         String keyword = "백범김구선생상";
+        int page = 1;
+        int pageSize = 4;
 
-        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "");
+        TourAPICommonListResponse list = tourAPIService.fetchDataFromSearchKeywordApi(keyword, "", "", "", "", page, pageSize);
         Long contentId = list.getTourAPICommonItemResponseList().get(0).getContentId();
         String contentTypeId = String.valueOf(
                 list.getTourAPICommonItemResponseList().get(0).getContentTypeId()
