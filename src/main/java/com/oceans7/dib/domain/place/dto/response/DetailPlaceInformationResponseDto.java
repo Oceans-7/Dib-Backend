@@ -1,9 +1,9 @@
 package com.oceans7.dib.domain.place.dto.response;
 
-import com.oceans7.dib.domain.place.ContentType;
-import com.oceans7.dib.domain.place.FacilityType;
+import com.oceans7.dib.domain.place.dto.ContentType;
+import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.global.util.TextManipulatorUtil;
-import com.oceans7.dib.openapi.dto.response.tourapi.detail.common.DetailCommonItemResponse;
+import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,7 +11,7 @@ import lombok.*;
 
 import java.util.List;
 
-import static com.oceans7.dib.domain.place.ContentType.getContentTypeByCode;
+import static com.oceans7.dib.domain.place.dto.ContentType.getContentTypeByCode;
 
 
 @Getter

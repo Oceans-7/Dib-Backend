@@ -1,0 +1,22 @@
+package com.oceans7.dib.global.api.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class KakaoLocalAPIService extends OpenAPIService {
+
+    @Value("${open-api.kakao.service-key}")
+    private String serviceKey;
+
+    @Value("${open-api.kakao.header-prefix}")
+    private String headerPrefix;
+
+    @Value("${open-api.kakao.callback-url}")
+    private String callbackUrl;
+
+    @Value("${open-api.kakao.data-type}")
+    private String dataType;
+}
