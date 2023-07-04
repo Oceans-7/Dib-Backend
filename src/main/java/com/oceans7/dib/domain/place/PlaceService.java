@@ -18,7 +18,7 @@ import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResp
 import com.oceans7.dib.openapi.dto.response.tourapi.detail.intro.DetailIntroResponse.*;
 import com.oceans7.dib.openapi.dto.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.openapi.dto.response.tourapi.list.TourAPICommonListResponse;
-import com.oceans7.dib.openapi.service.TourAPIService;
+import com.oceans7.dib.openapi.service.DataGoKrAPIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlaceService {
 
-    private final TourAPIService tourAPIService;
+    private final DataGoKrAPIService tourAPIService;
 
     public PlaceResponseDto getPlace(GetPlaceRequestDto request) {
         TourAPICommonListResponse apiResponse;
@@ -48,27 +48,25 @@ public class PlaceService {
 
         if(ValidatorUtil.isEmpty(request.getArea())) {
             // 지역 필터 없다면 위치 기반
-            apiResponse = tourAPIService.fetchDataFromLocationBasedApi(request.getMapX(), request.getMapY(),
-                    contentTypeId, arrangeTypeName,
-                    request.getPage(), request.getPageSize());
+            apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
+                    request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
         } else {
             // 지역 필터 있다면 지역 기반
             // areaCode 조회
             String areaName = request.getArea();
-            AreaCodeList list = tourAPIService.fetchDataFromAreaCodeApi("");
+            AreaCodeList list = tourAPIService.getAreaCodeApi("");
             String areaCode = list.getAreaCodeByName(areaName);
             String sigunguCode = "";
 
             // sigunguCode 조회
             if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
                 String sigunguName = request.getSigungu();
-                AreaCodeList sigunguList = tourAPIService.fetchDataFromAreaCodeApi(areaCode);
+                AreaCodeList sigunguList = tourAPIService.getAreaCodeApi(areaCode);
                 sigunguCode = sigunguList.getAreaCodeByName(sigunguName);
             }
 
-            apiResponse = tourAPIService.fetchDataFromAreaBasedApi(areaCode, sigunguCode,
-                    contentTypeId, arrangeTypeName,
-                    request.getPage(), request.getPageSize());
+            apiResponse = tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
+                    request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
         }
 
         SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
@@ -85,27 +83,28 @@ public class PlaceService {
         String areaCode = "";
         String sigunguCode = "";
 
+        // TODO : 키워드가 지역명일 때는 지역 기반 api를 호출하게 할 것임.
+
+
         // 필터링 확인
         if(ValidatorUtil.isNotEmpty(request.getContentType())) {
             contentTypeId = String.valueOf(request.getContentType().getCode());
         }
+
         if(ValidatorUtil.isNotEmpty(request.getArrangeType())) {
             arrangeTypeName = request.getArrangeType().getCode();
         }
+
         if(ValidatorUtil.isNotEmpty(request.getArea())) {
-            String areaName = request.getArea();
-            AreaCodeList list = tourAPIService.fetchDataFromAreaCodeApi("");
-            areaCode = list.getAreaCodeByName(areaName);
-        }
-        if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
-            String sigunguName = request.getSigungu();
-            AreaCodeList sigunguList = tourAPIService.fetchDataFromAreaCodeApi(areaCode);
-            sigunguCode = sigunguList.getAreaCodeByName(sigunguName);
+            areaCode = getAreaCode(request.getArea(), "");
         }
 
-        apiResponse = tourAPIService.fetchDataFromSearchKeywordApi(request.getKeyword(), areaCode, sigunguCode,
-                contentTypeId, arrangeTypeName,
-                request.getPage(), request.getPageSize());
+        if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
+            sigunguCode = getAreaCode(request.getSigungu(), areaCode);
+        }
+
+        apiResponse = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize(),
+                areaCode, sigunguCode, contentTypeId, arrangeTypeName);
 
         SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
                 .map(SimplePlaceInformationDto :: of)
@@ -114,28 +113,34 @@ public class PlaceService {
         return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, apiResponse, request.getArrangeType());
     }
 
+    private String getAreaCode(String areaName, String areaCode) {
+        AreaCodeList list = tourAPIService.getAreaCodeApi(areaCode);
+        areaCode = list.getAreaCodeByName(areaName);
+        return areaCode;
+    }
+
     public DetailPlaceInformationResponseDto getPlaceDetail(GetPlaceDetailRequestDto request) {
         // 공통 정보
         DetailCommonItemResponse commonItem = tourAPIService
-                .fetchDataFromCommonApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
+                .getCommonApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
                 .getDetailCommonItemResponse();
 
         // 소개 정보
         DetailIntroResponse introApiResponse = tourAPIService
-                .fetchDataFromIntroApi(request.getContentId(), String.valueOf(request.getContentType().getCode()));
+                .getIntroApi(request.getContentId(), String.valueOf(request.getContentType().getCode()));
 
         // 반복 정보
         List<DetailInfoItemResponse> infoItems = null;
         if(request.getContentType() == ContentType.TOURIST_SPOT) {
             infoItems = tourAPIService
-                    .fetchDataFromInfoApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
+                    .getInfoApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
                     .getDetailInfoItemResponses();
         }
 
         // 이미지 정보
         List<String> images = null;
         List<DetailImageItemResponse> imageItem =  tourAPIService
-                .fetchImageDataFromApi(request.getContentId())
+                .getImageApi(request.getContentId())
                 .getDetailImageItemResponses();
 
         if(ValidatorUtil.isNotEmpty(imageItem)) {
