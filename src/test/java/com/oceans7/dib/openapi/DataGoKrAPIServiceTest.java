@@ -224,7 +224,7 @@ public class DataGoKrAPIServiceTest {
         double mapX = 126.98935225645432;
         double mapY = 37.579871128849334;
 
-        FcstAPICommonListResponse response = dataGoKrAPIService.getNowForecase(mapX, mapY);
+        FcstAPICommonListResponse response = dataGoKrAPIService.getNowForecast(mapX, mapY);
 
         assertThat(response.getFcstAPICommonItemResponseList().size()).isEqualTo(8);
     }

@@ -147,7 +147,7 @@ public class DataGoKrAPIService extends OpenAPIService {
     /**
      * 기상청 단기 실황
      */
-    public FcstAPICommonListResponse getNowForecase(double mapX, double mapY) {
+    public FcstAPICommonListResponse getNowForecast(double mapX, double mapY) {
         GetWeatherDigitalForecast.LatXLngY grid = new GetWeatherDigitalForecast()
                 .convertGRID_GPS(mapX, mapY);
 
