@@ -10,17 +10,17 @@ import java.util.List;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SearchAddressListResponse {
-    private List<SearchAddressItemResponse> searchAddressItemResponseList;
+public class LocalResponse {
+    private List<AddressItem> documents;
 
     @JsonCreator
-    public SearchAddressListResponse(@JsonProperty("documents") List<SearchAddressItemResponse> searchAddressItemResponseList) {
-        this.searchAddressItemResponseList = searchAddressItemResponseList;
+    public LocalResponse(@JsonProperty("documents") List<AddressItem> documents) {
+        this.documents = documents;
     }
 
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class SearchAddressItemResponse {
+    public static class AddressItem {
         private Address address;
         private String address_name;
         private String address_type;
@@ -29,12 +29,12 @@ public class SearchAddressListResponse {
         private double y;
 
         @JsonCreator
-        public SearchAddressItemResponse(@JsonProperty("address") Address address,
-                                         @JsonProperty("address_name") String address_name,
-                                         @JsonProperty("address_type") String address_type,
-                                         @JsonProperty("road_address") Object road_address,
-                                         @JsonProperty("x") double x,
-                                         @JsonProperty("y") double y) {
+        public AddressItem(@JsonProperty("address") Address address,
+                           @JsonProperty("address_name") String address_name,
+                           @JsonProperty("address_type") String address_type,
+                           @JsonProperty("road_address") Object road_address,
+                           @JsonProperty("x") double x,
+                           @JsonProperty("y") double y) {
             this.address = address;
             this.address_name = address_name;
             this.address_type = address_type;

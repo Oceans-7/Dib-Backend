@@ -1,7 +1,6 @@
 package com.oceans7.dib.openapi;
 
-import com.oceans7.dib.global.api.response.kakao.SearchAddressListResponse;
-import com.oceans7.dib.global.api.response.kakao.SearchAddressListResponse.*;
+import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,13 +20,13 @@ public class KakaoLocalAPIServiceTest {
     @DisplayName("카카오 주소 검색 API 통신 테스트")
     public void callSearchAddressAPITest() {
         // given
-        String query = "먀먀먀";
+        String query = "여주";
 
         // when
-        SearchAddressListResponse result =
+        LocalResponse result =
                 kakaoLocalAPIService.getSearchAddressLocalApi(query);
-        SearchAddressItemResponse item = result.getSearchAddressItemResponseList().get(0);
-        SearchAddressItemResponse.Address addressItem = item.getAddress();
+        LocalResponse.AddressItem item = result.getDocuments().get(0);
+        LocalResponse.AddressItem.Address addressItem = item.getAddress();
 
         // then
         assertThat(item.getAddress_name()).isEqualTo("경기 여주시");
