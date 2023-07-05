@@ -10,6 +10,8 @@ import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListR
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse.*;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.global.api.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
