@@ -16,6 +16,8 @@ import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonIte
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse.*;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.global.api.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
 import com.oceans7.dib.global.api.service.DataGoKrAPIService;
