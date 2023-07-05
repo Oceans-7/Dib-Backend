@@ -1,22 +1,24 @@
 package com.oceans7.dib.global.api.service;
 
-import lombok.RequiredArgsConstructor;
+import com.oceans7.dib.global.api.http.KakaoApi;
+import com.oceans7.dib.global.api.response.kakao.SearchAddressListResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class KakaoLocalAPIService extends OpenAPIService {
 
-    @Value("${open-api.kakao.service-key}")
-    private String serviceKey;
+    private final KakaoApi kakaoApi;
 
-    @Value("${open-api.kakao.header-prefix}")
-    private String headerPrefix;
-
-    @Value("${open-api.kakao.callback-url}")
-    private String callbackUrl;
+    public KakaoLocalAPIService(KakaoApi kakaoApi) { this.kakaoApi = kakaoApi; }
 
     @Value("${open-api.kakao.data-type}")
     private String dataType;
+
+    public SearchAddressListResponse getSearchAddressLocalApi(String query) {
+        String result = kakaoApi.getSearchAddress(dataType, query);
+
+        return parsingJsonObject(result, SearchAddressListResponse.class);
+    }
+
 }
