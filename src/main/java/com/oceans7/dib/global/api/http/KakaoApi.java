@@ -11,4 +11,9 @@ public interface KakaoApi {
     @GetExchange("local/search/address.{dataType}")
     String getSearchAddress(@PathVariable("dataType") String dataType,
                             @RequestParam("query") String query);
+
+    @GetExchange("local/geo/coord2address.{dataType}")
+    String getGeoAddress(@PathVariable("dataType") String dataType,
+                         @RequestParam("x") double x,
+                         @RequestParam("y") double y);
 }

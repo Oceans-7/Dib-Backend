@@ -22,23 +22,23 @@ public class LocalResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AddressItem {
         private Address address;
-        private String address_name;
-        private String address_type;
-        private Object road_address;
+        private RoadAddress roadAddress;
+        private String addressName;
+        private String addressType;
         private double x;
         private double y;
 
         @JsonCreator
         public AddressItem(@JsonProperty("address") Address address,
-                           @JsonProperty("address_name") String address_name,
-                           @JsonProperty("address_type") String address_type,
-                           @JsonProperty("road_address") Object road_address,
+                           @JsonProperty("road_address") RoadAddress roadAddress,
+                           @JsonProperty("address_name") String addressName,
+                           @JsonProperty("address_type") String addressType,
                            @JsonProperty("x") double x,
                            @JsonProperty("y") double y) {
             this.address = address;
-            this.address_name = address_name;
-            this.address_type = address_type;
-            this.road_address = road_address;
+            this.roadAddress = roadAddress;
+            this.addressName = addressName;
+            this.addressType = addressType;
             this.x = x;
             this.y = y;
         }
@@ -46,17 +46,28 @@ public class LocalResponse {
         @Getter
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Address {
-            private String address_name;
-            private String region_1depth_name;
-            private String region_2depth_name;
+            private String addressName;
+            private String region1depthName;
+            private String region2depthName;
 
             @JsonCreator
-            public Address(@JsonProperty("address_name") String address_name,
-                           @JsonProperty("region_1depth_name") String region_1depth_name,
-                           @JsonProperty("region_2depth_name") String region_2depth_name) {
-                this.address_name = address_name;
-                this.region_1depth_name = region_1depth_name;
-                this.region_2depth_name = region_2depth_name;
+            public Address(@JsonProperty("address_name") String addressName,
+                           @JsonProperty("region_1depth_name") String region1depthName,
+                           @JsonProperty("region_2depth_name") String region2depthName) {
+                this.addressName = addressName;
+                this.region1depthName = region1depthName;
+                this.region2depthName = region2depthName;
+            }
+        }
+
+        @Getter
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class RoadAddress {
+            private String addressName;
+
+            @JsonCreator
+            public RoadAddress(@JsonProperty("address_name") String addressName) {
+                this.addressName = addressName;
             }
         }
     }
