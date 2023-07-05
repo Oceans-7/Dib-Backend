@@ -29,11 +29,28 @@ public class KakaoLocalAPIServiceTest {
         LocalResponse.AddressItem.Address addressItem = item.getAddress();
 
         // then
-        assertThat(item.getAddress_name()).isEqualTo("경기 여주시");
-        assertThat(item.getAddress_type()).isEqualTo("REGION");
+        assertThat(item.getAddressName()).isEqualTo("경기 여주시");
+        assertThat(item.getAddressType()).isEqualTo("REGION");
         assertThat(item.getX()).isEqualTo(127.637058787484);
         assertThat(item.getY()).isEqualTo(37.2984233734535);
-        assertThat(addressItem.getRegion_1depth_name()).isEqualTo("경기");
-        assertThat(addressItem.getRegion_2depth_name()).isEqualTo("여주시");
+        assertThat(addressItem.getRegion1depthName()).isEqualTo("경기");
+        assertThat(addressItem.getRegion2depthName()).isEqualTo("여주시");
+    }
+
+    @Test
+    @DisplayName("카카오 주소 검색 API 통신 테스트")
+    public void callGeoAddressAPITest() {
+        // given
+        double x = 127.637058787484;
+        double y = 37.2984233734535;
+
+        // when
+        LocalResponse result =
+                kakaoLocalAPIService.getGeoAddressLocalApi(x, y);
+        LocalResponse.AddressItem item = result.getDocuments().get(0);
+        LocalResponse.AddressItem.RoadAddress addressItem = item.getRoadAddress();
+
+        // then
+        assertThat(addressItem.getAddressName()).isEqualTo("경기도 여주시 세종로 1");
     }
 }
