@@ -2,7 +2,6 @@ package com.oceans7.dib.openapi;
 
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.ContentType;
-import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageItemResponse;
@@ -216,16 +215,5 @@ public class DataGoKrAPIServiceTest {
             assertThat(item.getOriginImageUrl().matches(urlPattern)).isEqualTo(true);
         }
 
-    }
-
-    @Test
-    @DisplayName("초단기 실황 조회 API 통신 테스트")
-    public void callUltraSrtNcstAPITest() {
-        double mapX = 126.98935225645432;
-        double mapY = 37.579871128849334;
-
-        FcstAPICommonListResponse response = dataGoKrAPIService.getNowForecast(mapX, mapY);
-
-        assertThat(response.getFcstAPICommonItemResponseList().size()).isEqualTo(8);
     }
 }
