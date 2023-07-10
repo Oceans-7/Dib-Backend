@@ -25,7 +25,7 @@ public class KakaoLocalAPIServiceTest {
         // when
         LocalResponse result =
                 kakaoLocalAPIService.getSearchAddressLocalApi(query);
-        LocalResponse.AddressItem item = result.getDocuments().get(0);
+        LocalResponse.AddressItem item = result.getAddressItems().get(0);
         LocalResponse.AddressItem.Address addressItem = item.getAddress();
 
         // then
@@ -38,7 +38,7 @@ public class KakaoLocalAPIServiceTest {
     }
 
     @Test
-    @DisplayName("카카오 주소 검색 API 통신 테스트")
+    @DisplayName("카카오 좌표 -> 주소 전환 API 통신 테스트")
     public void callGeoAddressAPITest() {
         // given
         double x = 127.637058787484;
@@ -47,7 +47,7 @@ public class KakaoLocalAPIServiceTest {
         // when
         LocalResponse result =
                 kakaoLocalAPIService.getGeoAddressLocalApi(x, y);
-        LocalResponse.AddressItem item = result.getDocuments().get(0);
+        LocalResponse.AddressItem item = result.getAddressItems().get(0);
         LocalResponse.AddressItem.RoadAddress addressItem = item.getRoadAddress();
 
         // then
