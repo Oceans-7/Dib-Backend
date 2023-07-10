@@ -7,9 +7,25 @@ import lombok.Getter;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FcstAPICommonItemResponse {
-    @JsonProperty("category")
-    private String category;
+    @JsonProperty("baseDate")
+    private String baseDate;
+
+    @JsonProperty("baseTime")
+    private String baseTime;
 
     @JsonProperty("obsrValue")
     private String obsrValue;
+
+    @JsonProperty("category")
+    private String category;
+
+    // 초단기 예보값
+    @JsonProperty("fcstDate")
+    private String fcstDate;
+
+    @JsonProperty("fcstTime")
+    private String fcstTime;
+
+    @JsonProperty("fcstValue")
+    private String fcstValue;
 }

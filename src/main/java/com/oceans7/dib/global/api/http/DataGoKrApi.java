@@ -99,4 +99,14 @@ public interface DataGoKrApi {
                               @RequestParam("base_time") String baseTime,
                               @RequestParam("pageNo") int page,
                               @RequestParam("numOfRows") int pageSize);
+
+    @GetExchange("/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst")
+    String getUltraForecastInfo(@RequestParam("serviceKey") String serviceKey,
+                              @RequestParam("dataType") String dataType,
+                              @RequestParam("nx") int nx,
+                              @RequestParam("ny") int ny,
+                              @RequestParam("base_date") String baseDate,
+                              @RequestParam("base_time") String baseTime,
+                              @RequestParam("pageNo") int page,
+                              @RequestParam("numOfRows") int pageSize);
 }

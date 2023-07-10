@@ -143,27 +143,4 @@ public class DataGoKrAPIService extends OpenAPIService {
 
         return parsingJsonObject(result, DetailImageListResponse.class);
     }
-
-    /**
-     * 기상청 단기 실황
-     */
-    public FcstAPICommonListResponse getNowForecast(double mapX, double mapY) {
-        GetWeatherDigitalForecast.LatXLngY grid = new GetWeatherDigitalForecast()
-                .convertGRID_GPS(mapX, mapY);
-
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-        String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String baseTime = now.format(DateTimeFormatter.ofPattern("HH"));
-        if(now.getMinute() < 40) {
-            baseTime = now
-                    .minusHours(1)
-                    .format(DateTimeFormatter.ofPattern("HH"));
-        }
-        baseTime += "00";
-
-        String result = dataGoKrApi.getNowForecastInfo(serviceKey, dataType, (int)grid.x, (int)grid.y,
-                baseDate, baseTime, 1, 8);
-
-        return parsingJsonObject(result, FcstAPICommonListResponse.class);
-    }
 }
