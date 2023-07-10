@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.location.dto.response;
 
+import com.oceans7.dib.domain.weather.dto.WeatherType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,16 +9,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class LocationResponseDto {
 
-    @Schema(description = "위도", example = "36.000000")
-    private float latitude;
+    @Schema(description = "도로명 주소", example = "경기도 여주시 세종로 1")
+    private String address;
 
-    @Schema(description = "경도", example = "127.000000")
-    private float longitude;
+    @Schema(description = "날씨 상태", example = "날씨 상태")
+    private WeatherType weatherType;
 
-    public static LocationResponseDto of(float latitude, float longitude) {
+    @Schema(description = "기온", example = "23")
+    private double temperatures;
+
+    public static LocationResponseDto of(String address, WeatherType weatherType, double temperatures) {
         LocationResponseDto locationResponseDto = new LocationResponseDto();
-        locationResponseDto.latitude = latitude;
-        locationResponseDto.longitude = longitude;
+        locationResponseDto.address = address;
+        locationResponseDto.weatherType = weatherType;
+        locationResponseDto.temperatures = temperatures;
         return locationResponseDto;
     }
 }

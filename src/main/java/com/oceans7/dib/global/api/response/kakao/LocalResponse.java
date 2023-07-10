@@ -11,11 +11,11 @@ import java.util.List;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LocalResponse {
-    private List<AddressItem> documents;
+    private List<AddressItem> addressItems;
 
     @JsonCreator
-    public LocalResponse(@JsonProperty("documents") List<AddressItem> documents) {
-        this.documents = documents;
+    public LocalResponse(@JsonProperty("documents") List<AddressItem> addressItems) {
+        this.addressItems = addressItems;
     }
 
     @Getter
