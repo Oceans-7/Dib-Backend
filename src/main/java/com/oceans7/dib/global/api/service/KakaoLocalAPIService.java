@@ -15,12 +15,18 @@ public class KakaoLocalAPIService extends OpenAPIService {
     @Value("${open-api.kakao.data-type}")
     private String dataType;
 
+    /**
+     * 쿼리 기반 주소 검색 api
+     */
     public LocalResponse getSearchAddressLocalApi(String query) {
         String result = kakaoApi.getSearchAddress(dataType, query);
 
         return parsingJsonObject(result, LocalResponse.class);
     }
 
+    /**
+     * 좌표 기반 주소 검색 api
+     */
     public LocalResponse getGeoAddressLocalApi(double x, double y) {
         String result = kakaoApi.getGeoAddress(dataType, x, y);
 

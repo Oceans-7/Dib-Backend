@@ -26,11 +26,7 @@ public interface DataGoKrApi {
                                     @RequestParam("_type") String dataType,
                                     @RequestParam("keyword") String keyword,
                                     @RequestParam("pageNo") int page,
-                                    @RequestParam("numOfRows") int pageSize,
-                                    @RequestParam("areaCode")  String areaCode,
-                                    @RequestParam("sigunguCode") String sigunguCode,
-                                    @RequestParam("contentTypeId") String contentTypeId,
-                                    @RequestParam("arrange") String arrangeType);
+                                    @RequestParam("numOfRows") int pageSize);
 
     @GetExchange("/B551011/KorService1/areaCode1")
     String getAreaCode(@RequestParam("serviceKey") String serviceKey,
@@ -63,7 +59,7 @@ public interface DataGoKrApi {
                              @RequestParam("firstImageYN") String option2,
                              @RequestParam("areacodeYN") String option3,
                              @RequestParam("addrinfoYN") String option4,
-                             @RequestParam("defaultYN") String option5,
+                             @RequestParam("mapinfoYN") String option5,
                              @RequestParam("overviewYN") String option6);
 
     @GetExchange("/B551011/KorService1/detailIntro1")

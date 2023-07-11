@@ -4,12 +4,15 @@ import com.oceans7.dib.domain.place.dto.ContentType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
-import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto;
+import com.oceans7.dib.domain.place.dto.response.*;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto.FacilityInfo;
-import com.oceans7.dib.domain.place.dto.response.PlaceResponseDto;
-import com.oceans7.dib.domain.place.dto.response.SearchPlaceResponseDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
-import com.oceans7.dib.domain.place.dto.response.SimplePlaceInformationDto;
+import com.oceans7.dib.global.api.response.kakao.LocalResponse;
+import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem;
+import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem.*;
+import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
+import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
+import com.oceans7.dib.global.util.CoordinateUtil;
 import com.oceans7.dib.global.util.TextManipulatorUtil;
 import com.oceans7.dib.global.util.ValidatorUtil;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
@@ -35,10 +38,14 @@ public class PlaceService {
 
     private final DataGoKrAPIService tourAPIService;
 
+    private final KakaoLocalAPIService kakaoLocalAPIService;
+
+    /**
+     * 관광 정보 리스트 조회
+     */
     public PlaceResponseDto getPlace(GetPlaceRequestDto request) {
         TourAPICommonListResponse apiResponse;
-        String contentTypeId = "";
-        String arrangeTypeName = "";
+        String contentTypeId = "", arrangeTypeName = "";
 
         // 필터링 확인
         if(ValidatorUtil.isNotEmpty(request.getContentType())) {
@@ -48,26 +55,10 @@ public class PlaceService {
             arrangeTypeName = request.getArrangeType().getCode();
         }
 
-        if(ValidatorUtil.isEmpty(request.getArea())) {
-            // 지역 필터 없다면 위치 기반
-            apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
-                    request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
+        if(ValidatorUtil.isNotEmpty(request.getArea())) {
+            apiResponse = getPlaceByArea(request, contentTypeId, arrangeTypeName);
         } else {
-            // 지역 필터 있다면 지역 기반
-            // areaCode 조회
-            String areaName = request.getArea();
-            AreaCodeList list = tourAPIService.getAreaCodeApi("");
-            String areaCode = list.getAreaCodeByName(areaName);
-            String sigunguCode = "";
-
-            // sigunguCode 조회
-            if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
-                String sigunguName = request.getSigungu();
-                AreaCodeList sigunguList = tourAPIService.getAreaCodeApi(areaCode);
-                sigunguCode = sigunguList.getAreaCodeByName(sigunguName);
-            }
-
-            apiResponse = tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
+            apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
                     request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
         }
 
@@ -78,49 +69,97 @@ public class PlaceService {
         return PlaceResponseDto.of(simpleDto, apiResponse, request.getArrangeType());
     }
 
-    public SearchPlaceResponseDto searchPlace(SearchPlaceRequestDto request) {
-        TourAPICommonListResponse apiResponse;
-        String contentTypeId = "";
-        String arrangeTypeName = "";
-        String areaCode = "";
-        String sigunguCode = "";
+    /**
+     * 지역 기반 관광 정보 조회
+     */
+    private TourAPICommonListResponse getPlaceByArea(GetPlaceRequestDto request, String contentTypeId, String arrangeTypeName) {
+        // TODO : 지역 구 묶기
+        // TODO : 지역 필터 [거리순] 구현 : 지역의 x, y 좌표를 local api를 통해 알아와서 위치기반 조회로 조회하기
+        String areaCode = "", sigunguCode = "";
 
-        // TODO : 키워드가 지역명일 때는 지역 기반 api를 호출하게 할 것임.
-
-
-        // 필터링 확인
-        if(ValidatorUtil.isNotEmpty(request.getContentType())) {
-            contentTypeId = String.valueOf(request.getContentType().getCode());
-        }
-
-        if(ValidatorUtil.isNotEmpty(request.getArrangeType())) {
-            arrangeTypeName = request.getArrangeType().getCode();
-        }
-
-        if(ValidatorUtil.isNotEmpty(request.getArea())) {
-            areaCode = getAreaCode(request.getArea(), "");
-        }
+        AreaCodeList list = tourAPIService.getAreaCodeApi("");
+        areaCode = list.getAreaCodeByName(request.getArea());
 
         if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
-            sigunguCode = getAreaCode(request.getSigungu(), areaCode);
+            AreaCodeList sigunguList = tourAPIService.getAreaCodeApi(areaCode);
+            sigunguCode = sigunguList.getAreaCodeByName(request.getSigungu());
         }
 
-        apiResponse = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize(),
-                areaCode, sigunguCode, contentTypeId, arrangeTypeName);
+        return tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
+                request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
+    }
 
-        SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
+    /**
+     * 관광 정보 키워드 검색
+     */
+    public SearchPlaceResponseDto searchPlace(SearchPlaceRequestDto request) {
+        LocalResponse local = kakaoLocalAPIService.getSearchAddressLocalApi(request.getKeyword());
+
+        if(isLocationName(local)) {
+            SimpleAreaResponseDto[] simpleDto = searchAreaKeyword(local, request.getMapX(), request.getMapY());
+            return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, true);
+        } else {
+            TourAPICommonListResponse apiResponse = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize());
+
+            SimplePlaceInformationDto[] simpleDto = searchPlaceKeyword(request, apiResponse);
+            return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, apiResponse, false);
+        }
+    }
+
+    private boolean isLocationName(LocalResponse local) {
+        return ValidatorUtil.isNotEmpty(local.getAddressItems());
+    }
+
+    /**
+     * 관광 정보 키워드 검색 -> 지역명 검색
+     */
+    private SimpleAreaResponseDto[] searchAreaKeyword(LocalResponse local, double mapX, double mapY) {
+        List<SimpleAreaResponseDto> areaList = new ArrayList<>();
+
+        for(AddressItem addressItem : local.getAddressItems()) {
+            String address, areaName, sigunguName;
+            double distance, areaX, areaY;
+
+            areaX = addressItem.getX();
+            areaY = addressItem.getY();
+            distance = CoordinateUtil.calculateDistance(mapX, mapY, areaX, areaY);
+
+            if(addressItem.getAddressType().equals("REGION")) {
+                Address addr = addressItem.getAddress();
+                address = addr.getAddressName();
+                areaName = addr.getRegion1depthName();
+                sigunguName = addr.getRegion2depthName();
+            } else {
+                RoadAddress addr = addressItem.getRoadAddress();
+                address = addr.getAddressName();
+                areaName = addr.getRegion1depthName();
+                sigunguName = addr.getRegion2depthName();
+            }
+            areaList.add(SimpleAreaResponseDto.of(address, distance, areaName, sigunguName, areaX, areaY));
+        }
+
+        return areaList.toArray(SimpleAreaResponseDto[]::new);
+    }
+
+    /**
+     * 관광 정보 키워드 검색 -> 단순 검색
+     */
+    private SimplePlaceInformationDto[] searchPlaceKeyword(SearchPlaceRequestDto request, TourAPICommonListResponse apiResponse) {
+
+        for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
+            double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
+            item.updateDistance(distance);
+        }
+
+        return apiResponse.getTourAPICommonItemResponseList().stream()
                 .map(SimplePlaceInformationDto :: of)
                 .toArray(SimplePlaceInformationDto[]::new);
 
-        return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, apiResponse, request.getArrangeType());
     }
 
-    private String getAreaCode(String areaName, String areaCode) {
-        AreaCodeList list = tourAPIService.getAreaCodeApi(areaCode);
-        areaCode = list.getAreaCodeByName(areaName);
-        return areaCode;
-    }
-
+    /**
+     * 관광 정보 상세 조회
+     */
     public DetailPlaceInformationResponseDto getPlaceDetail(GetPlaceDetailRequestDto request) {
         // 공통 정보
         DetailCommonItemResponse commonItem = tourAPIService
@@ -157,10 +196,6 @@ public class PlaceService {
 
     /**
      * content type에 따라 intro item을 설정한다.
-     * @param introApiResponse
-     * @param infoItems
-     * @param response
-     * @return
      */
     private DetailPlaceInformationResponseDto handleApiResponse(DetailIntroResponse introApiResponse, List<DetailInfoItemResponse> infoItems, DetailPlaceInformationResponseDto response) {
         String useTime = null;

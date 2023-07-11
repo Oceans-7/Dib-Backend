@@ -2,8 +2,6 @@ package com.oceans7.dib.global.api.service;
 
 import com.oceans7.dib.domain.place.dto.ContentType;
 import com.oceans7.dib.global.api.http.DataGoKrApi;
-import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
-import com.oceans7.dib.global.api.response.fcstapi.GetWeatherDigitalForecast;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListResponse;
@@ -12,10 +10,6 @@ import com.oceans7.dib.global.api.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class DataGoKrAPIService extends OpenAPIService {
@@ -38,9 +32,7 @@ public class DataGoKrAPIService extends OpenAPIService {
     @Value("${open-api.data-go-kr.mobile-app}")
     private String mobileApp;
 
-    private final String YES_OPTION = "Y";
-
-    private final int RADIUS = 20000;
+    private final static String YES_OPTION = "Y";
 
     /**
      * 위치 기반 관광 정보 조회 API
@@ -48,7 +40,7 @@ public class DataGoKrAPIService extends OpenAPIService {
     public TourAPICommonListResponse getLocationBasedTourApi(double mapX, double mapY, int page, int pageSize,
                                                              String contentTypeId, String arrangeType) {
         String result = dataGoKrApi.getLocationBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                mapX, mapY, RADIUS, page, pageSize,
+                mapX, mapY, 20000, page, pageSize,
                 contentTypeId, arrangeType);
 
         return parsingJsonObject(result, TourAPICommonListResponse.class);
@@ -57,13 +49,10 @@ public class DataGoKrAPIService extends OpenAPIService {
     /**
      * 키워드 검색 관광 정보 조회 API
      */
-    public TourAPICommonListResponse getSearchKeywordTourApi(String keyword, int page, int pageSize,
-                                                             String areaCode, String sigunguCode,
-                                                             String contentTypeId, String arrangeType) {
+    public TourAPICommonListResponse getSearchKeywordTourApi(String keyword, int page, int pageSize) {
 
         String result = dataGoKrApi.getSearchKeywordTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                keyword, page, pageSize,
-                areaCode, sigunguCode, contentTypeId, arrangeType);
+                keyword, page, pageSize);
 
         return parsingJsonObject(result, TourAPICommonListResponse.class);
     }
@@ -98,7 +87,6 @@ public class DataGoKrAPIService extends OpenAPIService {
                 contentId, contentTypeId,
                 YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION);
 
-        System.out.println(result);
         return parsingJsonObject(result, DetailCommonListResponse.class);
     }
 

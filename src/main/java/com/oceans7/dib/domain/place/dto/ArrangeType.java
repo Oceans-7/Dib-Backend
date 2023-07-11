@@ -6,8 +6,7 @@ public enum ArrangeType {
     DISTANCE("거리순", "E")
     ;
 
-    private String description;
-    private String code;
+    private final String code;
 
     ArrangeType(String description, String code) {
         this.code = code;

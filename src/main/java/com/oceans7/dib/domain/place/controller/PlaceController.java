@@ -41,7 +41,7 @@ public class PlaceController {
         }
     }
 
-    @Operation(summary = "키워드로 관광 정보 검색", description = "키워드를 입력받아 관련 정보를 조회한다. (옵션 : 필터링 적용)")
+    @Operation(summary = "키워드로 관광 정보 검색", description = "키워드를 입력받아 관련 정보를 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "O0000", description = "관광 정보 검색 결과가 없습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),

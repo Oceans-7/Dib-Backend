@@ -6,10 +6,10 @@ import com.oceans7.dib.domain.weather.dto.FcstType;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
-import com.oceans7.dib.global.api.response.fcstapi.GetWeatherDigitalForecast;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
+import com.oceans7.dib.global.util.CoordinateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +36,7 @@ public class LocationService {
         LocalResponse addressItems = kakaoLocalAPIService.getGeoAddressLocalApi(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
         addressName = addressItems.getAddressItems().get(0).getRoadAddress().getAddressName();
 
-        GetWeatherDigitalForecast.LatXLngY grid = new GetWeatherDigitalForecast()
-                .convertGRID_GPS(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
+        CoordinateUtil.LatXLngY grid = CoordinateUtil.convertGRID_GPS(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
 
         baseX = (int)grid.x;
         baseY = (int)grid.y;

@@ -46,6 +46,9 @@ public class LocalResponse {
         @Getter
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Address {
+            /**
+             * 지역 검색 시 Address에 담겨옴.
+             */
             private String addressName;
             private String region1depthName;
             private String region2depthName;
@@ -63,11 +66,20 @@ public class LocalResponse {
         @Getter
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class RoadAddress {
+            /**
+             * 도로명 주소로 검색 시 RoadAddress에 담겨옴.
+             */
             private String addressName;
+            private String region1depthName;
+            private String region2depthName;
 
             @JsonCreator
-            public RoadAddress(@JsonProperty("address_name") String addressName) {
+            public RoadAddress(@JsonProperty("address_name") String addressName,
+                               @JsonProperty("region_1depth_name") String region1depthName,
+                               @JsonProperty("region_2depth_name") String region2depthName) {
                 this.addressName = addressName;
+                this.region1depthName = region1depthName;
+                this.region2depthName = region2depthName;
             }
         }
     }
