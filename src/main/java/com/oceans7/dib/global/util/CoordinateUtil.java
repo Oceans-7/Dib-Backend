@@ -1,11 +1,34 @@
-package com.oceans7.dib.global.api.response.fcstapi;
+package com.oceans7.dib.global.util;
 
-/**
- * LCC DFS 좌표변환
- */
-public class GetWeatherDigitalForecast {
+public class CoordinateUtil {
+    private static final double EARTH_RADIUS_KM = 6371.0;
 
-    public LatXLngY convertGRID_GPS(double mapX, double mapY)
+    // 좌표 간 거리 계산
+    public static double calculateDistance(double lon1, double lat1, double lon2, double lat2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return round(EARTH_RADIUS_KM * c);
+    }
+
+    // m -> km 변환
+    public static double convertMetersToKilometers(double meters) {
+        return round(meters / 1000.0);
+    }
+
+    // 반올림
+    private static double round(double distance) {
+        return Math.round(distance * 10.0) / 10.0;
+    }
+
+    // LCC DFS 좌표변환 ( 위경도->좌표, mapX:경도, mapY:위도 )
+    public static LatXLngY convertGRID_GPS(double mapX, double mapY)
     {
         double RE = 6371.00877; // 지구 반경(km)
         double GRID = 5.0; // 격자 간격(km)
@@ -50,7 +73,7 @@ public class GetWeatherDigitalForecast {
         return rs;
     }
 
-    public class LatXLngY
+    public static class LatXLngY
     {
         public double lat;
         public double lng;
