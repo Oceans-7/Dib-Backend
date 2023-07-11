@@ -3,11 +3,13 @@ package com.oceans7.dib.domain.place.dto.request;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.ContentType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class GetPlaceRequestDto {
     @Schema(description = "사용자 위도 (필수)", example = "126.9779692")
     private double mapX;
