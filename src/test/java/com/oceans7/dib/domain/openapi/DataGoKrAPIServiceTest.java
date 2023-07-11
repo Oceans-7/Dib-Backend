@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi;
+package com.oceans7.dib.domain.openapi;
 
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.ContentType;
@@ -63,9 +63,12 @@ public class DataGoKrAPIServiceTest {
 
         // when
         TourAPICommonListResponse list =
-                dataGoKrAPIService.getSearchKeywordTourApi(keyword, page, pageSize, "", "", "", "");
+                dataGoKrAPIService.getSearchKeywordTourApi(keyword, page, pageSize);
 
         // then
+        assertThat(list.getPage()).isEqualTo(page);
+        assertThat(list.getPageSize()).isEqualTo(pageSize);
+        assertThat(list.getTourAPICommonItemResponseList().size()).isEqualTo(pageSize);
         List<TourAPICommonItemResponse> itemList = list.getTourAPICommonItemResponseList();
         for(TourAPICommonItemResponse item : itemList) {
             assertThat(item.getTitle().contains(keyword)).isEqualTo(true);
@@ -211,7 +214,7 @@ public class DataGoKrAPIServiceTest {
         for(DetailImageItemResponse item : detailItemList) {
             assertThat(item.getContentId()).isEqualTo(compareItem.getContentId());
 
-            String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif)$";
+            String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif|bmp)$";
             assertThat(item.getOriginImageUrl().matches(urlPattern)).isEqualTo(true);
         }
 
