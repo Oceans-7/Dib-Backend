@@ -1,4 +1,4 @@
-package com.oceans7.dib.openapi;
+package com.oceans7.dib.domain.openapi;
 
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;

@@ -1,8 +1,8 @@
-package com.oceans7.dib.openapi;
+package com.oceans7.dib.domain.openapi;
 
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
-import com.oceans7.dib.global.api.response.fcstapi.GetWeatherDigitalForecast;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
+import com.oceans7.dib.global.util.CoordinateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class VilageFcstAPIServiceTest {
     @Autowired
     VilageFcstAPIService vilageFcstAPIService;
 
-    private GetWeatherDigitalForecast.LatXLngY grid;
+    private CoordinateUtil.LatXLngY grid;
     private int baseX, baseY;
 
     @BeforeEach
@@ -30,8 +30,7 @@ public class VilageFcstAPIServiceTest {
         double mapX = 126.9779692;
         double mapY = 37.566535;
 
-        this.grid = new GetWeatherDigitalForecast()
-                .convertGRID_GPS(mapX, mapY);
+        this.grid = CoordinateUtil.convertGRID_GPS(mapX, mapY);
 
         this.baseX = (int)grid.x;
         this.baseY = (int)grid.y;
