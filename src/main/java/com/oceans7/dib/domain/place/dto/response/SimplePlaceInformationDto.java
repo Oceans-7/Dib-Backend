@@ -2,7 +2,6 @@ package com.oceans7.dib.domain.place.dto.response;
 
 import com.oceans7.dib.domain.place.dto.ContentType;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
-import com.oceans7.dib.global.util.CoordinateUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,7 +41,7 @@ public class SimplePlaceInformationDto {
         simplePlaceInformation.address = item.getAddress1() + item.getAddress2();
         simplePlaceInformation.contentId = item.getContentId();
         simplePlaceInformation.contentType = getContentTypeByCode(item.getContentTypeId());
-        simplePlaceInformation.distance = CoordinateUtil.convertMetersToKilometers(item.getDist());
+        simplePlaceInformation.distance = item.getDist();
         simplePlaceInformation.firstImage = item.getFirstImage();
         simplePlaceInformation.tel = item.getTel();
 

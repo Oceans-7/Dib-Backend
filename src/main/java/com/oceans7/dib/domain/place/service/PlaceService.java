@@ -58,8 +58,7 @@ public class PlaceService {
         if(ValidatorUtil.isNotEmpty(request.getArea())) {
             apiResponse = getPlaceByArea(request, contentTypeId, arrangeTypeName);
         } else {
-            apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
-                    request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
+            apiResponse = getPlaceByLocation(request, contentTypeId, arrangeTypeName);
         }
 
         SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
@@ -70,12 +69,25 @@ public class PlaceService {
     }
 
     /**
+     * 위치 기반 관광 정보 조회
+     */
+    private TourAPICommonListResponse getPlaceByLocation(GetPlaceRequestDto request, String contentTypeId, String arrangeTypeName) {
+        TourAPICommonListResponse apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
+                request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
+
+        for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
+            double distance = CoordinateUtil.convertMetersToKilometers(item.getDist());
+            item.updateDistance(distance);
+        }
+
+        return apiResponse;
+    }
+
+    /**
      * 지역 기반 관광 정보 조회
      */
     private TourAPICommonListResponse getPlaceByArea(GetPlaceRequestDto request, String contentTypeId, String arrangeTypeName) {
-        // TODO : 지역 구 묶기
-        // TODO : 지역 필터 [거리순] 구현 : 지역의 x, y 좌표를 local api를 통해 알아와서 위치기반 조회로 조회하기
-        String areaCode = "", sigunguCode = "";
+        String areaCode, sigunguCode = "";
 
         AreaCodeList list = tourAPIService.getAreaCodeApi("");
         areaCode = list.getAreaCodeByName(request.getArea());
@@ -85,8 +97,15 @@ public class PlaceService {
             sigunguCode = sigunguList.getAreaCodeByName(request.getSigungu());
         }
 
-        return tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
+        TourAPICommonListResponse apiResponse = tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
                 request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
+
+        for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
+            double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
+            item.updateDistance(distance);
+        }
+
+        return apiResponse;
     }
 
     /**
