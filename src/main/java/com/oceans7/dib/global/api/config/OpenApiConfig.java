@@ -33,26 +33,17 @@ public class OpenApiConfig {
 
     private final static String kakaoHeader = "KakaoAK ";
 
-    private HttpClient httpClient() {
-        return HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .responseTimeout(Duration.ofMillis(10000))
-                .doOnConnected(conn ->
-                        conn.addHandlerLast(new ReadTimeoutHandler(10000, TimeUnit.MILLISECONDS))
-                                .addHandlerLast(new WriteTimeoutHandler(10000, TimeUnit.MILLISECONDS)));
-    }
-
     @Bean
     DataGoKrApi dataGoKrApi() {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(dataGoKrBaseUrl)
-                .clientConnector(new ReactorClientHttpConnector(httpClient()))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
 
         return HttpServiceProxyFactory
                 .builder(WebClientAdapter.forClient(webClient))
+                .blockTimeout(Duration.ofMillis(7000))
                 .build()
                 .createClient(DataGoKrApi.class);
     }
@@ -62,13 +53,13 @@ public class OpenApiConfig {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(kakaoBaseUrl)
-                .clientConnector(new ReactorClientHttpConnector(httpClient()))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, kakaoHeader + kakaoServiceKey)
                 .build();
 
         return HttpServiceProxyFactory
                 .builder(WebClientAdapter.forClient(webClient))
+                .blockTimeout(Duration.ofMillis(7000))
                 .build()
                 .createClient(KakaoApi.class);
     }
