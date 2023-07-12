@@ -72,7 +72,7 @@ public class OpenApiConfig {
 
         return HttpServiceProxyFactory
                 .builder(WebClientAdapter.forClient(webClient))
-                .blockTimeout(Duration.ofMillis(7000))
+                .blockTimeout(Duration.ofMillis(5000))
                 .build()
                 .createClient(KakaoApi.class);
     }
