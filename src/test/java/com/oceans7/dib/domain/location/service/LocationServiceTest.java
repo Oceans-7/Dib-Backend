@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -15,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureWebTestClient(timeout = "1500")
 public class LocationServiceTest {
     @Autowired
     LocationService locationService;
@@ -28,7 +26,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("좌표 기준 지역명, 날씨 검색 테스트")
+    @DisplayName("좌표로 지역명과 날씨 조회 테스트")
     public void searchPlaceTest() {
 
         LocationResponseDto response = locationService.searchPlace(searchLocationRequestDto);
