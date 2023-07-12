@@ -12,7 +12,7 @@ public class LocationResponseDto {
     @Schema(description = "도로명 주소", example = "경기도 여주시 세종로 1")
     private String address;
 
-    @Schema(description = "날씨 상태", example = "날씨 상태")
+    @Schema(description = "날씨 상태", example = "SUNNY")
     private WeatherType weatherType;
 
     @Schema(description = "기온", example = "23")

@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,9 +34,10 @@ public class PlaceController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "O0000", description = "관광 정보 검색 결과가 없습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
             @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
+            @ApiResponse(responseCode = "C0005", description = "유효성 검사를 실패했습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
     })
     @GetMapping()
-    public ApplicationResponse<PlaceResponseDto> getPlace(@ModelAttribute GetPlaceRequestDto placeRequestDto) {
+    public ApplicationResponse<PlaceResponseDto> getPlace(@ModelAttribute @Validated GetPlaceRequestDto placeRequestDto) {
         {
             return ApplicationResponse.ok(placeService.getPlace(placeRequestDto));
         }
@@ -46,9 +48,10 @@ public class PlaceController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "O0000", description = "관광 정보 검색 결과가 없습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
             @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
+            @ApiResponse(responseCode = "C0005", description = "유효성 검사를 실패했습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
     })
     @GetMapping("/search")
-    public ApplicationResponse<SearchPlaceResponseDto> searchPlace(@ModelAttribute SearchPlaceRequestDto searchPlaceRequestDto) {
+    public ApplicationResponse<SearchPlaceResponseDto> searchPlace(@ModelAttribute @Validated SearchPlaceRequestDto searchPlaceRequestDto) {
         {
             return ApplicationResponse.ok(placeService.searchPlace(searchPlaceRequestDto));
         }
@@ -58,9 +61,10 @@ public class PlaceController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
+            @ApiResponse(responseCode = "C0005", description = "유효성 검사를 실패했습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
     })
     @GetMapping("/detail")
-    public ApplicationResponse<DetailPlaceInformationResponseDto> getPlaceDetail(@ModelAttribute GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
+    public ApplicationResponse<DetailPlaceInformationResponseDto> getPlaceDetail(@ModelAttribute @Validated GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
         {
             return ApplicationResponse.ok(placeService.getPlaceDetail(getPlaceDetailRequestDto));
         }
