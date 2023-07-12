@@ -1,11 +1,10 @@
-package com.oceans7.dib.domain.place;
+package com.oceans7.dib.domain.place.service;
 
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.response.*;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto.FacilityInfo;
-import com.oceans7.dib.domain.place.service.PlaceService;
 import com.oceans7.dib.global.MockRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +24,7 @@ public class PlaceServiceTest {
 
     private GetPlaceRequestDto placeReqDto;
     private GetPlaceRequestDto placeWithSortingReqDto;
+    private GetPlaceRequestDto areaPlaceReq;
 
     private SearchPlaceRequestDto searchPlaceReqDto;
     private SearchPlaceRequestDto searchAreaPlaceReqDto;
@@ -35,6 +35,7 @@ public class PlaceServiceTest {
     public void before() {
         placeReqDto = MockRequest.testGetPlaceReqNoOption();
         placeWithSortingReqDto = MockRequest.testGetPlaceWithSortingReq();
+        areaPlaceReq = MockRequest.testGetAreaPlaceReq();
 
         searchPlaceReqDto = MockRequest.testSearchPlaceReq();
         searchAreaPlaceReqDto = MockRequest.testSearchAreaPlaceReq();
@@ -80,13 +81,18 @@ public class PlaceServiceTest {
     @Test
     @DisplayName("관광 정보 리스트 조회 테스트 : 지역 기반")
     public void getAreaPlaceTest() {
-        // TODO : 관광 정보 리스트 조회 테스트 : 지역 기반
-    }
+        PlaceResponseDto placeResDto = placeService.getPlace(areaPlaceReq);
 
-    @Test
-    @DisplayName("관광 정보 리스트 조회 [정렬] 테스트 : 지역 기반")
-    public void getAreaPlaceWithSortingTest() {
-        // TODO : 관광 정보 리스트 조회 [정렬] 테스트 : 지역 기반
+        assertThat(placeResDto.getPage()).isEqualTo(areaPlaceReq.getPage());
+        assertThat(placeResDto.getPageSize()).isEqualTo(areaPlaceReq.getPageSize());
+        assertThat(placeResDto.getArrangeType()).isNull();
+
+        for(SimplePlaceInformationDto place : placeResDto.getPlaces()) {
+            assertThat(place.getContentType()).isEqualTo(placeReqDto.getContentType());
+            assertThat(place.getDistance()).isBetween(0.0, 10.0);
+            assertThat(place.getAddress()).contains(areaPlaceReq.getArea());
+            assertThat(place.getAddress()).contains(areaPlaceReq.getSigungu());
+        }
     }
 
     @Test

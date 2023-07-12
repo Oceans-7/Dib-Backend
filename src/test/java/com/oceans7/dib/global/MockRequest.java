@@ -21,10 +21,9 @@ public class MockRequest {
                 ContentType.TOURIST_SPOT, "", "", ArrangeType.DISTANCE, 1, 10);
     }
 
-    public static GetPlaceRequestDto testGetAreaPlaceWithSortingReq() {
+    public static GetPlaceRequestDto testGetAreaPlaceReq() {
         return new GetPlaceRequestDto(MAP_X, MAP_Y,
-                ContentType.TOURIST_SPOT, "서울", "성북구", ArrangeType.DISTANCE,
-                1, 10);
+                ContentType.TOURIST_SPOT, "서울", "성북구", null, 1, 10);
     }
 
     public static SearchPlaceRequestDto testSearchPlaceReq() {
