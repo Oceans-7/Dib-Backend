@@ -5,6 +5,7 @@ import com.oceans7.dib.global.api.http.KakaoApi;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import io.netty.resolver.DefaultAddressResolverGroup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,11 +34,22 @@ public class OpenApiConfig {
 
     private final static String kakaoHeader = "KakaoAK ";
 
+    private HttpClient httpClient() {
+        return HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+                .responseTimeout(Duration.ofMillis(5000))
+                .doOnConnected(conn ->
+                                conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
+                                    .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS))
+                ).resolver(DefaultAddressResolverGroup.INSTANCE);
+    }
+
     @Bean
     DataGoKrApi dataGoKrApi() {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(dataGoKrBaseUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient()))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
 
@@ -53,6 +65,7 @@ public class OpenApiConfig {
 
         WebClient webClient = WebClient.builder()
                 .baseUrl(kakaoBaseUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient()))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, kakaoHeader + kakaoServiceKey)
                 .build();
