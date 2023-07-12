@@ -9,10 +9,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ApplicationResponse<T> {
-    @Schema(description = "Response code", example = "SUCCESS")
+    @Schema(description = "Response code", example = "200")
     private String code;
 
-    @Schema(description = "Response message", example = "성공")
+    @Schema(description = "Response message", example = "요청 성공")
     private String message;
 
     @Schema(description = "Response data")
@@ -20,11 +20,11 @@ public class ApplicationResponse<T> {
     private T data;
 
     public static ApplicationResponse<Void> ok() {
-        return new ApplicationResponse<>("SUCCESS", "성공", null);
+        return new ApplicationResponse<>("200", "요청 성공", null);
     }
 
     public static <T> ApplicationResponse<T> ok(T data) {
-        return new ApplicationResponse<>("SUCCESS", "성공", data);
+        return new ApplicationResponse<>("200", "요청 성공", data);
     }
 
     public static ApplicationResponse<ErrorCode> error(ErrorCode errorCode) {
