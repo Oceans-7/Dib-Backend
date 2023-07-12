@@ -36,7 +36,7 @@ public class OpenApiConfig {
     private HttpClient httpClient() {
         return HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .responseTimeout(Duration.ofSeconds(10000))
+                .responseTimeout(Duration.ofMillis(10000))
                 .doOnConnected(conn ->
                         conn.addHandlerLast(new ReadTimeoutHandler(10000, TimeUnit.MILLISECONDS))
                                 .addHandlerLast(new WriteTimeoutHandler(10000, TimeUnit.MILLISECONDS)));
