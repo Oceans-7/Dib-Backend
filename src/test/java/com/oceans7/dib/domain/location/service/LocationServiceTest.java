@@ -1,8 +1,7 @@
-package com.oceans7.dib.domain.location;
+package com.oceans7.dib.domain.location.service;
 
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
-import com.oceans7.dib.domain.location.service.LocationService;
 import com.oceans7.dib.global.MockRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
