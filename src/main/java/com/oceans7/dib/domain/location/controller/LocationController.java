@@ -33,9 +33,9 @@ public class LocationController {
             @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
             @ApiResponse(responseCode = "C0005", description = "유효성 검사를 실패했습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
     })
-    public ResponseEntity<LocationResponseDto> searchPlace(
+    public ApplicationResponse<LocationResponseDto> searchPlace(
             @Validated @ModelAttribute SearchLocationRequestDto searchLocationRequestDto
     ) {
-        return ResponseEntity.ok(locationService.searchPlace(searchLocationRequestDto));
+        return ApplicationResponse.ok(locationService.searchPlace(searchLocationRequestDto));
     }
 }
