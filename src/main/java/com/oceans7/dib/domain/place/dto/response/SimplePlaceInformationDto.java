@@ -1,13 +1,13 @@
 package com.oceans7.dib.domain.place.dto.response;
 
-import com.oceans7.dib.domain.place.dto.ContentType;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.oceans7.dib.domain.place.dto.ContentType.getContentTypeByCode;
+import static com.oceans7.dib.domain.place.ContentType.getContentTypeByCode;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

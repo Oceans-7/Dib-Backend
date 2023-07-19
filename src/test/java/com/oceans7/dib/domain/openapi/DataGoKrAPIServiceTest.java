@@ -1,7 +1,7 @@
 package com.oceans7.dib.domain.openapi;
 
 import com.oceans7.dib.domain.place.dto.ArrangeType;
-import com.oceans7.dib.domain.place.dto.ContentType;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageItemResponse;

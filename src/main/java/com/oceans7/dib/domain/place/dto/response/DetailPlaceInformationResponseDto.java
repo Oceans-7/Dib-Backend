@@ -1,6 +1,6 @@
 package com.oceans7.dib.domain.place.dto.response;
 
-import com.oceans7.dib.domain.place.dto.ContentType;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.global.util.TextManipulatorUtil;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
@@ -11,7 +11,7 @@ import lombok.*;
 
 import java.util.List;
 
-import static com.oceans7.dib.domain.place.dto.ContentType.getContentTypeByCode;
+import static com.oceans7.dib.domain.place.ContentType.getContentTypeByCode;
 
 
 @Getter

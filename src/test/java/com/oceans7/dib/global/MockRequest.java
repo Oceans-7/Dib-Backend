@@ -2,7 +2,7 @@ package com.oceans7.dib.global;
 
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
-import com.oceans7.dib.domain.place.dto.ContentType;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;

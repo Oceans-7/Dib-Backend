@@ -1,6 +1,6 @@
 package com.oceans7.dib.global.api.service;
 
-import com.oceans7.dib.domain.place.dto.ContentType;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListResponse;

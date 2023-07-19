@@ -1,4 +1,4 @@
-package com.oceans7.dib.domain.place.dto;
+package com.oceans7.dib.domain.place;
 
 public enum ContentType {
     TOURIST_SPOT(12),

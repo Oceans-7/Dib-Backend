@@ -1,6 +1,6 @@
 package com.oceans7.dib.domain.place.service;
 
-import com.oceans7.dib.domain.place.dto.ContentType;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
