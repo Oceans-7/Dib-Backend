@@ -17,70 +17,38 @@ public class LocalResponse {
     public LocalResponse(@JsonProperty("documents") List<AddressItem> addressItems) {
         this.addressItems = addressItems;
     }
-
     @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AddressItem {
+        @JsonProperty("address")
         private Address address;
-        private RoadAddress roadAddress;
-        private String addressName;
-        private String addressType;
-        private double x;
-        private double y;
 
-        @JsonCreator
-        public AddressItem(@JsonProperty("address") Address address,
-                           @JsonProperty("road_address") RoadAddress roadAddress,
-                           @JsonProperty("address_name") String addressName,
-                           @JsonProperty("address_type") String addressType,
-                           @JsonProperty("x") double x,
-                           @JsonProperty("y") double y) {
-            this.address = address;
-            this.roadAddress = roadAddress;
-            this.addressName = addressName;
-            this.addressType = addressType;
-            this.x = x;
-            this.y = y;
-        }
+        @JsonProperty("road_address")
+        private Address roadAddress;
+
+        @JsonProperty("address_name")
+        private String addressName;
+
+        @JsonProperty("address_type")
+        private String addressType;
+
+        @JsonProperty("x")
+        private double x;
+
+        @JsonProperty("y")
+        private double y;
 
         @Getter
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Address {
-            /**
-             * 지역 검색 시 Address에 담겨옴.
-             */
+            @JsonProperty("address_name")
             private String addressName;
+
+            @JsonProperty("region_1depth_name")
             private String region1depthName;
+
+            @JsonProperty("region_2depth_name")
             private String region2depthName;
-
-            @JsonCreator
-            public Address(@JsonProperty("address_name") String addressName,
-                           @JsonProperty("region_1depth_name") String region1depthName,
-                           @JsonProperty("region_2depth_name") String region2depthName) {
-                this.addressName = addressName;
-                this.region1depthName = region1depthName;
-                this.region2depthName = region2depthName;
-            }
-        }
-
-        @Getter
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class RoadAddress {
-            /**
-             * 도로명 주소로 검색 시 RoadAddress에 담겨옴.
-             */
-            private String addressName;
-            private String region1depthName;
-            private String region2depthName;
-
-            @JsonCreator
-            public RoadAddress(@JsonProperty("address_name") String addressName,
-                               @JsonProperty("region_1depth_name") String region1depthName,
-                               @JsonProperty("region_2depth_name") String region2depthName) {
-                this.addressName = addressName;
-                this.region1depthName = region1depthName;
-                this.region2depthName = region2depthName;
-            }
         }
     }
 }

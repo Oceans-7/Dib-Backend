@@ -149,7 +149,7 @@ public class PlaceService {
                 areaName = addr.getRegion1depthName();
                 sigunguName = addr.getRegion2depthName();
             } else {
-                RoadAddress addr = addressItem.getRoadAddress();
+                Address addr = addressItem.getRoadAddress();
                 address = addr.getAddressName();
                 areaName = addr.getRegion1depthName();
                 sigunguName = addr.getRegion2depthName();

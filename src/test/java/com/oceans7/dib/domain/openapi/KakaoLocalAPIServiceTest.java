@@ -48,7 +48,7 @@ public class KakaoLocalAPIServiceTest {
         LocalResponse result =
                 kakaoLocalAPIService.getGeoAddressLocalApi(x, y);
         LocalResponse.AddressItem item = result.getAddressItems().get(0);
-        LocalResponse.AddressItem.RoadAddress addressItem = item.getRoadAddress();
+        LocalResponse.AddressItem.Address addressItem = item.getRoadAddress();
 
         // then
         assertThat(addressItem.getAddressName()).isEqualTo("경기도 여주시 세종로 1");
