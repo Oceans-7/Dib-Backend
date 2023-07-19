@@ -13,11 +13,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetPlaceRequestDto {
     @NotNull
-    @Schema(description = "사용자 위도", example = "126.9779692")
+    @Schema(description = "사용자 경도", example = "126.9779692")
     private double mapX;
 
     @NotNull
-    @Schema(description = "사용자 경도", example = "37.566535")
+    @Schema(description = "사용자 위도", example = "37.566535")
     private double mapY;
 
     @Schema(description = "관광지 타입", example = "TOURIST_SPOT")

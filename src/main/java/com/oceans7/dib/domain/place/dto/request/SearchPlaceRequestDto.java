@@ -18,11 +18,11 @@ public class SearchPlaceRequestDto {
     private String keyword;
 
     @NotNull
-    @Schema(description = "사용자 위도", example = "126.9779692")
+    @Schema(description = "사용자 경도", example = "126.9779692")
     private double mapX;
 
     @NotNull
-    @Schema(description = "사용자 경도", example = "37.566535")
+    @Schema(description = "사용자 위도", example = "37.566535")
     private double mapY;
 
     @NotNull
