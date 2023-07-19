@@ -18,6 +18,7 @@ public enum ErrorCode {
     // Open API
     NOT_FOUND_ITEM_EXCEPTION(HttpStatus.BAD_REQUEST, "O0000", "관광 정보 검색 결과가 없습니다."),
     SOCKET_TIMEOUT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "O0001", "Open API 서버 연결에 실패하였습니다."),
+    NOT_FOUNT_USER_LOCATION(HttpStatus.BAD_REQUEST, "O0002", "사용자 위치를 찾을 수 없습니다."),
     ;
 
     private HttpStatus httpStatus;

@@ -9,7 +9,10 @@ import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.CoordinateUtil;
+import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,11 @@ public class LocationService {
         String addressName;
 
         LocalResponse addressItems = kakaoLocalAPIService.getGeoAddressLocalApi(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
+
+        if(ValidatorUtil.isEmpty(addressItems.getAddressItems())) {
+            throw new ApplicationException(ErrorCode.NOT_FOUNT_USER_LOCATION);
+        }
+
         addressName = addressItems.getAddressItems().get(0).getRoadAddress().getAddressName();
 
         CoordinateUtil.LatXLngY grid = CoordinateUtil.convertGRID_GPS(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
@@ -73,6 +81,7 @@ public class LocationService {
 
         isDay = (now.getHour() >= 6 && now.getHour() < 18) ? true : false;
     }
+
     private int getFcstItem(List<FcstAPICommonItemResponse> items, FcstType category, String baseTime) {
         for(FcstAPICommonItemResponse item : items) {
             if(item.getCategory().equals(category.name()) && item.getFcstTime().equals(baseTime)) {
