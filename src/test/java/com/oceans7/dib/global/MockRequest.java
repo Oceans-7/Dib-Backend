@@ -41,4 +41,8 @@ public class MockRequest {
     public static SearchLocationRequestDto testSearchLocationReq() {
         return new SearchLocationRequestDto(126.9779692, 37.566535);
     }
+
+    public static SearchLocationRequestDto testSearchLocationXYExceptionReq() {
+        return new SearchLocationRequestDto(0, 0);
+    }
 }
