@@ -33,6 +33,7 @@ public class DataGoKrAPIService extends OpenAPIService {
     private String mobileApp;
 
     private final static String YES_OPTION = "Y";
+    private final static int RADIUS = 20000;
 
     /**
      * 위치 기반 관광 정보 조회 API
@@ -40,7 +41,7 @@ public class DataGoKrAPIService extends OpenAPIService {
     public TourAPICommonListResponse getLocationBasedTourApi(double mapX, double mapY, int page, int pageSize,
                                                              String contentTypeId, String arrangeType) {
         String result = dataGoKrApi.getLocationBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                mapX, mapY, 20000, page, pageSize,
+                mapX, mapY, RADIUS, page, pageSize,
                 contentTypeId, arrangeType);
 
         return parsingJsonObject(result, TourAPICommonListResponse.class);

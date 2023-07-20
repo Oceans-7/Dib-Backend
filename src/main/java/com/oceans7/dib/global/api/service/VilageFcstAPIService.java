@@ -21,13 +21,17 @@ public class VilageFcstAPIService extends OpenAPIService {
     @Value("${open-api.data-go-kr.data-type}")
     private String dataType;
 
+    private final static int BASE_PAGE = 1;
+    private final static int NCST_PAGE_SIZE = 8;
+    private final static int FCST_PAGE_SIZE = 60;
+
     /**
      * 기상청 초단기 실황
      */
     public FcstAPICommonListResponse getNowCast(int x, int y, String baseDate, String baseTime) {
 
         String result = dataGoKrApi.getNowForecastInfo(serviceKey, dataType, x, y,
-                baseDate, baseTime, 1, 8);
+                baseDate, baseTime, BASE_PAGE, NCST_PAGE_SIZE);
 
         return parsingJsonObject(result, FcstAPICommonListResponse.class);
     }
@@ -38,7 +42,7 @@ public class VilageFcstAPIService extends OpenAPIService {
     public FcstAPICommonListResponse getUltraForecast(int x, int y, String baseDate, String baseTime) {
 
         String result = dataGoKrApi.getUltraForecastInfo(serviceKey, dataType, x, y,
-                baseDate, baseTime, 1, 60);
+                baseDate, baseTime, BASE_PAGE, FCST_PAGE_SIZE);
 
         return parsingJsonObject(result, FcstAPICommonListResponse.class);
     }
