@@ -79,7 +79,7 @@ public class LocationService {
             this.baseDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         }
 
-        isDay = (now.getHour() >= 6 && now.getHour() < 18) ? true : false;
+        isDay = (now.getHour() >= 6 && now.getHour() < 18);
     }
 
     private int getFcstItem(List<FcstAPICommonItemResponse> items, FcstType category, String baseTime) {
