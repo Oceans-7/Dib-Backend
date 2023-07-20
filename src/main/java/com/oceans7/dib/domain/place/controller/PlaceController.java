@@ -8,6 +8,7 @@ import com.oceans7.dib.domain.place.dto.response.PlaceResponseDto;
 import com.oceans7.dib.domain.place.dto.response.SearchPlaceResponseDto;
 import com.oceans7.dib.domain.place.service.PlaceService;
 import com.oceans7.dib.global.response.ApplicationResponse;
+import com.oceans7.dib.global.util.ValidatorUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,8 +39,17 @@ public class PlaceController {
     })
     @GetMapping()
     public ApplicationResponse<PlaceResponseDto> getPlace(@ModelAttribute @Validated GetPlaceRequestDto placeRequestDto) {
-        PlaceResponseDto dto = placeService.getPlace(placeRequestDto);
-        return ApplicationResponse.ok(dto);
+        String contentType = "", arrangeType = "";
+
+        // 필터링 확인
+        if(ValidatorUtil.isNotEmpty(placeRequestDto.getContentType())) {
+            contentType = String.valueOf(placeRequestDto.getContentType().getCode());
+        }
+        if(ValidatorUtil.isNotEmpty(placeRequestDto.getArrangeType())) {
+            arrangeType = placeRequestDto.getArrangeType().name();
+        }
+
+        return ApplicationResponse.ok(placeService.getPlace(placeRequestDto, contentType, arrangeType));
     }
 
     @Operation(summary = "키워드로 관광 정보 검색", description = "키워드를 입력받아 관련 정보를 조회한다.")

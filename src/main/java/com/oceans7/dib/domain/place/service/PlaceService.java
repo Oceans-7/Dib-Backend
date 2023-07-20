@@ -43,22 +43,13 @@ public class PlaceService {
     /**
      * 관광 정보 리스트 조회
      */
-    public PlaceResponseDto getPlace(GetPlaceRequestDto request) {
+    public PlaceResponseDto getPlace(GetPlaceRequestDto request, String contentType, String arrangeType) {
         TourAPICommonListResponse apiResponse;
-        String contentTypeId = "", arrangeTypeName = "";
-
-        // 필터링 확인
-        if(ValidatorUtil.isNotEmpty(request.getContentType())) {
-            contentTypeId = String.valueOf(request.getContentType().getCode());
-        }
-        if(ValidatorUtil.isNotEmpty(request.getArrangeType())) {
-            arrangeTypeName = request.getArrangeType().getCode();
-        }
 
         if(ValidatorUtil.isNotEmpty(request.getArea())) {
-            apiResponse = getPlaceByArea(request, contentTypeId, arrangeTypeName);
+            apiResponse = getPlaceByArea(request, contentType, arrangeType);
         } else {
-            apiResponse = getPlaceByLocation(request, contentTypeId, arrangeTypeName);
+            apiResponse = getPlaceByLocation(request, contentType, arrangeType);
         }
 
         SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
@@ -71,9 +62,9 @@ public class PlaceService {
     /**
      * 위치 기반 관광 정보 조회
      */
-    private TourAPICommonListResponse getPlaceByLocation(GetPlaceRequestDto request, String contentTypeId, String arrangeTypeName) {
+    private TourAPICommonListResponse getPlaceByLocation(GetPlaceRequestDto request, String contentType, String arrangeType) {
         TourAPICommonListResponse apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
-                request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
+                request.getPage(), request.getPageSize(), contentType, arrangeType);
 
         for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
             double distance = CoordinateUtil.convertMetersToKilometers(item.getDist());
@@ -86,7 +77,7 @@ public class PlaceService {
     /**
      * 지역 기반 관광 정보 조회
      */
-    private TourAPICommonListResponse getPlaceByArea(GetPlaceRequestDto request, String contentTypeId, String arrangeTypeName) {
+    private TourAPICommonListResponse getPlaceByArea(GetPlaceRequestDto request, String contentType, String arrangeType) {
         String areaCode, sigunguCode = "";
 
         AreaCodeList list = tourAPIService.getAreaCodeApi("");
@@ -98,7 +89,7 @@ public class PlaceService {
         }
 
         TourAPICommonListResponse apiResponse = tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
-                request.getPage(), request.getPageSize(), contentTypeId, arrangeTypeName);
+                request.getPage(), request.getPageSize(), contentType, arrangeType);
 
         for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
             double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());

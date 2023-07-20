@@ -32,7 +32,7 @@ public class DataGoKrAPIServiceTest {
     DataGoKrAPIService dataGoKrAPIService;
 
     @Test
-    @DisplayName("위치 기반 서비스 API 통신 테스트")
+    @DisplayName("위치 기반 서비스 API 통신 테스트 : 거리순 필터")
     public void callLocationBasedAPITest() {
         // given
         double mapX = 126.9779692;
@@ -40,11 +40,11 @@ public class DataGoKrAPIServiceTest {
         int page = 1;
         int pageSize = 4;
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
-        String arrangeType = ArrangeType.DISTANCE.getCode();
+        ArrangeType arrangeType = ArrangeType.E;
 
         // when
         TourAPICommonListResponse list =
-                dataGoKrAPIService.getLocationBasedTourApi(mapX, mapY, page, pageSize, contentTypeId, arrangeType);
+                dataGoKrAPIService.getLocationBasedTourApi(mapX, mapY, page, pageSize, contentTypeId, arrangeType.name());
 
         // then
         assertThat(list.getTourAPICommonItemResponseList().size()).isEqualTo(pageSize);
@@ -99,11 +99,11 @@ public class DataGoKrAPIServiceTest {
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         int page = 1;
         int pageSize = 4;
-        String arrangeType = ArrangeType.TITLE.getCode();
+        ArrangeType arrangeType = ArrangeType.A;
 
         // when
         TourAPICommonListResponse tourAPICommonList =
-                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType);
+                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType.name());
 
         // than
         List<TourAPICommonItemResponse> itemList = tourAPICommonList.getTourAPICommonItemResponseList();
@@ -124,10 +124,10 @@ public class DataGoKrAPIServiceTest {
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         int page = 1;
         int pageSize = 4;
-        String arrangeType = ArrangeType.TITLE.getCode();
+        ArrangeType arrangeType = ArrangeType.A;
 
         TourAPICommonListResponse tourAPICommonList =
-                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType);
+                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType.name());
         TourAPICommonItemResponse compareItem = tourAPICommonList.getTourAPICommonItemResponseList().get(0);
 
         // when
@@ -150,10 +150,10 @@ public class DataGoKrAPIServiceTest {
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         int page = 1;
         int pageSize = 1;
-        String arrangeType = ArrangeType.TITLE.getCode();
+        ArrangeType arrangeType = ArrangeType.A;
 
         TourAPICommonListResponse tourAPICommonList =
-                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType);
+                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType.name());
         TourAPICommonItemResponse compareItem = tourAPICommonList.getTourAPICommonItemResponseList().get(0);
 
         // when
@@ -174,10 +174,10 @@ public class DataGoKrAPIServiceTest {
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         int page = 1;
         int pageSize = 1;
-        String arrangeType = ArrangeType.TITLE.getCode();
+        ArrangeType arrangeType = ArrangeType.A;
 
         TourAPICommonListResponse tourAPICommonList =
-                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType);
+                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType.name());
         TourAPICommonItemResponse compareItem = tourAPICommonList.getTourAPICommonItemResponseList().get(0);
 
         //then
@@ -200,10 +200,10 @@ public class DataGoKrAPIServiceTest {
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         int page = 1;
         int pageSize = 10;
-        String arrangeType = ArrangeType.TITLE.getCode();
+        ArrangeType arrangeType = ArrangeType.A;
 
         TourAPICommonListResponse tourAPICommonList =
-                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType);
+                dataGoKrAPIService.getAreaBasedTourApi(areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType.name());
         TourAPICommonItemResponse compareItem = tourAPICommonList.getTourAPICommonItemResponseList().get(0);
 
         // then

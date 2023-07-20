@@ -31,6 +31,9 @@ public class PlaceServiceTest {
 
     private GetPlaceDetailRequestDto getPlaceDetailReqDto;
 
+    private final static double MIN_DISTANCE = 0.0;
+    private final static double MAX_DISTANCE = 20.0;
+
     @BeforeEach
     public void before() {
         placeReqDto = MockRequest.testGetPlaceReqNoOption();
@@ -46,8 +49,14 @@ public class PlaceServiceTest {
     @Test
     @DisplayName("관광 정보 리스트 조회 테스트 : 위치 기반")
     public void getPlaceTest() {
-        PlaceResponseDto placeResDto = placeService.getPlace(placeReqDto);
+        // given
+        String contentType = String.valueOf(placeReqDto.getContentType().getCode());
+        String arrangeType = "";
 
+        // when
+        PlaceResponseDto placeResDto = placeService.getPlace(placeReqDto, contentType, arrangeType);
+
+        // then
         assertThat(placeResDto.getPage()).isEqualTo(placeReqDto.getPage());
         assertThat(placeResDto.getPageSize()).isEqualTo(placeReqDto.getPageSize());
         assertThat(placeResDto.getArrangeType()).isNull();
@@ -61,8 +70,14 @@ public class PlaceServiceTest {
     @Test
     @DisplayName("관광 정보 리스트 조회 [정렬] 테스트 : 위치 기반")
     public void getPlaceWithSortingTest() {
-        PlaceResponseDto placeResDto = placeService.getPlace(placeWithSortingReqDto);
+        // given
+        String contentType = String.valueOf(placeWithSortingReqDto.getContentType().getCode());
+        String arrangeType = placeWithSortingReqDto.getArrangeType().name();
 
+        // when
+        PlaceResponseDto placeResDto = placeService.getPlace(placeWithSortingReqDto, contentType, arrangeType);
+
+        // then
         assertThat(placeResDto.getPage()).isEqualTo(placeWithSortingReqDto.getPage());
         assertThat(placeResDto.getPageSize()).isEqualTo(placeWithSortingReqDto.getPageSize());
         assertThat(placeResDto.getArrangeType()).isEqualTo(placeWithSortingReqDto.getArrangeType());
@@ -70,7 +85,7 @@ public class PlaceServiceTest {
         double cmpDistance = 0.0;
         for(SimplePlaceInformationDto place : placeResDto.getPlaces()) {
             assertThat(place.getContentType()).isEqualTo(placeWithSortingReqDto.getContentType());
-            assertThat(place.getDistance()).isBetween(0.0, 20.0);
+            assertThat(place.getDistance()).isBetween(MIN_DISTANCE, MAX_DISTANCE);
 
             // 거리순 정렬 확인
             assertThat(place.getDistance()).isGreaterThanOrEqualTo(cmpDistance);
@@ -81,15 +96,21 @@ public class PlaceServiceTest {
     @Test
     @DisplayName("관광 정보 리스트 조회 테스트 : 지역 기반")
     public void getAreaPlaceTest() {
-        PlaceResponseDto placeResDto = placeService.getPlace(areaPlaceReq);
+        // given
+        String contentType = String.valueOf(placeReqDto.getContentType().getCode());
+        String arrangeType = "";
 
+        // when
+        PlaceResponseDto placeResDto = placeService.getPlace(areaPlaceReq, contentType, arrangeType);
+
+        // then
         assertThat(placeResDto.getPage()).isEqualTo(areaPlaceReq.getPage());
         assertThat(placeResDto.getPageSize()).isEqualTo(areaPlaceReq.getPageSize());
         assertThat(placeResDto.getArrangeType()).isNull();
 
         for(SimplePlaceInformationDto place : placeResDto.getPlaces()) {
             assertThat(place.getContentType()).isEqualTo(placeReqDto.getContentType());
-            assertThat(place.getDistance()).isBetween(0.0, 10.0);
+            assertThat(place.getDistance()).isBetween(MIN_DISTANCE, MAX_DISTANCE);
             assertThat(place.getAddress()).contains(areaPlaceReq.getArea());
             assertThat(place.getAddress()).contains(areaPlaceReq.getSigungu());
         }

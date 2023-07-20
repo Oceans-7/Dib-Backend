@@ -18,7 +18,7 @@ public class MockRequest {
 
     public static GetPlaceRequestDto testGetPlaceWithSortingReq() {
         return new GetPlaceRequestDto(MAP_X, MAP_Y,
-                ContentType.TOURIST_SPOT, "", "", ArrangeType.DISTANCE, 1, 10);
+                ContentType.TOURIST_SPOT, "", "", ArrangeType.E, 1, 5);
     }
 
     public static GetPlaceRequestDto testGetAreaPlaceReq() {
