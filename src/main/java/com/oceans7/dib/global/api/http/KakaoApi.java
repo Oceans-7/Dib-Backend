@@ -8,12 +8,9 @@ import org.springframework.web.service.annotation.HttpExchange;
 @HttpExchange("v2")
 public interface KakaoApi {
 
-    @GetExchange("local/search/address.{dataType}")
-    String getSearchAddress(@PathVariable("dataType") String dataType,
-                            @RequestParam("query") String query);
+    @GetExchange("local/search/address.json")
+    String getSearchAddress(@RequestParam("query") String query);
 
-    @GetExchange("local/geo/coord2address.{dataType}")
-    String getGeoAddress(@PathVariable("dataType") String dataType,
-                         @RequestParam("x") double x,
-                         @RequestParam("y") double y);
+    @GetExchange("local/geo/coord2address.json")
+    String getGeoAddress(@RequestParam("x") double x, @RequestParam("y") double y);
 }
