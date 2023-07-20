@@ -2,18 +2,16 @@ package com.oceans7.dib.global.api.service;
 
 import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class VilageFcstAPIService extends OpenAPIService {
 
     private final DataGoKrApi dataGoKrApi;
-
-    public VilageFcstAPIService(DataGoKrApi dataGoKrApi) {
-        this.dataGoKrApi = dataGoKrApi;
-    }
 
     @Value("${open-api.data-go-kr.service-decode-key}")
     private String serviceKey;

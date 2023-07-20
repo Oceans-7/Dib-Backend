@@ -8,17 +8,15 @@ import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListRes
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse;
 import com.oceans7.dib.global.api.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class DataGoKrAPIService extends OpenAPIService {
 
     private final DataGoKrApi dataGoKrApi;
-
-    public DataGoKrAPIService(DataGoKrApi dataGoKrApi) {
-        this.dataGoKrApi = dataGoKrApi;
-    }
 
     @Value("${open-api.data-go-kr.service-decode-key}")
     private String serviceKey;
