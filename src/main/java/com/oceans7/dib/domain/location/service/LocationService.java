@@ -29,6 +29,9 @@ public class LocationService {
 
     private final VilageFcstAPIService vilageFcstAPIService;
 
+    private final static int NCST_CALLABLE_TIME = 40;
+    private final static int FCST_CALLABLE_TIME = 60;
+
     public LocationResponseDto searchPlace(SearchLocationRequestDto searchLocationRequestDto) {
         int baseX, baseY;
         String addressName;
@@ -50,22 +53,19 @@ public class LocationService {
         baseX = (int)grid.x;
         baseY = (int)grid.y;
 
-        callableTime = 40;
-        baseDate = calculateBaseDate(now, callableTime);
-        baseTime = calculateBaseTime(now, callableTime);
+        baseDate = calculateBaseDate(now, NCST_CALLABLE_TIME);
+        baseTime = calculateBaseTime(now, NCST_CALLABLE_TIME);
         FcstAPICommonListResponse nowCast = vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime);
 
-        callableTime = 60;
-        baseDate = calculateBaseDate(now, callableTime);
-        baseTime = calculateBaseTime(now, callableTime);
+        baseDate = calculateBaseDate(now, FCST_CALLABLE_TIME);
+        baseTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
         FcstAPICommonListResponse ultraFcst = vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime);
 
-        callableTime = 0;
-        baseTime = calculateBaseTime(now, callableTime);
+        String nowTime = now.format(DateTimeFormatter.ofPattern("HH00"));
 
-        int sky = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.SKY, baseTime);
-        int precipitation = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.PTY, baseTime);
-        boolean isThunder = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.LGT, baseTime) > 0 ? true : false;
+        int sky = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.SKY, nowTime);
+        int precipitation = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.PTY, nowTime);
+        boolean isThunder = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.LGT, nowTime) > 0 ? true : false;
 
         WeatherType weatherType = WeatherType.getWeatherType(sky, precipitation, isThunder, isDay);
         double temperatures = getTemperatures(nowCast.getFcstAPICommonItemResponseList(), FcstType.T1H);
