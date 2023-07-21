@@ -36,7 +36,6 @@ public class LocationService {
         int baseX, baseY;
         String addressName;
         String baseDate, baseTime;
-        int callableTime;
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         boolean isDay = now.getHour() >= 6 && now.getHour() < 18;
 
