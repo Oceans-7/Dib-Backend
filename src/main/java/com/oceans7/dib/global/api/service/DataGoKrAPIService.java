@@ -32,6 +32,7 @@ public class DataGoKrAPIService extends OpenAPIService {
 
     private final static String YES_OPTION = "Y";
     private final static int RADIUS = 20000;
+    private final static int MAX_AREA_CODE_SIZE = 50;
 
     /**
      * 위치 기반 관광 정보 조회 API
@@ -61,7 +62,7 @@ public class DataGoKrAPIService extends OpenAPIService {
      */
     public AreaCodeList getAreaCodeApi(String areaCode) {
         String result = dataGoKrApi.getAreaCode(serviceKey, mobileOS, mobileApp, dataType,
-                50, areaCode);
+                MAX_AREA_CODE_SIZE, areaCode);
         return parsingJsonObject(result, AreaCodeList.class);
     }
 
