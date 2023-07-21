@@ -66,10 +66,11 @@ public class PlaceService {
         TourAPICommonListResponse apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
                 request.getPage(), request.getPageSize(), contentType, arrangeType);
 
-        for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
-            double distance = CoordinateUtil.convertMetersToKilometers(item.getDist());
-            item.updateDistance(distance);
-        }
+        apiResponse.getTourAPICommonItemResponseList().stream()
+                .forEach(item -> {
+                    double distance = CoordinateUtil.convertMetersToKilometers(item.getDist());
+                    item.updateDistance(distance);
+                });
 
         return apiResponse;
     }
@@ -91,10 +92,11 @@ public class PlaceService {
         TourAPICommonListResponse apiResponse = tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
                 request.getPage(), request.getPageSize(), contentType, arrangeType);
 
-        for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
-            double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
-            item.updateDistance(distance);
-        }
+        apiResponse.getTourAPICommonItemResponseList().stream()
+                .forEach(item -> {
+                    double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
+                    item.updateDistance(distance);
+                });
 
         return apiResponse;
     }
@@ -156,10 +158,11 @@ public class PlaceService {
      */
     private SimplePlaceInformationDto[] searchPlaceKeyword(SearchPlaceRequestDto request, TourAPICommonListResponse apiResponse) {
 
-        for(TourAPICommonItemResponse item : apiResponse.getTourAPICommonItemResponseList()) {
-            double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
-            item.updateDistance(distance);
-        }
+        apiResponse.getTourAPICommonItemResponseList().stream()
+                .forEach(item -> {
+                    double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
+                    item.updateDistance(distance);
+                });
 
         return apiResponse.getTourAPICommonItemResponseList().stream()
                 .map(SimplePlaceInformationDto :: of)
