@@ -29,12 +29,13 @@ public class LocationService {
 
     private final VilageFcstAPIService vilageFcstAPIService;
 
-    private String baseDate, baseTime;
-    private boolean isDay;
-
     public LocationResponseDto searchPlace(SearchLocationRequestDto searchLocationRequestDto) {
         int baseX, baseY;
         String addressName;
+        String baseDate, baseTime;
+        int callableTime;
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        boolean isDay = now.getHour() >= 6 && now.getHour() < 18;
 
         LocalResponse addressItems = kakaoLocalAPIService.getGeoAddressLocalApi(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
 
@@ -49,13 +50,19 @@ public class LocationService {
         baseX = (int)grid.x;
         baseY = (int)grid.y;
 
-        setBaseDateTime(40);
+        callableTime = 40;
+        baseDate = calculateBaseDate(now, callableTime);
+        baseTime = calculateBaseTime(now, callableTime);
         FcstAPICommonListResponse nowCast = vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime);
 
-        setBaseDateTime(60);
+        callableTime = 60;
+        baseDate = calculateBaseDate(now, callableTime);
+        baseTime = calculateBaseTime(now, callableTime);
         FcstAPICommonListResponse ultraFcst = vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime);
 
-        setBaseDateTime(0);
+        callableTime = 0;
+        baseTime = calculateBaseTime(now, callableTime);
+
         int sky = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.SKY, baseTime);
         int precipitation = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.PTY, baseTime);
         boolean isThunder = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.LGT, baseTime) > 0 ? true : false;
@@ -66,20 +73,21 @@ public class LocationService {
         return LocationResponseDto.of(addressName, weatherType, temperatures);
     }
 
-    private void setBaseDateTime(int callableTime) {
-        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-        this.baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH00");
-        this.baseTime = now.getMinute() < callableTime ?
-                now.minusHours(1).format(timeFormatter) : now.format(timeFormatter);
+    private String calculateBaseDate(LocalDateTime now, int callableTime) {
+        String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         // 자정
-        if(now.getHour() == 0 && now.getMinute() < callableTime) {
-            this.baseDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        if (now.getHour() == 0 && now.getMinute() < callableTime) {
+            baseDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         }
 
-        isDay = (now.getHour() >= 6 && now.getHour() < 18);
+        return baseDate;
+    }
+
+    private String calculateBaseTime(LocalDateTime now, int callableTime) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH00");
+        return now.getMinute() < callableTime ?
+                now.minusHours(1).format(timeFormatter) : now.format(timeFormatter);
     }
 
     private int getFcstItem(List<FcstAPICommonItemResponse> items, FcstType category, String baseTime) {
