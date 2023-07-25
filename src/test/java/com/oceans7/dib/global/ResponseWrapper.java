@@ -2,12 +2,12 @@ package com.oceans7.dib.global;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TourAPIResponseWrapper<T> {
+public class ResponseWrapper<T> {
     @JsonProperty("response")
     private Response response;
 
 
-    public TourAPIResponseWrapper(Response response) {
+    public ResponseWrapper(Response response) {
         this.response = response;
     }
 

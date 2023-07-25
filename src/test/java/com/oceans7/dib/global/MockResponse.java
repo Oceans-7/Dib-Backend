@@ -1,5 +1,7 @@
 package com.oceans7.dib.global;
 
+import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
+import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.*;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem.*;
@@ -15,7 +17,7 @@ import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemRespons
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse.*;
-import com.oceans7.dib.global.TourAPIResponseWrapper.Response;
+import com.oceans7.dib.global.ResponseWrapper.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,10 +64,10 @@ public class MockResponse {
                 "A03", "A0302", "A03022600");
     }
 
-    public static TourAPIResponseWrapper testLocationBasedRes() {
+    public static ResponseWrapper testLocationBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
         item.add(setCommonTourItem(1000.1711716167842, null));
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(
                         TourAPICommonListResponse.builder()
                                 .tourAPICommonItemResponseList(item)
@@ -76,10 +78,10 @@ public class MockResponse {
         );
     }
 
-    public static TourAPIResponseWrapper testAreaBasedRes() {
+    public static ResponseWrapper testAreaBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
         item.add(setCommonTourItem(0, "04538"));
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(
                         TourAPICommonListResponse.builder()
                             .tourAPICommonItemResponseList(item)
@@ -90,10 +92,10 @@ public class MockResponse {
         );
     }
 
-    public static TourAPIResponseWrapper testKeywordBasedRes() {
+    public static ResponseWrapper testKeywordBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
         item.add(setCommonTourItem(0, null));
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(
                         TourAPICommonListResponse.builder()
                                 .tourAPICommonItemResponseList(item)
@@ -108,22 +110,22 @@ public class MockResponse {
         return new AreaCodeItem(name, code);
     }
 
-    public static TourAPIResponseWrapper testAreaCodeRes() {
+    public static ResponseWrapper testAreaCodeRes() {
         List<AreaCodeItem> item = new ArrayList<>();
         item.add(setAreaCodeItem("서울","1"));
         item.add(setAreaCodeItem("인천","2"));
         item.add(setAreaCodeItem("대전", "3"));
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(new AreaCodeList(item))
         );
     }
 
-    public static TourAPIResponseWrapper testSigunguCodeRes() {
+    public static ResponseWrapper testSigunguCodeRes() {
         List<AreaCodeItem> item = new ArrayList<>();
         item.add(setAreaCodeItem("강남구","1"));
         item.add(setAreaCodeItem("강동구","2"));
         item.add(setAreaCodeItem("강북구", "3"));
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(new AreaCodeList(item))
         );
     }
@@ -132,11 +134,11 @@ public class MockResponse {
         return new DetailCommonItemResponse(setCommonTourItem(0, "04538"),"www.beautyplay.kr", "");
     }
 
-    public static TourAPIResponseWrapper testDetailCommonRes() {
+    public static ResponseWrapper testDetailCommonRes() {
         List<DetailCommonItemResponse> item = new ArrayList<>();
         item.add(setDetailCommonItem());
 
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(new DetailCommonListResponse(item))
         );
     }
@@ -149,11 +151,11 @@ public class MockResponse {
                 "일요일", "10:00~19:00(뷰티 체험은 18:00까지)");
     }
 
-    public static TourAPIResponseWrapper testDetailIntroRes() {
+    public static ResponseWrapper testDetailIntroRes() {
         List<SpotItemResponse> item = new ArrayList<>();
         item.add(setDetailIntroItem());
 
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(new SpotIntroResponse(item))
         );
     }
@@ -162,11 +164,11 @@ public class MockResponse {
         return new DetailInfoItemResponse((long) 2946230, 12, "화장실", "있음");
     }
 
-    public static TourAPIResponseWrapper testDetailInfoRes() {
+    public static ResponseWrapper testDetailInfoRes() {
         List<DetailInfoItemResponse> item = new ArrayList<>();
         item.add(setDetailInfoItem());
 
-        return new TourAPIResponseWrapper(
+        return new ResponseWrapper(
                 new Response(new DetailInfoListResponse(item))
         );
     }
@@ -180,9 +182,49 @@ public class MockResponse {
         return item;
     }
 
-    public static TourAPIResponseWrapper testDetailImageRes() {
-        return new TourAPIResponseWrapper(
+    public static ResponseWrapper testDetailImageRes() {
+        return new ResponseWrapper(
                 new Response(new DetailImageListResponse(setDetailImageItem()))
+        );
+    }
+
+    private static List<FcstAPICommonItemResponse> setNcstItem() {
+        List<FcstAPICommonItemResponse> item = new ArrayList<>();
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "0", "PTY", null, null, null));
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "89","REH", null, null, null));
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "0", "RN1", null, null, null));
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "26.1", "T1H", null, null, null));
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "1", "UUU", null, null, null));
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "205", "VEC", null, null, null));
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "2.1", "VVV", null, null, null));
+        item.add(new FcstAPICommonItemResponse("20230726", "0100", "2.3", "WSD", null, null, null));
+        return item;
+    }
+
+    public static ResponseWrapper testNcstRes() {
+        return new ResponseWrapper(
+                new Response(new FcstAPICommonListResponse(setNcstItem()))
+        );
+    }
+
+    private static List<FcstAPICommonItemResponse> setFcstItem() {
+        List<FcstAPICommonItemResponse> item = new ArrayList<>();
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "LGT", "20230726", "0100", "0"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "PTY", "20230726", "0100", "0"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "RN1", "20230726", "0100", "강수없음"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "SKY", "20230726", "0100", "4"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "T1H", "20230726", "0100", "25"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "REH", "20230726", "0100", "85"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "UUU", "20230726", "0100", "1.7"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "VVV", "20230726", "0100", "1.2"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "VEC", "20230726", "0100", "228"));
+        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "WSD", "20230726", "0100", "2"));
+        return item;
+    }
+
+    public static ResponseWrapper testFcstRes() {
+        return new ResponseWrapper(
+                new Response(new FcstAPICommonListResponse(setFcstItem()))
         );
     }
 }

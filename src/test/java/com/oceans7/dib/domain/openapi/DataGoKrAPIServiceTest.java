@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
-import com.oceans7.dib.global.TourAPIResponseWrapper;
+import com.oceans7.dib.global.ResponseWrapper;
 import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
@@ -61,16 +61,15 @@ public class DataGoKrAPIServiceTest {
     private final static int RADIUS = 20000;
     private final static int MAX_AREA_CODE_SIZE = 50;
 
-
-    private TourAPIResponseWrapper locationBasedAPIRes;
-    private TourAPIResponseWrapper areaBasedAPIRes;
-    private TourAPIResponseWrapper keywordBasedAPIRes;
-    private TourAPIResponseWrapper areaCodeAPIRes;
-    private TourAPIResponseWrapper sigunguCodeAPIRes;
-    private TourAPIResponseWrapper detailCommonAPIRes;
-    private TourAPIResponseWrapper detailIntroAPIRes;
-    private TourAPIResponseWrapper detailInfoAPIRes;
-    private TourAPIResponseWrapper detailImageAPIRes;
+    private ResponseWrapper locationBasedAPIRes;
+    private ResponseWrapper areaBasedAPIRes;
+    private ResponseWrapper keywordBasedAPIRes;
+    private ResponseWrapper areaCodeAPIRes;
+    private ResponseWrapper sigunguCodeAPIRes;
+    private ResponseWrapper detailCommonAPIRes;
+    private ResponseWrapper detailIntroAPIRes;
+    private ResponseWrapper detailInfoAPIRes;
+    private ResponseWrapper detailImageAPIRes;
 
     private ObjectMapper objectMapper;
 
@@ -97,7 +96,6 @@ public class DataGoKrAPIServiceTest {
         int pageSize = 1;
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         ArrangeType arrangeType = ArrangeType.E;
-        String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif|bmp)$";
 
         String apiResponse = objectMapper.writeValueAsString(locationBasedAPIRes);
         when(dataGoKrApi.getLocationBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType,
