@@ -8,6 +8,10 @@ import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 
 public class MockRequest {
+    public static final String QUERY = "서울 중구";
+    public static final double X = 126.997555182293;
+    public static final double Y = 37.5638077703601;
+
     private static final double MAP_X = 126.9779692;
     private static final double MAP_Y = 37.566535;
 
