@@ -5,23 +5,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class DetailCommonListResponse {
     @JsonProperty("item")
-    private DetailCommonItemResponse detailCommonItemResponse;
+    private List<DetailCommonItemResponse> detailCommonItemResponse;
 
     @JsonCreator
     public DetailCommonListResponse(@JsonProperty("response") JsonNode rootNode) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
         JsonNode itemNode = rootNode.findValue("item");
-        List<DetailCommonItemResponse> tmp = Arrays.stream(objectMapper.treeToValue(itemNode, DetailCommonItemResponse[].class)).toList();
-        this.detailCommonItemResponse = tmp.get(0);
+        this.detailCommonItemResponse = Arrays.stream(objectMapper.treeToValue(itemNode, DetailCommonItemResponse[].class)).toList();
     }
 
 }

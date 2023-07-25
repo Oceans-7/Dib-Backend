@@ -124,8 +124,6 @@ public class DataGoKrAPIService extends OpenAPIService {
      * 이미지 조회 (상세 조회용4)
      */
     public DetailImageListResponse getImageApi(Long contentId) {
-
-
         String result = dataGoKrApi.getTourImageInfo(serviceKey, mobileOS, mobileApp, dataType,
                 contentId, YES_OPTION);
 

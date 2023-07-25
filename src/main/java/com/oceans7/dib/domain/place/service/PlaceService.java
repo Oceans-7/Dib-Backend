@@ -177,7 +177,7 @@ public class PlaceService {
         // 공통 정보
         DetailCommonItemResponse commonItem = tourAPIService
                 .getCommonApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
-                .getDetailCommonItemResponse();
+                .getDetailCommonItemResponse().get(0);
 
         // 소개 정보
         DetailIntroResponse introApiResponse = tourAPIService
@@ -219,7 +219,7 @@ public class PlaceService {
         List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
 
         if (introApiResponse instanceof SpotIntroResponse) {
-            SpotItemResponse spotItem = ((SpotIntroResponse) introApiResponse).getSpotItemResponses();
+            SpotItemResponse spotItem = ((SpotIntroResponse) introApiResponse).getSpotItemResponses().get(0);
 
             useTime = TextManipulatorUtil.replaceBrWithNewLine(spotItem.getUseTime());
             tel = TextManipulatorUtil.extractTel(spotItem.getInfoCenter());
@@ -246,7 +246,7 @@ public class PlaceService {
                 facilityInfo.add(FacilityInfo.of(FacilityType.DISABLED_PERSON_FACILITY, flagOfDisable));
             }
         } else if (introApiResponse instanceof CultureIntroResponse) {
-            CultureItemResponse cultureItem = ((CultureIntroResponse) introApiResponse).getCultureItemResponse();
+            CultureItemResponse cultureItem = ((CultureIntroResponse) introApiResponse).getCultureItemResponse().get(0);
 
             useTime = TextManipulatorUtil.replaceBrWithNewLine(cultureItem.getUseTime());
             tel = TextManipulatorUtil.extractTel(cultureItem.getInfoCenter());
@@ -258,7 +258,7 @@ public class PlaceService {
             facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(cultureItem.getCheckPet())));
 
         } else if (introApiResponse instanceof EventIntroResponse) {
-            EventItemResponse eventItem = ((EventIntroResponse) introApiResponse).getEventItemResponse();
+            EventItemResponse eventItem = ((EventIntroResponse) introApiResponse).getEventItemResponse().get(0);
 
             useTime = TextManipulatorUtil.prefix("공연 시간 : ", eventItem.getPlayTime());
             tel = TextManipulatorUtil.extractTel(eventItem.getSponsor1Tel());
@@ -266,7 +266,7 @@ public class PlaceService {
             eventDate = TextManipulatorUtil.convertDateRangeFormat(eventItem.getEventStartDate(), eventItem.getEventEndDate());
 
         } else if (introApiResponse instanceof LeportsIntroResponse) {
-            LeportsItemResponse leportsItem = ((LeportsIntroResponse) introApiResponse).getLeportsItemResponse();
+            LeportsItemResponse leportsItem = ((LeportsIntroResponse) introApiResponse).getLeportsItemResponse().get(0);
 
             useTime = TextManipulatorUtil.replaceBrWithNewLine(leportsItem.getUseTime());
             tel = TextManipulatorUtil.extractTel(leportsItem.getInfoCenter());
@@ -278,7 +278,7 @@ public class PlaceService {
             facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(leportsItem.getCheckPet())));
 
         } else if (introApiResponse instanceof AccommodationIntroResponse) {
-            AccommodationItemResponse accommodationItem = ((AccommodationIntroResponse) introApiResponse).getAccommodationItemResponse();
+            AccommodationItemResponse accommodationItem = ((AccommodationIntroResponse) introApiResponse).getAccommodationItemResponse().get(0);
 
             useTime = TextManipulatorUtil.concatenateStrings(
                     accommodationItem.getCheckInTime(),
@@ -294,7 +294,7 @@ public class PlaceService {
             facilityInfo.add(FacilityInfo.of(FacilityType.SAUNA, ValidatorUtil.checkAvailability(accommodationItem.getCheckSauna())));
 
         } else if (introApiResponse instanceof ShoppingIntroResponse) {
-            ShoppingItemResponse shoppingItem = ((ShoppingIntroResponse) introApiResponse).getShoppingItemResponse();
+            ShoppingItemResponse shoppingItem = ((ShoppingIntroResponse) introApiResponse).getShoppingItemResponse().get(0);
 
             useTime = TextManipulatorUtil.replaceBrWithNewLine(shoppingItem.getOpenTime());
             tel = TextManipulatorUtil.extractTel(shoppingItem.getInfoCenter());
@@ -306,7 +306,7 @@ public class PlaceService {
             facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(shoppingItem.getCheckPet())));
 
         } else if (introApiResponse instanceof RestaurantIntroResponse) {
-            RestaurantItemResponse restaurantItem = ((RestaurantIntroResponse) introApiResponse).getRestaurantItemResponse();
+            RestaurantItemResponse restaurantItem = ((RestaurantIntroResponse) introApiResponse).getRestaurantItemResponse().get(0);
 
             useTime = TextManipulatorUtil.replaceBrWithNewLine(restaurantItem.getOpenTime());
             tel = TextManipulatorUtil.extractTel(restaurantItem.getInfoCenter());

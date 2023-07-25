@@ -5,12 +5,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
+@Builder
 public class TourAPICommonListResponse {
     @JsonProperty("item")
     private List<TourAPICommonItemResponse> tourAPICommonItemResponseList;
@@ -27,7 +31,6 @@ public class TourAPICommonListResponse {
     @JsonCreator
     public TourAPICommonListResponse(@JsonProperty("response")JsonNode rootNode) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-
 
         JsonNode itemNode = rootNode.findValue("item");
         JsonNode totalCountNode = rootNode.findValue("totalCount");

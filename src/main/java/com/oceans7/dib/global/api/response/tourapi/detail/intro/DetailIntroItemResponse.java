@@ -2,12 +2,16 @@ package com.oceans7.dib.global.api.response.tourapi.detail.intro;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 소개 정보
  */
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailIntroItemResponse {
     // 기본 응답
@@ -18,6 +22,7 @@ public class DetailIntroItemResponse {
     private int contentTypeId;
 
     @Getter
+    @NoArgsConstructor
     public static class SpotItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
         @JsonProperty("infocenter")
@@ -40,6 +45,18 @@ public class DetailIntroItemResponse {
         // 이용 시간
         @JsonProperty("usetime")
         private String useTime;
+
+        public SpotItemResponse(Long contentId, int contentTypeId, String infoCenter,
+                                String checkBabyCarriage, String checkCreditCard, String checkPet,
+                                String restDate, String useTime) {
+            super(contentId, contentTypeId);
+            this.infoCenter = infoCenter;
+            this.checkBabyCarriage = checkBabyCarriage;
+            this.checkCreditCard = checkCreditCard;
+            this.checkPet = checkPet;
+            this.restDate = restDate;
+            this.useTime = useTime;
+        }
     }
 
     @Getter
