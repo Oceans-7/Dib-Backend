@@ -25,9 +25,6 @@ import java.util.List;
 import static com.oceans7.dib.global.MockRequest.*;
 
 public class MockResponse {
-    private static final double X = 126.997555182293;
-    private static final double Y = 37.5638077703601;
-
     // --- KakaoLocalAPIService Test Mock Response
     private static Address setAddress() {
         return new Address("서울 중구", "서울", "중구");
@@ -321,5 +318,18 @@ public class MockResponse {
 
     public static DetailImageListResponse testPlaceImageRes() {
         return new DetailImageListResponse(setDetailImageItem());
+    }
+
+    // --- LocationService Test Mock Response
+    public static FcstAPICommonListResponse testLocationNcstRes() {
+        return new FcstAPICommonListResponse(setNcstItem());
+    }
+
+    public static FcstAPICommonListResponse testLocationFcstRes() {
+        return new FcstAPICommonListResponse(setFcstItem());
+    }
+
+    public static LocalResponse testGeoAddressXYExceptionRes() {
+        return new LocalResponse(null);
     }
 }
