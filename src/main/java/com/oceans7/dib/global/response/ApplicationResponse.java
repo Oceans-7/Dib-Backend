@@ -1,7 +1,6 @@
 package com.oceans7.dib.global.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oceans7.dib.global.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,11 +26,4 @@ public class ApplicationResponse<T> {
         return new ApplicationResponse<>("200", "요청 성공", data);
     }
 
-    public static ApplicationResponse<ErrorCode> error(ErrorCode errorCode) {
-        return new ApplicationResponse<>(errorCode.getCode(), errorCode.getMessage(), null);
-    }
-
-    public static ApplicationResponse<ErrorCode> error(ErrorCode errorCode, String message) {
-        return new ApplicationResponse<>(errorCode.getCode(), message, null);
-    }
 }

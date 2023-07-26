@@ -3,6 +3,7 @@ package com.oceans7.dib.domain.location.controller;
 import com.oceans7.dib.domain.location.service.LocationService;
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.global.exception.ErrorResponse;
 import com.oceans7.dib.global.response.ApplicationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,8 +31,8 @@ public class LocationController {
     @Operation(summary = "좌표 기준 주소 및 날씨 조회", description = "위도, 경도를 받아 해당 지역의 도로명 주소와 기온 정보를 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
-            @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
-            @ApiResponse(responseCode = "C0005", description = "유효성 검사를 실패했습니다.", content = @Content(schema = @Schema(implementation = ApplicationResponse.class))),
+            @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "C0005", description = "유효성 검사를 실패했습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     public ApplicationResponse<LocationResponseDto> searchPlace(
             @Validated @ModelAttribute SearchLocationRequestDto searchLocationRequestDto
