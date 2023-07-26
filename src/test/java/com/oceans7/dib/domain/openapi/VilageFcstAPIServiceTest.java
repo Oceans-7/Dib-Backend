@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.openapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.ResponseWrapper;
 import com.oceans7.dib.global.api.http.DataGoKrApi;
@@ -45,7 +46,6 @@ public class VilageFcstAPIServiceTest {
 
     private ObjectMapper objectMapper;
 
-    private CoordinateUtil.LatXLngY grid;
     private int baseX, baseY;
 
     @BeforeEach
@@ -55,10 +55,7 @@ public class VilageFcstAPIServiceTest {
 
         objectMapper = new ObjectMapper();
 
-        double mapX = 126.9779692;
-        double mapY = 37.566535;
-
-        this.grid = CoordinateUtil.convertGRID_GPS(mapX, mapY);
+        CoordinateUtil.LatXLngY grid = CoordinateUtil.convertGRID_GPS(MockRequest.X, MockRequest.Y);
         this.baseX = (int)grid.x;
         this.baseY = (int)grid.y;
     }
