@@ -45,10 +45,10 @@ public class KakaoLocalAPIServiceTest {
     public void callSearchAddressAPITest() throws JsonProcessingException {
         // KakaoApi 인터페이스 # getSearchAddress() Mocking
         String apiResponse = objectMapper.writeValueAsString(searchAddressRes);
-        when(kakaoApi.getSearchAddress(QUERY)).thenReturn(apiResponse);
+        when(kakaoApi.getSearchAddress(AREA_QUERY)).thenReturn(apiResponse);
 
         // when
-        LocalResponse localResponse = kakaoLocalAPIService.getSearchAddressLocalApi(QUERY);
+        LocalResponse localResponse = kakaoLocalAPIService.getSearchAddressLocalApi(AREA_QUERY);
         LocalResponse.AddressItem addressItem = localResponse.getAddressItems().get(0);
         LocalResponse.AddressItem.Address address = addressItem.getAddress();
 

@@ -8,42 +8,42 @@ import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 
 public class MockRequest {
-    public static final String QUERY = "서울 중구";
+    public static final String AREA_QUERY = "서울 중구";
+
+    public static final Long CONTENT_ID = (long) 2946230;
+    public static final ContentType CONTENT_TYPE = ContentType.TOURIST_SPOT;
+    public static final ArrangeType ARRANGE_TYPE = ArrangeType.E;
+
     public static final double X = 126.997555182293;
     public static final double Y = 37.5638077703601;
 
-    private static final double MAP_X = 126.9779692;
-    private static final double MAP_Y = 37.566535;
-
-    public static GetPlaceRequestDto testGetPlaceReqNoOption() {
-        return new GetPlaceRequestDto(MAP_X, MAP_Y,
-                ContentType.TOURIST_SPOT, null, null, null, 1, 10);
+    public static GetPlaceRequestDto testPlaceReq() {
+        return new GetPlaceRequestDto(X, Y, CONTENT_TYPE, null, null, null, 1, 2);
     }
 
-    public static GetPlaceRequestDto testGetPlaceWithSortingReq() {
-        return new GetPlaceRequestDto(MAP_X, MAP_Y,
-                ContentType.TOURIST_SPOT, "", "", ArrangeType.E, 1, 5);
+    public static GetPlaceRequestDto testPlaceWithSortingReq() {
+        return new GetPlaceRequestDto(X, Y, CONTENT_TYPE, null, null, ARRANGE_TYPE, 1, 2);
     }
 
-    public static GetPlaceRequestDto testGetAreaPlaceReq() {
-        return new GetPlaceRequestDto(MAP_X, MAP_Y,
-                ContentType.TOURIST_SPOT, "서울", "성북구", null, 1, 10);
+    public static GetPlaceRequestDto testPlaceWithAreaReq() {
+        return new GetPlaceRequestDto(X, Y, CONTENT_TYPE,
+                AREA_QUERY.split(" ")[0], AREA_QUERY.split(" ")[1], null, 1, 1);
     }
 
-    public static SearchPlaceRequestDto testSearchPlaceReq() {
-        return new SearchPlaceRequestDto("식당", MAP_X, MAP_Y, 1, 10);
+    public static SearchPlaceRequestDto testSearchReq() {
+        return new SearchPlaceRequestDto("뷰티플레이", X, Y, 1, 1);
     }
 
-    public static SearchPlaceRequestDto testSearchAreaPlaceReq() {
-        return new SearchPlaceRequestDto("고성", MAP_X, MAP_Y, 1, 10);
+    public static SearchPlaceRequestDto testSearchAreaReq() {
+        return new SearchPlaceRequestDto(AREA_QUERY, X, Y, 1, 1);
     }
 
-    public static GetPlaceDetailRequestDto testGetPlaceDetailReq() {
-        return new GetPlaceDetailRequestDto((long)2592089, ContentType.TOURIST_SPOT);
+    public static GetPlaceDetailRequestDto testPlaceDetailReq() {
+        return new GetPlaceDetailRequestDto(CONTENT_ID, CONTENT_TYPE);
     }
 
     public static SearchLocationRequestDto testSearchLocationReq() {
-        return new SearchLocationRequestDto(126.9779692, 37.566535);
+        return new SearchLocationRequestDto(X, Y);
     }
 
     public static SearchLocationRequestDto testSearchLocationXYExceptionReq() {

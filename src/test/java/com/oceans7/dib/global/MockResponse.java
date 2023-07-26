@@ -22,10 +22,13 @@ import com.oceans7.dib.global.ResponseWrapper.Response;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.oceans7.dib.global.MockRequest.*;
+
 public class MockResponse {
     private static final double X = 126.997555182293;
     private static final double Y = 37.5638077703601;
 
+    // --- KakaoLocalAPIService Test Mock Response
     private static Address setAddress() {
         return new Address("서울 중구", "서울", "중구");
     }
@@ -50,9 +53,10 @@ public class MockResponse {
         return new LocalResponse(item);
     }
 
+    // --- DataGoKrAPIService Test Mock Response
     private static TourAPICommonItemResponse setCommonTourItem(double dist, String zipcode) {
         return new TourAPICommonItemResponse(
-                (long) 2946230, 12,
+                CONTENT_ID, CONTENT_TYPE.getCode(),
                 "뷰티플레이", "",
                 "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg",
                 "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg",
@@ -62,6 +66,20 @@ public class MockResponse {
                 dist, zipcode, "",
                 "24", "1",
                 "A03", "A0302", "A03022600");
+    }
+
+    private static TourAPICommonItemResponse setCommonTourItem2(double dist, String zipcode) {
+        return new TourAPICommonItemResponse(
+                (long) 126911, 12,
+                "서울 남현동 요지", "",
+                "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg",
+                "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg",
+                "서울특별시 관악구 남현3길 60", "(남현동)",
+                "Type1", X, Y,
+                "20230129232104", "20230208103221",
+                dist, zipcode, "",
+                "24", "1",
+                "A02", "A0201", "A02010700");
     }
 
     public static ResponseWrapper testLocationBasedRes() {
@@ -145,7 +163,7 @@ public class MockResponse {
 
     private static SpotItemResponse setDetailIntroItem() {
         return new SpotItemResponse(
-                (long) 2946230, 12,
+                CONTENT_ID, CONTENT_TYPE.getCode(),
                 "070-4070-9675",
                 "", "", "",
                 "일요일", "10:00~19:00(뷰티 체험은 18:00까지)");
@@ -161,7 +179,7 @@ public class MockResponse {
     }
 
     private static DetailInfoItemResponse setDetailInfoItem() {
-        return new DetailInfoItemResponse((long) 2946230, 12, "화장실", "있음");
+        return new DetailInfoItemResponse(CONTENT_ID, CONTENT_TYPE.getCode(), "화장실", "있음");
     }
 
     public static ResponseWrapper testDetailInfoRes() {
@@ -175,10 +193,10 @@ public class MockResponse {
 
     private static List<DetailImageItemResponse> setDetailImageItem() {
         List<DetailImageItemResponse> item = new ArrayList<>();
-        item.add(new DetailImageItemResponse((long) 2946230, "http://tong.visitkorea.or.kr/cms/resource/50/2947650_image2_1.jpg"));
-        item.add(new DetailImageItemResponse((long) 2946230, "http://tong.visitkorea.or.kr/cms/resource/52/2947652_image2_1.jpg"));
-        item.add(new DetailImageItemResponse((long) 2946230, "http://tong.visitkorea.or.kr/cms/resource/51/2947651_image2_1.jpg"));
-        item.add(new DetailImageItemResponse((long) 2946230, "http://tong.visitkorea.or.kr/cms/resource/53/2947653_image2_1.jpg"));
+        item.add(new DetailImageItemResponse(CONTENT_ID, "http://tong.visitkorea.or.kr/cms/resource/50/2947650_image2_1.jpg"));
+        item.add(new DetailImageItemResponse(CONTENT_ID, "http://tong.visitkorea.or.kr/cms/resource/52/2947652_image2_1.jpg"));
+        item.add(new DetailImageItemResponse(CONTENT_ID, "http://tong.visitkorea.or.kr/cms/resource/51/2947651_image2_1.jpg"));
+        item.add(new DetailImageItemResponse(CONTENT_ID, "http://tong.visitkorea.or.kr/cms/resource/53/2947653_image2_1.jpg"));
         return item;
     }
 
@@ -188,6 +206,7 @@ public class MockResponse {
         );
     }
 
+    // --- VlilageFcstAPIService Test Mock Response
     private static List<FcstAPICommonItemResponse> setNcstItem() {
         List<FcstAPICommonItemResponse> item = new ArrayList<>();
         item.add(new FcstAPICommonItemResponse("20230726", "0100", "0", "PTY", null, null, null));
@@ -226,5 +245,81 @@ public class MockResponse {
         return new ResponseWrapper(
                 new Response(new FcstAPICommonListResponse(setFcstItem()))
         );
+    }
+
+    // --- PlaceService Test Mock Response
+    public static TourAPICommonListResponse testPlaceRes() {
+        List<TourAPICommonItemResponse> item = new ArrayList<>();
+        item.add(setCommonTourItem(1000.1711716167842, null));
+        item.add(setCommonTourItem2(10001.983304508862, null));
+        return TourAPICommonListResponse.builder()
+                                .tourAPICommonItemResponseList(item)
+                                .page(1)
+                                .pageSize(2)
+                                .totalCount(1)
+                                .build();
+    }
+
+    public static AreaCodeList testPlaceAreaCodeRes() {
+        List<AreaCodeItem> item = new ArrayList<>();
+        item.add(setAreaCodeItem("서울","1"));
+        item.add(setAreaCodeItem("인천","2"));
+        item.add(setAreaCodeItem("대전", "3"));
+        return new AreaCodeList(item);
+    }
+
+    public static AreaCodeList testPlaceSigunguCodeRes() {
+        List<AreaCodeItem> item = new ArrayList<>();
+        item.add(setAreaCodeItem("강남구","1"));
+        item.add(setAreaCodeItem("강동구","2"));
+        item.add(setAreaCodeItem("중구", "24"));
+        return new AreaCodeList(item);
+    }
+
+    public static TourAPICommonListResponse testAreaPlaceRes() {
+        List<TourAPICommonItemResponse> item = new ArrayList<>();
+        item.add(setCommonTourItem(0, "04538"));
+        return TourAPICommonListResponse.builder()
+                .tourAPICommonItemResponseList(item)
+                .page(1)
+                .pageSize(1)
+                .totalCount(1)
+                .build();
+    }
+
+    public static TourAPICommonListResponse testSearchRes() {
+        List<TourAPICommonItemResponse> item = new ArrayList<>();
+        item.add(setCommonTourItem(1000.1711716167842, null));
+        return TourAPICommonListResponse.builder()
+                .tourAPICommonItemResponseList(item)
+                .page(1)
+                .pageSize(1)
+                .totalCount(1)
+                .build();
+    }
+
+    public static DetailCommonListResponse testPlaceCommonRes() {
+        List<DetailCommonItemResponse> item = new ArrayList<>();
+        item.add(setDetailCommonItem());
+
+        return new DetailCommonListResponse(item);
+    }
+
+    public static SpotIntroResponse testPlaceIntroRes() {
+        List<SpotItemResponse> item = new ArrayList<>();
+        item.add(setDetailIntroItem());
+
+        return new SpotIntroResponse(item);
+    }
+
+    public static DetailInfoListResponse testPlaceInfoRes() {
+        List<DetailInfoItemResponse> item = new ArrayList<>();
+        item.add(setDetailInfoItem());
+
+        return new DetailInfoListResponse(item);
+    }
+
+    public static DetailImageListResponse testPlaceImageRes() {
+        return new DetailImageListResponse(setDetailImageItem());
     }
 }

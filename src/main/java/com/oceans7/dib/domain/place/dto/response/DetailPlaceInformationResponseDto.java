@@ -88,7 +88,7 @@ public class DetailPlaceInformationResponseDto {
         response.mapX = commonItem.getMapX();
         response.mapY = commonItem.getMapY();
         response.introduce = TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview());
-        response.homepageUrl = TextManipulatorUtil.extractFirstUrl(commonItem.getHomepageUrl());
+        response.homepageUrl = TextManipulatorUtil.extractUrl(commonItem.getHomepageUrl());
 
         response.images = images;
 

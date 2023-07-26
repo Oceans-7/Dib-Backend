@@ -6,14 +6,19 @@ import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.response.*;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto.FacilityInfo;
 import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.api.service.DataGoKrAPIService;
+import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.oceans7.dib.global.MockResponse.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -22,69 +27,85 @@ public class PlaceServiceTest {
     @Autowired
     PlaceService placeService;
 
-    private GetPlaceRequestDto placeReqDto;
-    private GetPlaceRequestDto placeWithSortingReqDto;
-    private GetPlaceRequestDto areaPlaceReq;
+    @MockBean
+    private DataGoKrAPIService tourAPIService;
 
-    private SearchPlaceRequestDto searchPlaceReqDto;
-    private SearchPlaceRequestDto searchAreaPlaceReqDto;
+    @MockBean
+    private KakaoLocalAPIService kakaoLocalAPIService;
 
-    private GetPlaceDetailRequestDto getPlaceDetailReqDto;
+    private GetPlaceRequestDto placeReq;
+    private GetPlaceRequestDto placeWithSortingReq;
+    private GetPlaceRequestDto placeWithAreaReq;
+    private SearchPlaceRequestDto searchReq;
+    private SearchPlaceRequestDto searchAreaReq;
+    private GetPlaceDetailRequestDto placeDetailReq;
 
     private final static double MIN_DISTANCE = 0.0;
     private final static double MAX_DISTANCE = 20.0;
 
     @BeforeEach
-    public void before() {
-        placeReqDto = MockRequest.testGetPlaceReqNoOption();
-        placeWithSortingReqDto = MockRequest.testGetPlaceWithSortingReq();
-        areaPlaceReq = MockRequest.testGetAreaPlaceReq();
-
-        searchPlaceReqDto = MockRequest.testSearchPlaceReq();
-        searchAreaPlaceReqDto = MockRequest.testSearchAreaPlaceReq();
-
-        getPlaceDetailReqDto = MockRequest.testGetPlaceDetailReq();
+    public void setUp() {
+        placeReq = MockRequest.testPlaceReq();
+        placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
+        placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
+        searchReq = MockRequest.testSearchReq();
+        searchAreaReq = MockRequest.testSearchAreaReq();
+        placeDetailReq = MockRequest.testPlaceDetailReq();
     }
 
     @Test
     @DisplayName("관광 정보 리스트 조회 테스트 : 위치 기반")
     public void getPlaceTest() {
         // given
-        String contentType = String.valueOf(placeReqDto.getContentType().getCode());
+        String contentType = String.valueOf(placeReq.getContentType());
         String arrangeType = "";
 
+        // mocking
+        when(tourAPIService.getLocationBasedTourApi(
+                placeReq.getMapX(), placeReq.getMapY(), placeReq.getPage(), placeReq.getPageSize(), contentType, arrangeType))
+                .thenReturn(testPlaceRes());
+
         // when
-        PlaceResponseDto placeResDto = placeService.getPlace(placeReqDto, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeReq, contentType, arrangeType);
+        SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
-        assertThat(placeResDto.getPage()).isEqualTo(placeReqDto.getPage());
-        assertThat(placeResDto.getPageSize()).isEqualTo(placeReqDto.getPageSize());
-        assertThat(placeResDto.getArrangeType()).isNull();
+        assertThat(placeRes.getPage()).isEqualTo(placeReq.getPage());
+        assertThat(placeRes.getPageSize()).isEqualTo(placeReq.getPageSize());
+        assertThat(placeRes.getArrangeType()).isNull();
 
-        for(SimplePlaceInformationDto place : placeResDto.getPlaces()) {
-            assertThat(place.getContentType()).isEqualTo(placeReqDto.getContentType());
-            assertThat(place.getDistance()).isBetween(0.0, 20.0);
-        }
+        assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
+        assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getTel()).isEqualTo("");
+        assertThat(info.getTitle()).isEqualTo("뷰티플레이");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getDistance()).isBetween(MIN_DISTANCE, MAX_DISTANCE);
+        assertThat(info.getDistance()).isEqualTo(1.0);
     }
 
     @Test
     @DisplayName("관광 정보 리스트 조회 [정렬] 테스트 : 위치 기반")
     public void getPlaceWithSortingTest() {
         // given
-        String contentType = String.valueOf(placeWithSortingReqDto.getContentType().getCode());
-        String arrangeType = placeWithSortingReqDto.getArrangeType().name();
+        String contentType = String.valueOf(placeWithSortingReq.getContentType());
+        String arrangeType = String.valueOf(placeWithSortingReq.getArrangeType());
+
+        when(tourAPIService.getLocationBasedTourApi(
+                placeWithSortingReq.getMapX(), placeWithSortingReq.getMapY(),
+                placeWithSortingReq.getPage(), placeWithSortingReq.getPageSize(), contentType, arrangeType))
+                .thenReturn(testPlaceRes());
 
         // when
-        PlaceResponseDto placeResDto = placeService.getPlace(placeWithSortingReqDto, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeWithSortingReq, contentType, arrangeType);
 
         // then
-        assertThat(placeResDto.getPage()).isEqualTo(placeWithSortingReqDto.getPage());
-        assertThat(placeResDto.getPageSize()).isEqualTo(placeWithSortingReqDto.getPageSize());
-        assertThat(placeResDto.getArrangeType()).isEqualTo(placeWithSortingReqDto.getArrangeType());
+        assertThat(placeRes.getPage()).isEqualTo(placeWithSortingReq.getPage());
+        assertThat(placeRes.getPageSize()).isEqualTo(placeWithSortingReq.getPageSize());
+        assertThat(placeRes.getArrangeType()).isEqualTo(placeWithSortingReq.getArrangeType());
 
         double cmpDistance = 0.0;
-        for(SimplePlaceInformationDto place : placeResDto.getPlaces()) {
-            assertThat(place.getContentType()).isEqualTo(placeWithSortingReqDto.getContentType());
+        for(SimplePlaceInformationDto place : placeRes.getPlaces()) {
             assertThat(place.getDistance()).isBetween(MIN_DISTANCE, MAX_DISTANCE);
 
             // 거리순 정렬 확인
@@ -97,99 +118,126 @@ public class PlaceServiceTest {
     @DisplayName("관광 정보 리스트 조회 테스트 : 지역 기반")
     public void getAreaPlaceTest() {
         // given
-        String contentType = String.valueOf(placeReqDto.getContentType().getCode());
+        String contentType = String.valueOf(placeWithAreaReq.getContentType());
         String arrangeType = "";
+        String areaCode = "1";
+        String sigunguCode = "24";
+
+        when(tourAPIService.getAreaCodeApi("")).thenReturn(testPlaceAreaCodeRes());
+        when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(testPlaceSigunguCodeRes());
+        when(tourAPIService.getAreaBasedTourApi(
+                areaCode, sigunguCode, placeWithAreaReq.getPage(), placeWithAreaReq.getPageSize(), contentType, arrangeType))
+                .thenReturn(testAreaPlaceRes());
 
         // when
-        PlaceResponseDto placeResDto = placeService.getPlace(areaPlaceReq, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeWithAreaReq, contentType, arrangeType);
+        SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
-        assertThat(placeResDto.getPage()).isEqualTo(areaPlaceReq.getPage());
-        assertThat(placeResDto.getPageSize()).isEqualTo(areaPlaceReq.getPageSize());
-        assertThat(placeResDto.getArrangeType()).isNull();
+        assertThat(placeRes.getPage()).isEqualTo(placeWithAreaReq.getPage());
+        assertThat(placeRes.getPageSize()).isEqualTo(placeWithAreaReq.getPageSize());
+        assertThat(placeRes.getArrangeType()).isNull();
 
-        for(SimplePlaceInformationDto place : placeResDto.getPlaces()) {
-            assertThat(place.getContentType()).isEqualTo(placeReqDto.getContentType());
-            assertThat(place.getDistance()).isBetween(MIN_DISTANCE, MAX_DISTANCE);
-            assertThat(place.getAddress()).contains(areaPlaceReq.getArea());
-            assertThat(place.getAddress()).contains(areaPlaceReq.getSigungu());
-        }
+        assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
+        assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getTel()).isEqualTo("");
+        assertThat(info.getTitle()).isEqualTo("뷰티플레이");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getAddress().contains(placeWithAreaReq.getArea()) &&
+                info.getAddress().contains(placeWithAreaReq.getSigungu())
+        ).isTrue();
     }
 
     @Test
-    @DisplayName("관광 정보 키워드 검색 테스트")
+    @DisplayName("관광 정보 [키워드] 검색 테스트")
     public void searchPlaceTest() {
-        // given : "식당"
+        // given
+        when(tourAPIService.getSearchKeywordTourApi(searchReq.getKeyword(), searchReq.getPage(), searchReq.getPageSize()))
+                .thenReturn(testSearchRes());
 
         // when
-        SearchPlaceResponseDto searchPlaceResDto = placeService.searchPlace(searchPlaceReqDto);
+        SearchPlaceResponseDto searchRes = placeService.searchPlace(searchReq);
+        SimplePlaceInformationDto info = searchRes.getPlaces().get(0);
 
         // then
-        assertThat(searchPlaceResDto.getPage()).isEqualTo(searchPlaceReqDto.getPage());
-        assertThat(searchPlaceResDto.getPageSize()).isEqualTo(searchPlaceReqDto.getPageSize());
-        assertThat(searchPlaceResDto.getKeyword()).isEqualTo(searchPlaceReqDto.getKeyword());
+        assertThat(searchRes.getPage()).isEqualTo(searchReq.getPage());
+        assertThat(searchRes.getPageSize()).isEqualTo(searchReq.getPageSize());
+        assertThat(searchRes.getKeyword()).isEqualTo(searchReq.getKeyword());
 
-        assertThat(searchPlaceResDto.isAreaSearch()).isFalse();
-        assertThat(searchPlaceResDto.getAreas()).isNullOrEmpty();
+        assertThat(searchRes.isAreaSearch()).isFalse();
+        assertThat(searchRes.getAreas()).isNullOrEmpty();
 
-        assertThat(searchPlaceResDto.getPlaces().size()).isEqualTo(searchPlaceReqDto.getPageSize());
+        assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
+        assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getTel()).isEqualTo("");
+        assertThat(info.getTitle()).isEqualTo("뷰티플레이");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
     }
 
     @Test
-    @DisplayName("관광 정보 지역 검색 테스트")
+    @DisplayName("관광 정보 [지역] 검색 테스트")
     public void searchAreaPlaceTest() {
-        // given : "고성"
+        // given
+        when(kakaoLocalAPIService.getSearchAddressLocalApi(searchAreaReq.getKeyword()))
+                .thenReturn(testSearchAddressRes());
 
         // when
-        SearchPlaceResponseDto searchPlaceResDto = placeService.searchPlace(searchAreaPlaceReqDto);
+        SearchPlaceResponseDto searchRes = placeService.searchPlace(searchAreaReq);
+        SimpleAreaResponseDto info = searchRes.getAreas().get(0);
 
-        assertThat(searchPlaceResDto.getKeyword()).isEqualTo(searchAreaPlaceReqDto.getKeyword());
+        // then
+        assertThat(searchRes.getKeyword()).isEqualTo(searchAreaReq.getKeyword());
 
-        assertThat(searchPlaceResDto.isAreaSearch()).isTrue();
-        assertThat(searchPlaceResDto.getPlaces()).isNullOrEmpty();
+        assertThat(searchRes.isAreaSearch()).isTrue();
+        assertThat(searchRes.getPlaces()).isNullOrEmpty();
 
-        for(SimpleAreaResponseDto areaItem : searchPlaceResDto.getAreas()) {
-            assertThat(areaItem.getAddress().contains(searchAreaPlaceReqDto.getKeyword())).isTrue();
-        }
+        assertThat(info.getAddress()).isEqualTo("서울 중구");
+        assertThat(info.getDistance()).isEqualTo(0.0);
+        assertThat(info.getAreaName()).isEqualTo("서울");
+        assertThat(info.getSigunguName()).isEqualTo("중구");
+        assertThat(info.getMapX()).isEqualTo(126.997555182293);
+        assertThat(info.getMapY()).isEqualTo(37.5638077703601);
     }
 
     @Test
     @DisplayName("관광 정보 상세 조회 테스트")
     public void getPlaceDetailTest() {
-        // given - contentid :2592089
-        String title = "문화철도 959";
-        String address = "서울특별시 구로구 경인로 688 (신도림동)";
-        double mapX = 126.8912917045;
-        double mapY = 37.5089677083;
-        String homepageUrl = "http://art959.com/";
-        String restDate = "대관 (매주 일요일, 공휴일)\n카페 (매주 일요일, 월요일)";
-        String useTime = "[대관]\n주중 09:00~22:00\n토요일 10:00~17:00\n\n[키즈카페]\n화요일~금요일 10:00~19:00\n토요일 / 공휴일 10:00~18:00";
-        String tel = "02-856-1702";
-        String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif|bmp)$";
+        // given
+        String contentType = String.valueOf(placeDetailReq.getContentType().getCode());
+
+        when(tourAPIService.getCommonApi(placeDetailReq.getContentId(), contentType)).thenReturn(testPlaceCommonRes());
+        when(tourAPIService.getIntroApi(placeDetailReq.getContentId(), contentType)).thenReturn(testPlaceIntroRes());
+        when(tourAPIService.getInfoApi(placeDetailReq.getContentId(), contentType)).thenReturn(testPlaceInfoRes());
+        when(tourAPIService.getImageApi(placeDetailReq.getContentId())).thenReturn(testPlaceImageRes());
 
         // when
-        DetailPlaceInformationResponseDto detailResDto = placeService.getPlaceDetail(getPlaceDetailReqDto);
+        DetailPlaceInformationResponseDto detailRes = placeService.getPlaceDetail(placeDetailReq);
 
         // then
-        assertThat(detailResDto.getContentId()).isEqualTo(getPlaceDetailReqDto.getContentId());
-        assertThat(detailResDto.getContentType()).isEqualTo(getPlaceDetailReqDto.getContentType());
-        assertThat(detailResDto.getTitle()).isEqualTo(title);
-        assertThat(detailResDto.getAddress()).isEqualTo(address);
-        assertThat(detailResDto.getMapX()).isEqualTo(mapX);
-        assertThat(detailResDto.getMapY()).isEqualTo(mapY);
-        assertThat(detailResDto.getHomepageUrl()).isEqualTo(homepageUrl);
-        assertThat(detailResDto.getUseTime()).isEqualTo(useTime);
-        assertThat(detailResDto.getRestDate()).isEqualTo(restDate);
-        assertThat(detailResDto.getTel()).isEqualTo(tel);
+        assertThat(detailRes.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
+        assertThat(detailRes.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
+        assertThat(detailRes.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(detailRes.getTitle()).isEqualTo("뷰티플레이");
+        assertThat(detailRes.getMapX()).isEqualTo(126.997555182293);
+        assertThat(detailRes.getMapY()).isEqualTo(37.5638077703601);
+        assertThat(detailRes.getIntroduce()).isEqualTo("");
+        assertThat(detailRes.getHomepageUrl()).isEqualTo("www.beautyplay.kr");
+        assertThat(detailRes.getUseTime()).isEqualTo("10:00~19:00(뷰티 체험은 18:00까지)");
+        assertThat(detailRes.getTel()).isEqualTo("070-4070-9675");
+        assertThat(detailRes.getRestDate()).isEqualTo("일요일");
+        assertThat(detailRes.getReservationUrl()).isNull();
 
-        for(String image : detailResDto.getImages()) {
+        for(String image : detailRes.getImages()) {
+            String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif|bmp)$";
             assertThat(image.matches(urlPattern)).isEqualTo(true);
         }
 
-        for(FacilityInfo facilityInfo : detailResDto.getFacilityInfo()) {
+        for(FacilityInfo facilityInfo : detailRes.getFacilityInfo()) {
             switch(facilityInfo.getType()) {
-                case BABY_CARRIAGE, PET, PARKING, DISABLED_PERSON_FACILITY -> assertThat(facilityInfo.isAvailability()).isFalse();
-                case CREDIT_CARD, RESTROOM -> assertThat(facilityInfo.isAvailability()).isTrue();
+                case BABY_CARRIAGE, PET, PARKING, DISABLED_PERSON_FACILITY, CREDIT_CARD -> assertThat(facilityInfo.isAvailability()).isFalse();
+                case RESTROOM -> assertThat(facilityInfo.isAvailability()).isTrue();
             }
         }
     }
