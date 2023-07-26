@@ -8,11 +8,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PlaceResponseDto {
     @ArraySchema(schema = @Schema(description = "장소 정보", implementation = SimplePlaceInformationDto.class))
-    private SimplePlaceInformationDto[] places;
+    private List<SimplePlaceInformationDto> places;
 
     @Schema(description = "검색 결과 개수", example = "1")
     private int count;
@@ -26,7 +28,7 @@ public class PlaceResponseDto {
     @Schema(description = "정렬 형식", example = "TITLE")
     private ArrangeType arrangeType;
 
-    public static PlaceResponseDto of(SimplePlaceInformationDto[] simpleDto, TourAPICommonListResponse list,
+    public static PlaceResponseDto of(List<SimplePlaceInformationDto> simpleDto, TourAPICommonListResponse list,
                                       ArrangeType arrangeType) {
         PlaceResponseDto placeResponse = new PlaceResponseDto();
 

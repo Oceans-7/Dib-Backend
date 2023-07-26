@@ -132,7 +132,7 @@ public class PlaceServiceTest {
         assertThat(searchPlaceResDto.isAreaSearch()).isFalse();
         assertThat(searchPlaceResDto.getAreas()).isNullOrEmpty();
 
-        assertThat(searchPlaceResDto.getPlaces().length).isEqualTo(searchPlaceReqDto.getPageSize());
+        assertThat(searchPlaceResDto.getPlaces().size()).isEqualTo(searchPlaceReqDto.getPageSize());
     }
 
     @Test

@@ -10,7 +10,6 @@ import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem.*;
-import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.util.CoordinateUtil;
 import com.oceans7.dib.global.util.TextManipulatorUtil;
@@ -52,9 +51,9 @@ public class PlaceService {
             apiResponse = getPlaceByLocation(request, contentType, arrangeType);
         }
 
-        SimplePlaceInformationDto[] simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
+        List<SimplePlaceInformationDto> simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
                 .map(SimplePlaceInformationDto :: of)
-                .toArray(SimplePlaceInformationDto[]::new);
+                .collect(Collectors.toList());
 
         return PlaceResponseDto.of(simpleDto, apiResponse, request.getArrangeType());
     }
@@ -108,12 +107,12 @@ public class PlaceService {
         LocalResponse local = kakaoLocalAPIService.getSearchAddressLocalApi(request.getKeyword());
 
         if(isLocationName(local)) {
-            SimpleAreaResponseDto[] simpleDto = searchAreaKeyword(local, request.getMapX(), request.getMapY());
+            List<SimpleAreaResponseDto> simpleDto = searchAreaKeyword(local, request.getMapX(), request.getMapY());
             return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, true);
         } else {
             TourAPICommonListResponse apiResponse = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize());
 
-            SimplePlaceInformationDto[] simpleDto = searchPlaceKeyword(request, apiResponse);
+            List<SimplePlaceInformationDto> simpleDto = searchPlaceKeyword(request, apiResponse);
             return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, apiResponse, false);
         }
     }
@@ -125,7 +124,7 @@ public class PlaceService {
     /**
      * 관광 정보 키워드 검색 -> 지역명 검색
      */
-    private SimpleAreaResponseDto[] searchAreaKeyword(LocalResponse local, double mapX, double mapY) {
+    private List<SimpleAreaResponseDto> searchAreaKeyword(LocalResponse local, double mapX, double mapY) {
         List<SimpleAreaResponseDto> areaList = new ArrayList<>();
 
         for(AddressItem addressItem : local.getAddressItems()) {
@@ -150,13 +149,13 @@ public class PlaceService {
             areaList.add(SimpleAreaResponseDto.of(address, distance, areaName, sigunguName, areaX, areaY));
         }
 
-        return areaList.toArray(SimpleAreaResponseDto[]::new);
+        return areaList;
     }
 
     /**
      * 관광 정보 키워드 검색 -> 단순 검색
      */
-    private SimplePlaceInformationDto[] searchPlaceKeyword(SearchPlaceRequestDto request, TourAPICommonListResponse apiResponse) {
+    private List<SimplePlaceInformationDto> searchPlaceKeyword(SearchPlaceRequestDto request, TourAPICommonListResponse apiResponse) {
 
         apiResponse.getTourAPICommonItemResponseList().stream()
                 .forEach(item -> {
@@ -166,7 +165,7 @@ public class PlaceService {
 
         return apiResponse.getTourAPICommonItemResponseList().stream()
                 .map(SimplePlaceInformationDto :: of)
-                .toArray(SimplePlaceInformationDto[]::new);
+                .collect(Collectors.toList());
 
     }
 
