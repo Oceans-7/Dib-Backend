@@ -153,6 +153,8 @@ public class PlaceServiceTest {
     @DisplayName("관광 정보 [키워드] 검색 테스트")
     public void searchPlaceTest() {
         // given
+        when(kakaoLocalAPIService.getSearchAddressLocalApi(searchReq.getKeyword()))
+                .thenReturn(testSearchNoAddressRes());
         when(tourAPIService.getSearchKeywordTourApi(searchReq.getKeyword(), searchReq.getPage(), searchReq.getPageSize()))
                 .thenReturn(testSearchRes());
 

@@ -284,6 +284,10 @@ public class MockResponse {
                 .build();
     }
 
+    public static LocalResponse testSearchNoAddressRes() {
+        return new LocalResponse(null);
+    }
+
     public static TourAPICommonListResponse testSearchRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
         item.add(setCommonTourItem(1000.1711716167842, null));
