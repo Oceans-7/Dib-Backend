@@ -204,43 +204,43 @@ public class MockResponse {
     }
 
     // --- VlilageFcstAPIService Test Mock Response
-    private static List<FcstAPICommonItemResponse> setNcstItem() {
+    private static List<FcstAPICommonItemResponse> setNcstItem(String baseDate, String baseTime) {
         List<FcstAPICommonItemResponse> item = new ArrayList<>();
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "0", "PTY", null, null, null));
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "89","REH", null, null, null));
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "0", "RN1", null, null, null));
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "26.1", "T1H", null, null, null));
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "1", "UUU", null, null, null));
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "205", "VEC", null, null, null));
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "2.1", "VVV", null, null, null));
-        item.add(new FcstAPICommonItemResponse("20230726", "0100", "2.3", "WSD", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "0", "PTY", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "89","REH", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "0", "RN1", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "26.1", "T1H", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "1", "UUU", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "205", "VEC", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "2.1", "VVV", null, null, null));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, "2.3", "WSD", null, null, null));
         return item;
     }
 
     public static ResponseWrapper testNcstRes() {
         return new ResponseWrapper(
-                new Response(new FcstAPICommonListResponse(setNcstItem()))
+                new Response(new FcstAPICommonListResponse(setNcstItem("20230726", "0100")))
         );
     }
 
-    private static List<FcstAPICommonItemResponse> setFcstItem() {
+    private static List<FcstAPICommonItemResponse> setFcstItem(String baseDate, String baseTime, String fcstDate, String fcstTime) {
         List<FcstAPICommonItemResponse> item = new ArrayList<>();
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "LGT", "20230726", "0100", "0"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "PTY", "20230726", "0100", "0"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "RN1", "20230726", "0100", "강수없음"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "SKY", "20230726", "0100", "4"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "T1H", "20230726", "0100", "25"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "REH", "20230726", "0100", "85"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "UUU", "20230726", "0100", "1.7"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "VVV", "20230726", "0100", "1.2"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "VEC", "20230726", "0100", "228"));
-        item.add(new FcstAPICommonItemResponse("20230726", "0000", null, "WSD", "20230726", "0100", "2"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "LGT", fcstDate, fcstTime, "0"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "PTY", fcstDate, fcstTime, "0"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "RN1", fcstDate, fcstTime, "강수없음"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "SKY", fcstDate, fcstTime, "4"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "T1H", fcstDate, fcstTime, "25"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "REH", fcstDate, fcstTime, "85"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "UUU", fcstDate, fcstTime, "1.7"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "VVV", fcstDate, fcstTime, "1.2"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "VEC", fcstDate, fcstTime, "228"));
+        item.add(new FcstAPICommonItemResponse(baseDate, baseTime, null, "WSD", fcstDate, fcstTime, "2"));
         return item;
     }
 
     public static ResponseWrapper testFcstRes() {
         return new ResponseWrapper(
-                new Response(new FcstAPICommonListResponse(setFcstItem()))
+                new Response(new FcstAPICommonListResponse(setFcstItem("20230726", "0000", "20230726", "0100")))
         );
     }
 
@@ -325,12 +325,12 @@ public class MockResponse {
     }
 
     // --- LocationService Test Mock Response
-    public static FcstAPICommonListResponse testLocationNcstRes() {
-        return new FcstAPICommonListResponse(setNcstItem());
+    public static FcstAPICommonListResponse testLocationNcstRes(String baseDate, String baseTime) {
+        return new FcstAPICommonListResponse(setNcstItem(baseDate, baseTime));
     }
 
-    public static FcstAPICommonListResponse testLocationFcstRes() {
-        return new FcstAPICommonListResponse(setFcstItem());
+    public static FcstAPICommonListResponse testLocationFcstRes(String baseDate, String baseTime, String fcstDate, String fcstTime) {
+        return new FcstAPICommonListResponse(setFcstItem(baseDate, baseTime, fcstDate, fcstTime));
     }
 
     public static LocalResponse testGeoAddressXYExceptionRes() {

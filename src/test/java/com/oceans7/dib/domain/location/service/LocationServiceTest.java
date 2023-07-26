@@ -64,24 +64,28 @@ public class LocationServiceTest {
     @DisplayName("좌표로 지역명과 날씨 조회 테스트")
     public void searchPlaceTest() {
         // given
-        String baseDate, baseTime;
+        String baseDate, baseTime, fcstDate, fcstTime;
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        String nowTime = now.format(DateTimeFormatter.ofPattern("HH00"));
 
         when(kakaoLocalAPIService.getGeoAddressLocalApi(searchLocationReq.getMapX(), searchLocationReq.getMapY())).thenReturn(testGeoAddressRes());
 
         baseDate = calculateBaseDate(now, NCST_CALLABLE_TIME);
         baseTime = calculateBaseTime(now, NCST_CALLABLE_TIME);
-        when(vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime)).thenReturn(testLocationNcstRes());
+        when(vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime))
+                .thenReturn(testLocationNcstRes(baseDate, baseDate));
 
-        baseDate = calculateBaseDate(now, FCST_CALLABLE_TIME);
-        baseTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
-        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime)).thenReturn(testLocationFcstRes());
+        fcstDate = calculateBaseDate(now, FCST_CALLABLE_TIME);
+        fcstTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
+        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime))
+                .thenReturn(testLocationFcstRes(baseDate, fcstTime, fcstDate, nowTime));
 
         // when
         LocationResponseDto response = locationService.searchPlace(searchLocationReq);
 
         // then
         assertThat(response.getAddress()).isEqualTo("서울특별시 중구 창경궁로 17");
+        System.out.println(response.getWeatherType());
         assertThat(response.getWeatherType()).isEqualTo(WeatherType.NIGHT_CLOUDY);
         assertThat(response.getTemperatures()).isEqualTo(26.1);
     }
