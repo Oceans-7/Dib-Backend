@@ -55,7 +55,7 @@ public class OpenApiConfig {
 
         return HttpServiceProxyFactory
                 .builder(WebClientAdapter.forClient(webClient))
-                .blockTimeout(Duration.ofMillis(30000))
+                .blockTimeout(Duration.ofMillis(5000))
                 .build()
                 .createClient(DataGoKrApi.class);
     }
