@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.openapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.api.http.KakaoApi;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
@@ -15,7 +16,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 
 import static com.oceans7.dib.global.MockRequest.*;
-import static com.oceans7.dib.global.MockResponse.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -34,8 +34,8 @@ public class KakaoLocalAPIServiceTest {
 
     @BeforeEach
     void setUp() {
-        searchAddressRes = testSearchAddressRes();
-        geoAddressRes = testGeoAddressRes();
+        searchAddressRes = MockResponse.testSearchAddressRes();
+        geoAddressRes = MockResponse.testGeoAddressRes();
 
         objectMapper = new ObjectMapper();
     }

@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.openapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.ResponseWrapper;
 import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.oceans7.dib.global.MockResponse.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -50,8 +50,8 @@ public class VilageFcstAPIServiceTest {
 
     @BeforeEach
     public void before() {
-        ultraSrtNcstAPIRes = testNcstRes();
-        ultraFcstAPIRes = testFcstRes();
+        ultraSrtNcstAPIRes = MockResponse.testNcstRes();
+        ultraFcstAPIRes = MockResponse.testFcstRes();
 
         objectMapper = new ObjectMapper();
 
