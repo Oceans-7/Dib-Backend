@@ -66,10 +66,6 @@ public class LocationService {
         int precipitation = getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.PTY, nowTime);
         boolean isThunder = (getFcstItem(ultraFcst.getFcstAPICommonItemResponseList(), FcstType.LGT, nowTime) > 0);
 
-        System.out.println(sky);
-        System.out.println(precipitation);
-        System.out.println(isThunder);
-
         WeatherType weatherType = WeatherType.getWeatherType(sky, precipitation, isThunder, isDay);
         double temperatures = getTemperatures(nowCast.getFcstAPICommonItemResponseList(), FcstType.T1H);
 
