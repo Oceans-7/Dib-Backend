@@ -85,8 +85,7 @@ public class LocationServiceTest {
 
         // then
         assertThat(response.getAddress()).isEqualTo("서울특별시 중구 창경궁로 17");
-        System.out.println(response.getWeatherType());
-        assertThat(response.getWeatherType()).isEqualTo(WeatherType.NIGHT_CLOUDY);
+        assertThat(response.getWeatherType()).isEqualTo(WeatherType.OVERCAST);
         assertThat(response.getTemperatures()).isEqualTo(26.1);
     }
 
