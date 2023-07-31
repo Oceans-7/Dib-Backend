@@ -1,5 +1,8 @@
 package com.oceans7.dib.global;
 
+import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.domain.weather.dto.FcstType;
+import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
@@ -335,5 +338,13 @@ public class MockResponse {
 
     public static LocalResponse testGeoAddressXYExceptionRes() {
         return new LocalResponse(null);
+    }
+
+    public static LocationResponseDto testSearchPlaceRes() {
+        String addressName = "서울특별시 중구 창경궁로 17";
+        WeatherType weatherType = WeatherType.SUNNY;
+        double temperatures = 33.2;
+
+        return LocationResponseDto.of(addressName, weatherType, temperatures);
     }
 }
