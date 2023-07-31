@@ -4,10 +4,6 @@ import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.MockRequest;
-import com.oceans7.dib.global.MockResponse;
-import com.oceans7.dib.global.api.http.KakaoApi;
-import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
-import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
@@ -107,7 +103,7 @@ public class LocationServiceTest {
 
     @Test
     @DisplayName("[exception] 잘못된 좌표로 요청 테스트")
-    public void searchPlaceXYNullExceptionTest() {
+    public void searchPlaceInvalidXYThrowsExceptionTest() {
         when(kakaoLocalAPIService.getGeoAddressLocalApi(searchXYExceptionReq.getMapX(), searchXYExceptionReq.getMapY()))
                 .thenReturn(testGeoAddressXYExceptionRes());
 
