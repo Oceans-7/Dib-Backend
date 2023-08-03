@@ -1,6 +1,8 @@
 package com.oceans7.dib.global.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,7 +18,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return ResponseEntity.status(ErrorCode.NOT_VALID_EXCEPTION.getHttpStatus())
-                .body(ErrorResponse.error(ErrorCode.NOT_VALID_EXCEPTION, e.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
+        ErrorCode errorCode = ErrorCode.INVALID_VALUE_EXCEPTION;
+        String message = e.getBindingResult().getFieldError().getField() +
+                "은(는) " + errorCode.getMessage();
+
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ErrorResponse.error(errorCode, message));
     }
 }
