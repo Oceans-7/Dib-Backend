@@ -1,6 +1,5 @@
 package com.oceans7.dib.global.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -18,6 +17,9 @@ public enum ErrorCode {
     NOT_FOUND_ITEM_EXCEPTION(HttpStatus.BAD_REQUEST, "O0000", "관광 정보 검색 결과가 없습니다."),
     SOCKET_TIMEOUT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "O0001", "Open API 서버 연결에 실패하였습니다."),
     NOT_FOUNT_USER_LOCATION(HttpStatus.BAD_REQUEST, "O0002", "사용자 위치를 찾을 수 없습니다."),
+
+    // Place
+    NOT_FOUNT_AREA_NAME(HttpStatus.BAD_REQUEST, "P0000", "지역명을 찾을 수 없습니다."),
     ;
 
     private HttpStatus httpStatus;

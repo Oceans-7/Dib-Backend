@@ -8,6 +8,7 @@ import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 
 public class MockRequest {
+    public static final String KEYWORD_QUERY = "뷰티플레이";
     public static final String AREA_QUERY = "서울 중구";
 
     public static final Long CONTENT_ID = (long) 2946230;
@@ -30,12 +31,24 @@ public class MockRequest {
                 AREA_QUERY.split(" ")[0], AREA_QUERY.split(" ")[1], null, 1, 1);
     }
 
+    public static GetPlaceRequestDto testPlaceXYExceptionReq() {
+        return new GetPlaceRequestDto(0, 0, null, null, null, null, 1, 1);
+    }
+
+    public static GetPlaceRequestDto testPlaceAreaExceptionReq() {
+        return new GetPlaceRequestDto(X, Y, null, "Invalid Area Name", null, null, 1, 1);
+    }
+
     public static SearchPlaceRequestDto testSearchReq() {
-        return new SearchPlaceRequestDto("뷰티플레이", X, Y, 1, 1);
+        return new SearchPlaceRequestDto(KEYWORD_QUERY, X, Y, 1, 1);
     }
 
     public static SearchPlaceRequestDto testSearchAreaReq() {
         return new SearchPlaceRequestDto(AREA_QUERY, X, Y, 1, 1);
+    }
+
+    public static SearchPlaceRequestDto testSearchNotFoundExceptionReq() {
+        return new SearchPlaceRequestDto("Not Found Keyword!!", X, Y, 1, 1);
     }
 
     public static GetPlaceDetailRequestDto testPlaceDetailReq() {
