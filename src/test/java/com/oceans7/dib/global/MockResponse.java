@@ -306,6 +306,16 @@ public class MockResponse {
                 .build();
     }
 
+    public static TourAPICommonListResponse testNoResultRes() {
+        List<TourAPICommonItemResponse> item = new ArrayList<>();
+        return TourAPICommonListResponse.builder()
+                .tourAPICommonItemResponseList(item)
+                .page(0)
+                .pageSize(0)
+                .totalCount(0)
+                .build();
+    }
+
     public static DetailCommonListResponse testPlaceCommonRes() {
         List<DetailCommonItemResponse> item = new ArrayList<>();
         item.add(setDetailCommonItem());

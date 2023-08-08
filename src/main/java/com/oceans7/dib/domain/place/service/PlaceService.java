@@ -104,7 +104,6 @@ public class PlaceService {
     }
 
     private String findAreaCode(String areaCode, String areaName) {
-        // TODO : 서비스단에서 해당 예외 테스트해보기
         AreaCodeList areaCodeList = tourAPIService.getAreaCodeApi(areaCode);
         String findCode = areaCodeList.getAreaCodeByName(areaName);
 
