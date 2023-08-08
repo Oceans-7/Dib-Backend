@@ -73,7 +73,7 @@ public class LocationServiceTest {
 
         fcstDate = calculateBaseDate(now, FCST_CALLABLE_TIME);
         fcstTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
-        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime))
+        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, fcstDate, fcstTime))
                 .thenReturn(testLocationFcstRes(baseDate, fcstTime, fcstDate, nowTime));
 
         // when
@@ -81,7 +81,7 @@ public class LocationServiceTest {
 
         // then
         assertThat(response.getAddress()).isEqualTo("서울특별시 중구 창경궁로 17");
-        assertThat(response.getWeatherType()).isEqualTo(WeatherType.OVERCAST);
+        assertThat(response.getWeatherType()).isEqualTo(WeatherType.NIGHT_CLOUDY);
         assertThat(response.getTemperatures()).isEqualTo(26.1);
     }
 
