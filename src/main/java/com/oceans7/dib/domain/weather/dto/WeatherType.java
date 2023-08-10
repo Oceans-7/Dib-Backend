@@ -40,7 +40,13 @@ public enum WeatherType {
         if (precipitationMap.containsKey(precipitation)) {
             return precipitationMap.get(precipitation);
         } else if (skyMap.containsKey(sky) && precipitation == 0) {
-            return isDay ? skyMap.get(sky) : (sky == 1 ? NIGHT_SUNNY : NIGHT_CLOUDY);
+            if(!isDay && sky == 1) {
+                return NIGHT_SUNNY;
+            } else if (!isDay && sky == 2) {
+                return NIGHT_CLOUDY;
+            }
+
+            return skyMap.get(sky);
         }
 
         return null;

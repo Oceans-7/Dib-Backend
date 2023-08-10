@@ -89,9 +89,9 @@ public class LocationService {
                 now.minusHours(1).format(timeFormatter) : now.format(timeFormatter);
     }
 
-    private int getFcstItem(List<FcstAPICommonItemResponse> items, FcstType category, String baseTime) {
+    private int getFcstItem(List<FcstAPICommonItemResponse> items, FcstType category, String nowTime) {
         for(FcstAPICommonItemResponse item : items) {
-            if(item.getCategory().equals(category.name()) && item.getFcstTime().equals(baseTime)) {
+            if(item.getCategory().equals(category.name()) && item.getFcstTime().equals(nowTime)) {
                 return Integer.parseInt(item.getFcstValue());
             }
         }
