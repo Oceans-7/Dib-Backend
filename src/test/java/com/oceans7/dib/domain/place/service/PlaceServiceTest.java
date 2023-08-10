@@ -6,8 +6,10 @@ import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.response.*;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto.FacilityInfo;
 import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.api.service.DataGoKrAPIService;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
+import com.oceans7.dib.global.exception.ApplicationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static com.oceans7.dib.global.MockResponse.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -36,8 +39,10 @@ public class PlaceServiceTest {
     private GetPlaceRequestDto placeReq;
     private GetPlaceRequestDto placeWithSortingReq;
     private GetPlaceRequestDto placeWithAreaReq;
+    private GetPlaceRequestDto placeWithAreaExceptionReq;
     private SearchPlaceRequestDto searchReq;
     private SearchPlaceRequestDto searchAreaReq;
+    private SearchPlaceRequestDto searchNotFoundExceptionReq;
     private GetPlaceDetailRequestDto placeDetailReq;
 
     private final static double MIN_DISTANCE = 0.0;
@@ -48,8 +53,10 @@ public class PlaceServiceTest {
         placeReq = MockRequest.testPlaceReq();
         placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
         placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
+        placeWithAreaExceptionReq = MockRequest.testPlaceAreaExceptionReq();
         searchReq = MockRequest.testSearchReq();
         searchAreaReq = MockRequest.testSearchAreaReq();
+        searchNotFoundExceptionReq = MockRequest.testSearchNotFoundExceptionReq();
         placeDetailReq = MockRequest.testPlaceDetailReq();
     }
 
@@ -150,6 +157,21 @@ public class PlaceServiceTest {
     }
 
     @Test
+    @DisplayName("[exception] 유효하지 않은 지역 조회 테스트")
+    public void getAreaPlaceNotFoundAreaItemExceptionTest() {
+        // given
+        String contentType = "";
+        String arrangeType = "";
+        String areaCode = placeWithAreaExceptionReq.getArea();
+
+        when(tourAPIService.getAreaCodeApi("")).thenReturn(testPlaceAreaCodeRes());
+        when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(testPlaceSigunguCodeRes());
+
+        // when & then
+        assertThrows(ApplicationException.class, () -> placeService.getPlace(placeWithAreaExceptionReq, contentType, arrangeType));
+    }
+
+    @Test
     @DisplayName("관광 정보 [키워드] 검색 테스트")
     public void searchPlaceTest() {
         // given
@@ -176,6 +198,19 @@ public class PlaceServiceTest {
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
         assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+    }
+
+    @Test
+    @DisplayName("[exception] 검색 결과 없음 예외 테스트")
+    public void searchPlaceNotFoundItemExceptionTest() {
+        // given
+        when(kakaoLocalAPIService.getSearchAddressLocalApi(searchNotFoundExceptionReq.getKeyword()))
+                .thenReturn(testSearchNoAddressRes());
+        when(tourAPIService.getSearchKeywordTourApi(searchNotFoundExceptionReq.getKeyword(), searchNotFoundExceptionReq.getPage(), searchNotFoundExceptionReq.getPageSize()))
+                .thenReturn(MockResponse.testNoResultRes());
+
+        // then
+        assertThrows(ApplicationException.class, () -> placeService.searchPlace(searchNotFoundExceptionReq));
     }
 
     @Test

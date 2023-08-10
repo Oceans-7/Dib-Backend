@@ -4,10 +4,6 @@ import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.MockRequest;
-import com.oceans7.dib.global.MockResponse;
-import com.oceans7.dib.global.api.http.KakaoApi;
-import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
-import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
@@ -77,7 +73,7 @@ public class LocationServiceTest {
 
         fcstDate = calculateBaseDate(now, FCST_CALLABLE_TIME);
         fcstTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
-        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime))
+        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, fcstDate, fcstTime))
                 .thenReturn(testLocationFcstRes(baseDate, fcstTime, fcstDate, nowTime));
 
         // when
@@ -85,7 +81,7 @@ public class LocationServiceTest {
 
         // then
         assertThat(response.getAddress()).isEqualTo("서울특별시 중구 창경궁로 17");
-        assertThat(response.getWeatherType()).isEqualTo(WeatherType.OVERCAST);
+        assertThat(response.getWeatherType()).isEqualTo(WeatherType.NIGHT_CLOUDY);
         assertThat(response.getTemperatures()).isEqualTo(26.1);
     }
 
@@ -107,7 +103,7 @@ public class LocationServiceTest {
 
     @Test
     @DisplayName("[exception] 잘못된 좌표로 요청 테스트")
-    public void searchPlaceXYNullExceptionTest() {
+    public void searchPlaceInvalidXYThrowsExceptionTest() {
         when(kakaoLocalAPIService.getGeoAddressLocalApi(searchXYExceptionReq.getMapX(), searchXYExceptionReq.getMapY()))
                 .thenReturn(testGeoAddressXYExceptionRes());
 

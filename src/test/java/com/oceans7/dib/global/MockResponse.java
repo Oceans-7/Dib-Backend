@@ -1,5 +1,10 @@
 package com.oceans7.dib.global;
 
+import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.domain.place.dto.ArrangeType;
+import com.oceans7.dib.domain.place.dto.FacilityType;
+import com.oceans7.dib.domain.place.dto.response.*;
+import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
@@ -18,9 +23,11 @@ import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListRespons
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse.*;
 import com.oceans7.dib.global.ResponseWrapper.Response;
+import com.oceans7.dib.global.util.ValidatorUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.oceans7.dib.global.MockRequest.*;
 
@@ -67,7 +74,7 @@ public class MockResponse {
 
     private static TourAPICommonItemResponse setCommonTourItem2(double dist, String zipcode) {
         return new TourAPICommonItemResponse(
-                (long) 126911, 12,
+                CONTENT_ID, CONTENT_TYPE.getCode(),
                 "서울 남현동 요지", "",
                 "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg",
                 "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg",
@@ -275,7 +282,7 @@ public class MockResponse {
 
     public static TourAPICommonListResponse testAreaPlaceRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(0, "04538"));
+        item.add(setCommonTourItem(1000.1711716167842, "04538"));
         return TourAPICommonListResponse.builder()
                 .tourAPICommonItemResponseList(item)
                 .page(1)
@@ -296,6 +303,16 @@ public class MockResponse {
                 .page(1)
                 .pageSize(1)
                 .totalCount(1)
+                .build();
+    }
+
+    public static TourAPICommonListResponse testNoResultRes() {
+        List<TourAPICommonItemResponse> item = new ArrayList<>();
+        return TourAPICommonListResponse.builder()
+                .tourAPICommonItemResponseList(item)
+                .page(0)
+                .pageSize(0)
+                .totalCount(0)
                 .build();
     }
 
@@ -335,5 +352,69 @@ public class MockResponse {
 
     public static LocalResponse testGeoAddressXYExceptionRes() {
         return new LocalResponse(null);
+    }
+
+    // LocationController Test Mock Response
+    public static LocationResponseDto testSearchPlaceRes() {
+        String addressName = "서울특별시 중구 창경궁로 17";
+        WeatherType weatherType = WeatherType.SUNNY;
+        double temperatures = 33.2;
+
+        return LocationResponseDto.of(addressName, weatherType, temperatures);
+    }
+
+    // PlaceController Test Mock Response
+    public static PlaceResponseDto testGetPlaceRes() {
+        ArrangeType arrangeType = null;
+        List<SimplePlaceInformationDto> simpleDto = testPlaceRes().getTourAPICommonItemResponseList().stream()
+                .map(SimplePlaceInformationDto :: of)
+                .collect(Collectors.toList());
+
+        return PlaceResponseDto.of(simpleDto, testPlaceRes(), arrangeType);
+    }
+
+    public static PlaceResponseDto testGetPlaceBasedAreaRes() {
+        ArrangeType arrangeType = null;
+        List<SimplePlaceInformationDto> simpleDto = testAreaPlaceRes().getTourAPICommonItemResponseList().stream()
+                .map(SimplePlaceInformationDto :: of)
+                .collect(Collectors.toList());
+
+        return PlaceResponseDto.of(simpleDto, testAreaPlaceRes(), arrangeType);
+    }
+
+    public static SearchPlaceResponseDto testSearchPlaceBasedKeywordRes() {
+        List<SimplePlaceInformationDto> simpleDto = testSearchRes().getTourAPICommonItemResponseList().stream()
+                .map(SimplePlaceInformationDto :: of)
+                .collect(Collectors.toList());
+
+        return SearchPlaceResponseDto.of(KEYWORD_QUERY, simpleDto, testSearchRes(), false);
+    }
+
+    public static  SearchPlaceResponseDto testSearchPlaceBasedAreaRes() {
+        List<SimpleAreaResponseDto> simpleDto = new ArrayList<>();
+        simpleDto.add(SimpleAreaResponseDto.of("서울 중구", 1000.1711716167842, "서울", "중구", X, Y));
+        return SearchPlaceResponseDto.of(AREA_QUERY, simpleDto, true);
+    }
+
+    public static DetailPlaceInformationResponseDto testGetDetailPlaceRes() {
+        DetailCommonItemResponse commonItem = setDetailCommonItem();
+        SpotItemResponse spotItem = setDetailIntroItem();
+        DetailInfoItemResponse infoItem = setDetailInfoItem();
+        List<DetailImageItemResponse> imageItems = setDetailImageItem();
+
+        List<String> imageUrls = imageItems.stream()
+                .map(image -> image.getOriginImageUrl())
+                .collect(Collectors.toList());
+
+        DetailPlaceInformationResponseDto mock = DetailPlaceInformationResponseDto.of(commonItem, imageUrls);
+
+        List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(spotItem.getCheckBabyCarriage())));
+        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(spotItem.getCheckCreditCard())));
+        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(spotItem.getCheckPet())));
+        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.RESTROOM, true));
+
+        mock.updateItem(spotItem.getUseTime(), spotItem.getInfoCenter(), spotItem.getRestDate(), null, null, facilityInfo);
+        return mock;
     }
 }

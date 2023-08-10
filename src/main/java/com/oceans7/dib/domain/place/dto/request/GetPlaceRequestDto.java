@@ -5,12 +5,14 @@ import com.oceans7.dib.domain.place.ContentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class GetPlaceRequestDto {
     @NotNull
     @Schema(description = "사용자 경도", example = "126.9779692")

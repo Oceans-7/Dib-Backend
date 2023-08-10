@@ -11,6 +11,8 @@ import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem.*;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.CoordinateUtil;
 import com.oceans7.dib.global.util.TextManipulatorUtil;
 import com.oceans7.dib.global.util.ValidatorUtil;
@@ -51,6 +53,10 @@ public class PlaceService {
             apiResponse = getPlaceByLocation(request, contentType, arrangeType);
         }
 
+        if(apiResponse.getTotalCount() == 0) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION);
+        }
+
         List<SimplePlaceInformationDto> simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
                 .map(SimplePlaceInformationDto :: of)
                 .collect(Collectors.toList());
@@ -80,12 +86,9 @@ public class PlaceService {
     private TourAPICommonListResponse getPlaceByArea(GetPlaceRequestDto request, String contentType, String arrangeType) {
         String areaCode, sigunguCode = "";
 
-        AreaCodeList list = tourAPIService.getAreaCodeApi("");
-        areaCode = list.getAreaCodeByName(request.getArea());
-
+        areaCode = findAreaCode("", request.getArea());
         if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
-            AreaCodeList sigunguList = tourAPIService.getAreaCodeApi(areaCode);
-            sigunguCode = sigunguList.getAreaCodeByName(request.getSigungu());
+            sigunguCode = findAreaCode(areaCode, request.getSigungu());
         }
 
         TourAPICommonListResponse apiResponse = tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
@@ -100,6 +103,17 @@ public class PlaceService {
         return apiResponse;
     }
 
+    private String findAreaCode(String areaCode, String areaName) {
+        AreaCodeList areaCodeList = tourAPIService.getAreaCodeApi(areaCode);
+        String findCode = areaCodeList.getAreaCodeByName(areaName);
+
+        if(ValidatorUtil.isEmpty(findCode)) {
+            throw new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME);
+        }
+
+        return findCode;
+    }
+
     /**
      * 관광 정보 키워드 검색
      */
@@ -112,6 +126,9 @@ public class PlaceService {
         } else {
             TourAPICommonListResponse apiResponse = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize());
 
+            if(apiResponse.getTotalCount() == 0) {
+                throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION);
+            }
             List<SimplePlaceInformationDto> simpleDto = searchPlaceKeyword(request, apiResponse);
             return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, apiResponse, false);
         }
