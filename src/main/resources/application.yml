@@ -1,15 +1,35 @@
-
 spring:
-  profiles:
-    include:
-      - prod
+  config:
+    activate:
+      on-profile: test
 
-### swagger
-springdoc:
-  swagger-ui:
-    path: '/api-docs-ui'
-    enabled: true
-    docExpansion: 'none'
-    # request, response media type
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://dib.c6dlqvnqfshs.ap-northeast-2.rds.amazonaws.com:3306/dib?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: admin
+    password: Diboceans2023!
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+### OPEN API
+open-api:
+  data-go-kr:
+    base-url: 'http://apis.data.go.kr'
+    service-decode-key: Aq9KMuZOroXZ2VXTfp0muqNzOi3KhLBhbJDeKqNur4Z2qQV2SMTnqbkvRKMXtUoyiOUyzoJ5giU/Cy1JqRuz2g==
+    data-type: json
+    mobile-os: AND
+    mobile-app : DIB
+  kakao:
+    base-url: 'https://dapi.kakao.com'
+    data-type: json
+    service-key: 1f7f0a314c1fc7741b13c4ca30644eb9
+    header-prefix: 'KakaoAK '
+    open-key-url: https://kauth.kakao.com
+
+# jwt
+jwt:
+  secret: temp
