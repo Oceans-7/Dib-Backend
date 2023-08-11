@@ -12,7 +12,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Bean
@@ -33,6 +32,7 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",
                                         "/location",
                                         "/auth/login"
+                                ).permitAll()
                                 .anyRequest().authenticated()
 
                         // TODO 인증 필터 추가
