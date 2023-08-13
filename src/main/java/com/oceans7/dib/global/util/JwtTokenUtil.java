@@ -25,7 +25,7 @@ public class JwtTokenUtil {
     private static final int REFRESH_TOKEN_EXPIRATION_MS = 14 * 24 * 60 * 60 * 1000;
 
     // jwt 토큰 생성
-    public String generateAccessToken(TokenType tokenType, Long userId, String profileUrl) {
+    public String generateToken(TokenType tokenType, Long userId, String profileUrl) {
         Date now = new Date();
 
         int expireDuration = tokenType == TokenType.REFRESH_TOKEN ? REFRESH_TOKEN_EXPIRATION_MS : ACCESS_TOKEN_EXPIRATION_MS;

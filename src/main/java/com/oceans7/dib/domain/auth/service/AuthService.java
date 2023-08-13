@@ -52,8 +52,8 @@ public class AuthService {
 
         User user = foundUser.orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId)));
 
-        String accessToken = jwtTokenUtil.generateAccessToken(TokenType.ACCESS_TOKEN, user.getId(), user.getProfileUrl());
-        String refreshToken = jwtTokenUtil.generateAccessToken(TokenType.REFRESH_TOKEN, user.getId(), user.getProfileUrl());
+        String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user.getId(), user.getProfileUrl());
+        String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user.getId(), user.getProfileUrl());
 
         return TokenResponseDto.of(accessToken, refreshToken);
     }
