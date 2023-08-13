@@ -48,14 +48,19 @@ public class AuthService {
         String picture = claims.getBody().get("picture", String.class);
         String socialUserId = claims.getBody().getSubject();
 
-        Optional<User> foundUser = userRepository.findBySocialTypeAndSocialUserId(SocialType.KAKAO, socialUserId);
+        User user = upsertUser(SocialType.KAKAO, socialUserId, nickname, picture);
 
-        User user = foundUser.orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId)));
+
 
         String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user.getId(), user.getProfileUrl());
         String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user.getId(), user.getProfileUrl());
 
         return TokenResponseDto.of(accessToken, refreshToken);
+    }
+
+    private User upsertUser(SocialType socialType, String socialUserId, String nickname, String picture) {
+        return userRepository.findBySocialTypeAndSocialUserId(SocialType.KAKAO, socialUserId)
+                .orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId)));
     }
 
     public Jws<Claims> parseJwt(String jwt, String aud, String iss, String nonce) {
