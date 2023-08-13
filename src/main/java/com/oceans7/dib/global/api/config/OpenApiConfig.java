@@ -2,6 +2,7 @@ package com.oceans7.dib.global.api.config;
 
 import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.http.KakaoApi;
+import com.oceans7.dib.global.api.http.KakaoAuthApi;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -31,6 +32,9 @@ public class OpenApiConfig {
 
     @Value("${open-api.kakao.service-key}")
     private String kakaoServiceKey;
+
+    @Value("${open-api.kakao.open-key-url}")
+    private String kakaoOpenKeyUrl;
 
     private final static String kakaoHeader = "KakaoAK ";
 
@@ -75,6 +79,22 @@ public class OpenApiConfig {
                 .blockTimeout(Duration.ofMillis(5000))
                 .build()
                 .createClient(KakaoApi.class);
+    }
+
+    @Bean
+    KakaoAuthApi kakaoAuthApi() {
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl(kakaoOpenKeyUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient()))
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+        return HttpServiceProxyFactory
+                .builder(WebClientAdapter.forClient(webClient))
+                .blockTimeout(Duration.ofMillis(5000))
+                .build()
+                .createClient(KakaoAuthApi.class);
     }
 
 }
