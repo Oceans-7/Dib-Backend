@@ -20,8 +20,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenUtil jwtTokenUtil;
-
     private final AuthenticationManager authenticationManager;
 
     @Bean

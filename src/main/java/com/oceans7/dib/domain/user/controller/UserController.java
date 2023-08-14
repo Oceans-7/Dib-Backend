@@ -21,8 +21,10 @@ public class UserController {
 
     @GetMapping("/me")
     @Operation(summary = "내 정보 조회", description = "토큰에 해당하는 유저의 정보 조회")
-    public ResponseEntity<UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal UserAccount userAccount) {
-
+    public ResponseEntity<UserInfoResponseDto> getUserInfo( @AuthenticationPrincipal UserAccount userAccount) {
+        if (userAccount == null) {
+            return ResponseEntity.ok(new UserInfoResponseDto());
+        }
         return ResponseEntity.ok(UserInfoResponseDto.from(userAccount));
     }
 }
