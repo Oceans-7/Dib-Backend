@@ -29,12 +29,17 @@ public class User extends BaseEntity {
     @Column(name = "social_user_id")
     private String socialUserId;
 
-    public static User of(String profileUrl, String nickname, SocialType socialType, String socialUserId) {
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public static User of(String profileUrl, String nickname, SocialType socialType, String socialUserId, Role role) {
         User user = new User();
         user.profileUrl = profileUrl;
         user.nickname = nickname;
         user.socialType = socialType;
         user.socialUserId = socialUserId;
+        user.role = role;
 
         return user;
     }

@@ -2,19 +2,32 @@ package com.oceans7.dib.global.util;
 
 
 import com.oceans7.dib.domain.auth.service.TokenType;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.oceans7.dib.global.api.http.KakaoAuthApi;
+import com.oceans7.dib.global.api.response.kakaoAuth.OpenKeyListResponse;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
+import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenUtil {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+
+    private final KakaoAuthApi kakaoAuthApi;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
@@ -37,7 +50,7 @@ public class JwtTokenUtil {
                 .setExpiration(expiryDate) // 만료 시간 세팅
                 ;
         claims.put("user_id", userId);
-        claims.put("profileUrl", profileUrl);
+        claims.put("profile_url", profileUrl);
         claims.put("type", tokenType);
 
         String token = Jwts.builder()
@@ -46,5 +59,80 @@ public class JwtTokenUtil {
                 .compact();
 
         return token;
+    }
+
+    public Jws<Claims> parseJwt(String jwt, String aud, String iss, String nonce) {
+        try {
+            Jws<Claims> claims = Jwts.parser()
+                    .requireAudience(aud)
+                    .requireIssuer(iss)
+                    .parseClaimsJws(jwt);
+            if (nonce.equals(claims.getBody().get("nonce", String.class))) {
+                throw new ApplicationException(ErrorCode.NONCE_NOT_MATCHED);
+            }
+            return claims;
+
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
+            throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
+        }
+    }
+
+    public void verifySignature(String idToken, String kid){
+
+        OpenKeyListResponse keyListResponse = kakaoAuthApi.getKakaoOpenKeyAddress();
+
+
+        //TODO openKey 값을 캐싱해서 사용할 수 있도록 수정
+        OpenKeyListResponse.JWK openKey = keyListResponse.getKeys().stream()
+                .filter(key -> key.getKid().equals(kid))
+                .findFirst()
+                .orElseThrow(() -> new ApplicationException(ErrorCode.OPENKEY_NOT_MATCHED));
+
+        try {
+            Jwts.parser()
+                    .setSigningKey(getRSAPublicKey(openKey.getN(), openKey.getE()))
+                    .parseClaimsJws(idToken);
+
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
+        }
+    }
+
+    public Jws<Claims> parseAccessToken(String accessToken) {
+        try {
+            Jws<Claims> claims = Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(accessToken);
+
+            return claims;
+
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
+            throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
+        }
+    }
+
+    public boolean isValidAccessToken(String accessToken) {
+        try {
+            Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(accessToken);
+
+            return true;
+
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
+            return false;
+        }
+    }
+
+    private Key getRSAPublicKey(String modulus, String exponent)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        byte[] decodeN = Base64.getUrlDecoder().decode(modulus);
+        byte[] decodeE = Base64.getUrlDecoder().decode(exponent);
+        BigInteger n = new BigInteger(1, decodeN);
+        BigInteger e = new BigInteger(1, decodeE);
+
+        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n, e);
+        return keyFactory.generatePublic(keySpec);
     }
 }

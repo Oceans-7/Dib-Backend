@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.auth.service;
 
 import com.oceans7.dib.domain.auth.dto.request.SocialLoginRequestDto;
 import com.oceans7.dib.domain.auth.dto.response.TokenResponseDto;
+import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
@@ -11,26 +12,26 @@ import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.JwtTokenUtil;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.security.*;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final KakaoAuthApi kakaoAuthApi;
-
     private final JwtTokenUtil jwtTokenUtil;
 
     private final UserRepository userRepository;
+
+    private final KakaoAuthApi kakaoAuthApi;
 
     public static String AUD = "kakao";
     public static String ISS = "https://kauth.kakao.com/oauth/authorize";
@@ -39,10 +40,10 @@ public class AuthService {
 
 
         String idToken = socialLoginRequestDto.getIdToken();
-        Jws<Claims> claims = parseJwt(idToken, AUD, ISS, socialLoginRequestDto.getNonce());
+        Jws<Claims> claims = jwtTokenUtil.parseJwt(idToken, AUD, ISS, socialLoginRequestDto.getNonce());
 
         String kid = claims.getHeader().get("kid").toString();
-        verifySignature(idToken, kid);
+        jwtTokenUtil.verifySignature(idToken, kid);
 
         String nickname = claims.getBody().get("nickname", String.class);
         String picture = claims.getBody().get("picture", String.class);
@@ -60,7 +61,7 @@ public class AuthService {
 
     private User upsertUser(SocialType socialType, String socialUserId, String nickname, String picture) {
         return userRepository.findBySocialTypeAndSocialUserId(SocialType.KAKAO, socialUserId)
-                .orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId)));
+                .orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId, Role.USER)));
     }
 
     public Jws<Claims> parseJwt(String jwt, String aud, String iss, String nonce) {
