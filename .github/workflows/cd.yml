@@ -32,7 +32,7 @@ jobs:
       # 배포를 위한 prod yml 설정
       - name: Make application-prod.yml
         run: |
-          cd -p ./src/main/resources
+          cd ./src/main/resources
           touch ./application-prod.yml
           echo "${{ secrets.PROPERTIES_PROD }}" > ./application-prod.yml
         shell: bash
