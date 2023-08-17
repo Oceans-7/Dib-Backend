@@ -45,7 +45,10 @@ public class LocationService {
             throw new ApplicationException(ErrorCode.NOT_FOUNT_USER_LOCATION);
         }
 
-        addressName = addressItems.getAddressItems().get(0).getRoadAddress().getAddressName();
+        LocalResponse.AddressItem addressItem = addressItems.getAddressItems().get(0);
+
+        addressName = ValidatorUtil.isNotEmpty(addressItem.getRoadAddress()) ?
+                addressItem.getRoadAddress().getAddressName() : addressItem.getAddress().getAddressName();
 
         CoordinateUtil.LatXLngY grid = CoordinateUtil.convertGRID_GPS(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
 
