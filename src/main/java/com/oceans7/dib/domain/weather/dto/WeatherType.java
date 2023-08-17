@@ -29,26 +29,23 @@ public enum WeatherType {
         precipitationMap.put(7, SNOWY);
 
         skyMap.put(1, SUNNY);
-        skyMap.put(2, CLOUDY);
+        skyMap.put(3, CLOUDY);
         skyMap.put(4, OVERCAST);
     }
 
-    // 하늘 코드와 강수 코드를 입력받아 날씨 타입을 반환하는 함수
+    /**
+     * param 하늘 코드, 강수 코드, 낙뢰 여부, 낮밤 여부
+     * return 날씨 타입
+     */
     public static WeatherType getWeatherType(int sky, int precipitation, boolean isThunder, boolean isDay) {
+        // case : 번개
         if (isThunder) return THUNDER;
 
-        if (precipitationMap.containsKey(precipitation)) {
-            return precipitationMap.get(precipitation);
-        } else if (skyMap.containsKey(sky) && precipitation == 0) {
-            if(!isDay && sky == 1) {
-                return NIGHT_SUNNY;
-            } else if (!isDay && sky == 2) {
-                return NIGHT_CLOUDY;
-            }
+        // case : 비/눈
+        if (precipitationMap.containsKey(precipitation)) { return precipitationMap.get(precipitation);}
 
-            return skyMap.get(sky);
-        }
-
-        return null;
+        // case : 밤/낮의 맑음/흐림
+        if (isDay) { return skyMap.get(sky); }
+        else { return sky == 1 ? NIGHT_SUNNY : NIGHT_CLOUDY; }
     }
 }
