@@ -45,7 +45,7 @@ public enum WeatherType {
         if (precipitationMap.containsKey(precipitation)) { return precipitationMap.get(precipitation);}
 
         // case : 밤/낮의 맑음/흐림
-        if (isDay) { return skyMap.get(sky); }
+        if (isDay || sky == 4) { return skyMap.get(sky); }
         else { return sky == 1 ? NIGHT_SUNNY : NIGHT_CLOUDY; }
     }
 }
