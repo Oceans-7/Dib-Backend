@@ -31,7 +31,7 @@ public class GetPlaceRequestDto {
     @Schema(description = "시군구 (area 필드 필수)", example = "성북구")
     private String sigungu;
 
-    @Schema(description = "정렬 구분", example = "TITLE")
+    @Schema(description = "정렬 구분", example = "A")
     private ArrangeType arrangeType;
 
     @NotNull
