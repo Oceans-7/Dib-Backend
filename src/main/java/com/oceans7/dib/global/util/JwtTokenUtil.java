@@ -138,7 +138,7 @@ public class JwtTokenUtil {
         }
     }
 
-    public Key getRSAPublicKey(String modulus, String exponent)
+    private Key getRSAPublicKey(String modulus, String exponent)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         byte[] decodeN = Base64.getUrlDecoder().decode(modulus);
