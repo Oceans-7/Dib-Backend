@@ -1,6 +1,8 @@
 package com.oceans7.dib.global.util;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.auth.service.TokenType;
 import com.oceans7.dib.global.api.http.KakaoAuthApi;
 import com.oceans7.dib.global.api.response.kakaoAuth.OpenKeyListResponse;
@@ -17,8 +19,10 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -61,23 +65,25 @@ public class JwtTokenUtil {
         return token;
     }
 
-    public Jws<Claims> parseJwt(String jwt, String aud, String iss, String nonce) {
-        try {
-            Jws<Claims> claims = Jwts.parser()
-                    .requireAudience(aud)
-                    .requireIssuer(iss)
-                    .parseClaimsJws(jwt);
-            if (nonce.equals(claims.getBody().get("nonce", String.class))) {
-                throw new ApplicationException(ErrorCode.NONCE_NOT_MATCHED);
-            }
-            return claims;
+    private String removeSignature(String jwt) {
+        String[] jwtSplit = jwt.split("\\.");
+        return jwtSplit[0] + "." + jwtSplit[1] + ".";
+    }
 
-        } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
+    public Jws<Claims> parseJwt(String jwt) {
+        try {
+            String jwtWithoutSignature = removeSignature(jwt);
+
+            return Jwts.parserBuilder()
+                    .build()
+                    .parseClaimsJws(jwtWithoutSignature);
+
+        } catch (ExpiredJwtException | MalformedJwtException e) {
             throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
         }
     }
 
-    public void verifySignature(String idToken, String kid){
+    public void verifySignature(String idToken, String kid, String aud, String iss, String nonce){
 
         OpenKeyListResponse keyListResponse = kakaoAuthApi.getKakaoOpenKeyAddress();
 
@@ -89,9 +95,16 @@ public class JwtTokenUtil {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.OPENKEY_NOT_MATCHED));
 
         try {
-            Jwts.parser()
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .requireAudience(aud)
+                    .requireIssuer(iss)
                     .setSigningKey(getRSAPublicKey(openKey.getN(), openKey.getE()))
+                    .build()
                     .parseClaimsJws(idToken);
+
+            if (nonce.equals(claims.getBody().get("nonce", String.class))) {
+                throw new ApplicationException(ErrorCode.NONCE_NOT_MATCHED);
+            }
 
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
@@ -111,11 +124,12 @@ public class JwtTokenUtil {
         }
     }
 
-    public boolean isValidAccessToken(String accessToken) {
+    public boolean isValidToken(String token) {
         try {
-            Jwts.parser()
+            Jwts.parserBuilder()
                     .setSigningKey(jwtSecret)
-                    .parseClaimsJws(accessToken);
+                    .build()
+                    .parseClaimsJws(token);
 
             return true;
 

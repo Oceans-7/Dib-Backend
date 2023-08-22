@@ -21,7 +21,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        if (authentication.getPrincipal() == null || !jwtTokenUtil.isValidAccessToken(authentication.getPrincipal().toString())) {
+        if (authentication.getPrincipal() == null || !jwtTokenUtil.isValidToken(authentication.getPrincipal().toString())) {
 
             throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
         }

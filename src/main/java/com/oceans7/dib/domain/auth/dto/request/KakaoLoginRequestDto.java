@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SocialLoginRequestDto {
+public class KakaoLoginRequestDto {
 
     @NotNull
     @Schema(description = "idToken")
