@@ -78,7 +78,7 @@ public class PlaceControllerTest {
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
-        ResultActions result = mvc.perform(get("/places")
+        ResultActions result = mvc.perform(get("/place")
                 .param("mapX", String.valueOf(placeReq.getMapX()))
                 .param("mapY", String.valueOf(placeReq.getMapY()))
                 .param("contentType", String.valueOf(placeReq.getContentType()))
@@ -113,7 +113,7 @@ public class PlaceControllerTest {
                 .thenReturn(MockResponse.testGetPlaceBasedAreaRes());
 
         // when
-        ResultActions result = mvc.perform(get("/places")
+        ResultActions result = mvc.perform(get("/place")
                 .param("mapX", String.valueOf(placeWithAreaReq.getMapX()))
                 .param("mapY", String.valueOf(placeWithAreaReq.getMapY()))
                 .param("area", placeWithAreaReq.getArea())
@@ -150,7 +150,7 @@ public class PlaceControllerTest {
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
-        ResultActions result = mvc.perform(get("/places")
+        ResultActions result = mvc.perform(get("/place")
                 .param("mapX", String.valueOf(placeWithSortingReq.getMapX()))
                 .param("mapY", String.valueOf(placeWithSortingReq.getMapY()))
                 .param("contentType", String.valueOf(placeWithSortingReq.getContentType()))
@@ -195,7 +195,7 @@ public class PlaceControllerTest {
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when
-        ResultActions result = mvc.perform(get("/places")
+        ResultActions result = mvc.perform(get("/place")
                 .param("mapX", String.valueOf(placeXYExceptionReq.getMapX()))
                 .param("mapY", String.valueOf(placeXYExceptionReq.getMapY()))
                 .param("page", String.valueOf(placeXYExceptionReq.getPage()))
@@ -216,7 +216,7 @@ public class PlaceControllerTest {
         String contentType = "Invalid Content Type!!";
 
         // when
-        ResultActions result = mvc.perform(get("/places")
+        ResultActions result = mvc.perform(get("/place")
                 .param("mapX", String.valueOf(MockRequest.X))
                 .param("mapY", String.valueOf(MockRequest.Y))
                 .param("contentType", contentType)
@@ -238,7 +238,7 @@ public class PlaceControllerTest {
         String arrangeType = "Invalid Arrange Type!!";
 
         // when
-        ResultActions result = mvc.perform(get("/places")
+        ResultActions result = mvc.perform(get("/place")
                 .param("mapX", String.valueOf(MockRequest.X))
                 .param("mapY", String.valueOf(MockRequest.Y))
                 .param("arrangeType", arrangeType)
@@ -264,7 +264,7 @@ public class PlaceControllerTest {
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME));
 
         // when
-        ResultActions result = mvc.perform(get("/places")
+        ResultActions result = mvc.perform(get("/place")
                 .param("mapX", String.valueOf(placeAreaExceptionReq.getMapX()))
                 .param("mapY", String.valueOf(placeAreaExceptionReq.getMapY()))
                 .param("area", placeAreaExceptionReq.getArea())
@@ -287,7 +287,7 @@ public class PlaceControllerTest {
                 .thenReturn(MockResponse.testSearchPlaceBasedKeywordRes());
 
         // when
-        ResultActions result = mvc.perform(get("/places/search")
+        ResultActions result = mvc.perform(get("/place/search")
                 .param("mapX", String.valueOf(searchReq.getMapX()))
                 .param("mapY", String.valueOf(searchReq.getMapY()))
                 .param("keyword", searchReq.getKeyword())
@@ -320,7 +320,7 @@ public class PlaceControllerTest {
                 .thenReturn(MockResponse.testSearchPlaceBasedAreaRes());
 
         // when
-        ResultActions result = mvc.perform(get("/places/search")
+        ResultActions result = mvc.perform(get("/place/search")
                 .param("mapX", String.valueOf(searchAreaReq.getMapX()))
                 .param("mapY", String.valueOf(searchAreaReq.getMapY()))
                 .param("keyword", searchAreaReq.getKeyword())
@@ -352,7 +352,7 @@ public class PlaceControllerTest {
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when
-        ResultActions result = mvc.perform(get("/places/search")
+        ResultActions result = mvc.perform(get("/place/search")
                 .param("mapX", String.valueOf(searchNotFoundExceptionReq.getMapX()))
                 .param("mapY", String.valueOf(searchNotFoundExceptionReq.getMapY()))
                 .param("keyword", searchNotFoundExceptionReq.getKeyword())
@@ -375,7 +375,7 @@ public class PlaceControllerTest {
                 .thenReturn(MockResponse.testGetDetailPlaceRes());
 
         // when
-        ResultActions result = mvc.perform(get("/places/detail")
+        ResultActions result = mvc.perform(get("/place/detail")
                 .param("contentId", String.valueOf(placeDetailReq.getContentId()))
                 .param("contentType", String.valueOf(placeDetailReq.getContentType())));
         List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = MockResponse.testGetDetailPlaceRes().getFacilityInfo();
