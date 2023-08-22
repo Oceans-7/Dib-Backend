@@ -33,7 +33,7 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/places", "/places/**",
                 "/location",
-                "/auth/login",
+                "/auth/kakao-login",
                 "/user/me"
         };
 
