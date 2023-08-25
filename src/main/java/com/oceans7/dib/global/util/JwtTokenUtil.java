@@ -70,13 +70,13 @@ public class JwtTokenUtil {
         return jwtSplit[0] + "." + jwtSplit[1] + ".";
     }
 
-    public Jws<Claims> parseJwt(String jwt) {
+    public Jwt<Header, Claims> parseJwt(String jwt) {
         try {
             String jwtWithoutSignature = removeSignature(jwt);
 
             return Jwts.parserBuilder()
                     .build()
-                    .parseClaimsJws(jwtWithoutSignature);
+                    .parseClaimsJwt(jwtWithoutSignature);
 
         } catch (ExpiredJwtException | MalformedJwtException e) {
             throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
@@ -102,7 +102,7 @@ public class JwtTokenUtil {
                     .build()
                     .parseClaimsJws(idToken);
 
-            if (nonce.equals(claims.getBody().get("nonce", String.class))) {
+            if (!nonce.equals(claims.getBody().get("nonce", String.class))) {
                 throw new ApplicationException(ErrorCode.NONCE_NOT_MATCHED);
             }
 

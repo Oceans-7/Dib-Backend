@@ -6,22 +6,12 @@ import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
-import com.oceans7.dib.global.api.http.KakaoAuthApi;
-import com.oceans7.dib.global.api.response.kakaoAuth.OpenKeyListResponse;
-import com.oceans7.dib.global.exception.ApplicationException;
-import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.JwtTokenUtil;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
@@ -31,17 +21,20 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    public static String AUD = "kakao";
-    public static String ISS = "https://kauth.kakao.com/oauth/authorize";
+    @Value("${kakao.auth.jwt.aud}")
+    public String aud;
+
+    @Value("${kakao.auth.jwt.iss}")
+    public String iss;
 
     public TokenResponseDto kakaologin(KakaoLoginRequestDto kakaoLoginRequestDto) {
 
 
         String idToken = kakaoLoginRequestDto.getIdToken();
-        Jws<Claims> claims = jwtTokenUtil.parseJwt(idToken);
+        Jwt<Header, Claims> claims = jwtTokenUtil.parseJwt(idToken);
 
         String kid = claims.getHeader().get("kid").toString();
-        jwtTokenUtil.verifySignature(idToken, kid, AUD, ISS, kakaoLoginRequestDto.getNonce());
+        jwtTokenUtil.verifySignature(idToken, kid, aud, iss, kakaoLoginRequestDto.getNonce());
 
         String nickname = claims.getBody().get("nickname", String.class);
         String picture = claims.getBody().get("picture", String.class);
