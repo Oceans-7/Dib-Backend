@@ -21,7 +21,7 @@ public class UserAccountService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String token) throws UsernameNotFoundException {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+        Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token);
         Long userId = claims.getBody().get("user_id", Long.class);
         String profileUrl = claims.getBody().get("profile_url", String.class);
         String nickName = claims.getBody().get("nick_name", String.class);
