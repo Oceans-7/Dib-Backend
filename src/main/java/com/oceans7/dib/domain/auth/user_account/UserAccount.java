@@ -15,8 +15,14 @@ public class UserAccount extends org.springframework.security.core.userdetails.U
     private String nickName;
 
     public UserAccount(Long userId, String profileUrl, String nickName, Role role) {
+
         super(userId.toString(), "", new ArrayList<Role>() {{
             add(role);
         }});
+
+        this.userId = userId;
+        this.profileUrl = profileUrl;
+        this.nickName = nickName;
+
     }
 }

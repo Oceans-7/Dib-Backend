@@ -42,14 +42,14 @@ public class AuthService {
 
         User user = upsertUser(SocialType.KAKAO, socialUserId, nickname, picture);
 
-        String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user.getId(), user.getProfileUrl());
-        String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user.getId(), user.getProfileUrl());
+        String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user);
+        String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user);
 
         return TokenResponseDto.of(accessToken, refreshToken);
     }
 
     private User upsertUser(SocialType socialType, String socialUserId, String nickname, String picture) {
-        return userRepository.findBySocialTypeAndSocialUserId(SocialType.KAKAO, socialUserId)
+        return userRepository.findBySocialTypeAndSocialUserId(socialType, socialUserId)
                 .orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId, Role.USER)));
     }
 }
