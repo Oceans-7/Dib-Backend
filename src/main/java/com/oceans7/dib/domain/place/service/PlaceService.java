@@ -7,6 +7,10 @@ import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.response.*;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto.FacilityInfo;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
+import com.oceans7.dib.domain.place.entity.Dib;
+import com.oceans7.dib.domain.place.repository.DibRepository;
+import com.oceans7.dib.domain.user.entity.User;
+import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem.*;
@@ -27,9 +31,11 @@ import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListRespons
 import com.oceans7.dib.global.api.service.DataGoKrAPIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -38,8 +44,10 @@ import java.util.stream.Collectors;
 public class PlaceService {
 
     private final DataGoKrAPIService tourAPIService;
-
     private final KakaoLocalAPIService kakaoLocalAPIService;
+
+    private final UserRepository userRepository;
+    private final DibRepository dibRepository;
 
     /**
      * 관광 정보 리스트 조회
@@ -338,5 +346,37 @@ public class PlaceService {
 
         return response;
     }
+
+    /**
+     * 관광 정보 찜하기
+     */
+    @Transactional
+    public void addPlaceDib(Long userId, Long contentId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
+
+        isMarkedAsDib(user, contentId);
+
+        // 공통 정보
+        DetailCommonItemResponse commonItem = tourAPIService.getCommonApi(contentId, "")
+                .getDetailCommonItemResponse().get(0);
+
+        dibRepository.save(Dib.of(contentId, commonItem.getContentTypeId(), commonItem.getTitle(),
+                TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "), commonItem.getTel(), commonItem.getFirstImage(), user));
+    }
+
+    private void isMarkedAsDib(User user, Long contentId) {
+        Optional<Dib> findDib = dibRepository.findByUserAndContentId(user, contentId);
+
+        if(findDib.isPresent()) {
+            throw new ApplicationException(ErrorCode.INVALID_VALUE_EXCEPTION);
+        }
+    }
+
+    @Transactional
+    public void removePlaceDib(Long userId, Long contentId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
+        dibRepository.deleteByUserAndContentId(user, contentId);
+    }
+
 
 }

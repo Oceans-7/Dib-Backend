@@ -12,6 +12,7 @@ public enum ErrorCode {
     INVALID_VALUE_EXCEPTION(HttpStatus.BAD_REQUEST, "C0002", "올바르지 않은 요청 값입니다."),
     UNAUTHORIZED_EXCEPTION(HttpStatus.UNAUTHORIZED, "C0003", "해당 요청에 대한 권한이 없습니다."),
     TIME_OUT_EXCEPTION(HttpStatus.BAD_REQUEST, "C0004", "트래픽이 초과되었으므로 잠시 후에 다시 요청해주세요."),
+    FILE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "C0005", "파일 업로드를 실패했습니다."),
 
     // Open API
     NOT_FOUND_ITEM_EXCEPTION(HttpStatus.BAD_REQUEST, "O0000", "관광 정보 검색 결과가 없습니다."),
@@ -25,6 +26,12 @@ public enum ErrorCode {
     TOKEN_VERIFICATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "A0000", "토큰 검증에 실패했습니다."),
     OPENKEY_NOT_MATCHED(HttpStatus.BAD_REQUEST, "A0001", "일치하는 공개키를 찾을 수 없습니다."),
     NONCE_NOT_MATCHED(HttpStatus.BAD_REQUEST, "A0002", "nonce값이 일치하지 않습니다."),
+
+    // Event
+    ALREADY_ISSUED_EXCEPTION(HttpStatus.BAD_REQUEST, "E0000", "이미 발급된 쿠폰입니다."),
+
+    // Mypage
+    ALREADY_USED_NICKNAME_EXCEPTION(HttpStatus.BAD_REQUEST, "M0000", "이미 사용중인 닉네임입니다."),
     ;
 
     private HttpStatus httpStatus;
