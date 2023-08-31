@@ -6,6 +6,10 @@ import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
+import com.oceans7.dib.domain.user_refresh_token.entity.UserRefreshToken;
+import com.oceans7.dib.domain.user_refresh_token.repository.UserRefreshTokenRepository;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.JwtTokenUtil;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,8 @@ public class AuthService {
     private final JwtTokenUtil jwtTokenUtil;
 
     private final UserRepository userRepository;
+
+    private final UserRefreshTokenRepository userRefreshTokenRepository;
 
     @Value("${kakao.auth.jwt.aud}")
     public String aud;
@@ -45,11 +51,36 @@ public class AuthService {
         String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user);
         String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user);
 
+        userRefreshTokenRepository.save(UserRefreshToken.of(refreshToken, user));
+
         return TokenResponseDto.of(accessToken, refreshToken);
     }
 
     private User upsertUser(SocialType socialType, String socialUserId, String nickname, String picture) {
         return userRepository.findBySocialTypeAndSocialUserId(socialType, socialUserId)
                 .orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId, Role.USER)));
+    }
+
+    public TokenResponseDto regenerateToken(String token) {
+        Jws<Claims> claims = jwtTokenUtil.parseToken(token);
+        TokenType tokenType = TokenType.valueOf(claims.getBody().get("type", String.class));
+
+        if (tokenType != TokenType.REFRESH_TOKEN) {
+            throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
+        }
+
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByRefreshToken(token)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+
+        String subject = claims.getBody().getSubject();
+        User user = userRepository.findById(Long.parseLong(subject))
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
+        String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user);
+        String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user);
+
+        userRefreshToken.updateRefreshToken(refreshToken);
+        userRefreshTokenRepository.save(userRefreshToken);
+
+        return TokenResponseDto.of(accessToken, refreshToken);
     }
 }

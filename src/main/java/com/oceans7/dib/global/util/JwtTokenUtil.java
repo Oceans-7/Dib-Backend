@@ -1,10 +1,7 @@
 package com.oceans7.dib.global.util;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.auth.service.TokenType;
-import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.global.api.http.KakaoAuthApi;
 import com.oceans7.dib.global.api.response.kakaoAuth.OpenKeyListResponse;
@@ -21,10 +18,8 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -114,13 +109,13 @@ public class JwtTokenUtil {
         }
     }
 
-    public Jws<Claims> parseAccessToken(String accessToken) {
+    public Jws<Claims> parseToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(accessToken);
 
-            return claims;
+            return Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret)
+                    .build()
+                    .parseClaimsJws(token);
 
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
             throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
