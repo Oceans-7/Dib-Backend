@@ -8,13 +8,8 @@ import com.oceans7.dib.domain.place.entity.Dib;
 import com.oceans7.dib.domain.place.repository.DibRepository;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
-import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
-import com.oceans7.dib.global.api.service.DataGoKrAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
-import com.oceans7.dib.global.util.AmazonS3ResourceStorage;
-import com.oceans7.dib.global.util.MultipartUtil;
-import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +22,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MypageService {
 
-    private final DataGoKrAPIService tourAPIService;
-
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
     private final DibRepository dibRepository;
-
-    private final AmazonS3ResourceStorage amazonS3ResourceStorage;
-
-    private static final String S3_URL = "https://dib-file-bucket.s3.ap-northeast-2.amazonaws.com/";
 
     private User findUser(Long userId) {
         return userRepository.findById(userId)
@@ -67,13 +56,7 @@ public class MypageService {
 
         checkDuplicatedNickname(user, request);
 
-        String filePath = user.getProfileUrl();
-        if(ValidatorUtil.isNotEmpty(request.getMultipartFile())) {
-            filePath = MultipartUtil.getPath(request.getMultipartFile());
-            amazonS3ResourceStorage.store(filePath, request.getMultipartFile());
-        }
-
-        user.updateProfile(request.getNickname(), S3_URL + filePath);
+        user.updateProfile(request.getNickname(), request.getImageUrl());
     }
 
     private void checkDuplicatedNickname(User user, UpdateProfileRequestDto request) {
