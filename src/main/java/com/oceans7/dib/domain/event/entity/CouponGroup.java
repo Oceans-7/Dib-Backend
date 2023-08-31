@@ -37,4 +37,18 @@ public class CouponGroup {
 
     @Column(name = "closing_date")
     private LocalDate closingDate;
+
+    public static CouponGroup of(String name, String region, String category, String checkCode,
+                                 int discountPercentage, LocalDate startDate, LocalDate closingDate) {
+        CouponGroup couponGroup = new CouponGroup();
+        couponGroup.name = name;
+        couponGroup.region = region;
+        couponGroup.category = category;
+        couponGroup.checkCode = checkCode;
+        couponGroup.discountPercentage = discountPercentage;
+        couponGroup.startDate = startDate;
+        couponGroup.closingDate = closingDate;
+
+        return couponGroup;
+    }
 }
