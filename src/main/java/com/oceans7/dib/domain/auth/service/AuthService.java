@@ -6,24 +6,20 @@ import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
-import com.oceans7.dib.global.api.http.KakaoAuthApi;
-import com.oceans7.dib.global.api.response.kakaoAuth.OpenKeyListResponse;
+import com.oceans7.dib.domain.user_refresh_token.entity.UserRefreshToken;
+import com.oceans7.dib.domain.user_refresh_token.repository.UserRefreshTokenRepository;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.JwtTokenUtil;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -31,17 +27,23 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    public static String AUD = "kakao";
-    public static String ISS = "https://kauth.kakao.com/oauth/authorize";
+    private final UserRefreshTokenRepository userRefreshTokenRepository;
 
-    public TokenResponseDto kakaologin(KakaoLoginRequestDto kakaoLoginRequestDto) {
+    @Value("${kakao.auth.jwt.aud}")
+    public String aud;
+
+    @Value("${kakao.auth.jwt.iss}")
+    public String iss;
+
+    @Transactional
+    public TokenResponseDto kakaoLogin(KakaoLoginRequestDto kakaoLoginRequestDto) {
 
 
         String idToken = kakaoLoginRequestDto.getIdToken();
-        Jws<Claims> claims = jwtTokenUtil.parseJwt(idToken);
+        Jwt<Header, Claims> claims = jwtTokenUtil.parseJwt(idToken);
 
         String kid = claims.getHeader().get("kid").toString();
-        jwtTokenUtil.verifySignature(idToken, kid, AUD, ISS, kakaoLoginRequestDto.getNonce());
+        jwtTokenUtil.verifySignature(idToken, kid, aud, iss, kakaoLoginRequestDto.getNonce());
 
         String nickname = claims.getBody().get("nickname", String.class);
         String picture = claims.getBody().get("picture", String.class);
@@ -49,14 +51,39 @@ public class AuthService {
 
         User user = upsertUser(SocialType.KAKAO, socialUserId, nickname, picture);
 
-        String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user.getId(), user.getProfileUrl());
-        String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user.getId(), user.getProfileUrl());
+        String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user);
+        String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user);
+
+        userRefreshTokenRepository.save(UserRefreshToken.of(refreshToken, user));
 
         return TokenResponseDto.of(accessToken, refreshToken);
     }
 
     private User upsertUser(SocialType socialType, String socialUserId, String nickname, String picture) {
-        return userRepository.findBySocialTypeAndSocialUserId(SocialType.KAKAO, socialUserId)
+        return userRepository.findBySocialTypeAndSocialUserId(socialType, socialUserId)
                 .orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId, Role.USER)));
+    }
+
+    @Transactional
+    public TokenResponseDto regenerateToken(String token) {
+        Jws<Claims> claims = jwtTokenUtil.parseToken(token);
+        TokenType tokenType = TokenType.valueOf(claims.getBody().get("type", String.class));
+
+        if (tokenType != TokenType.REFRESH_TOKEN) {
+            throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
+        }
+
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByRefreshToken(token)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+
+        String subject = claims.getBody().getSubject();
+        User user = userRepository.findById(Long.parseLong(subject))
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
+        String accessToken = jwtTokenUtil.generateToken(TokenType.ACCESS_TOKEN, user);
+        String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user);
+
+        userRefreshToken.updateRefreshToken(refreshToken);
+
+        return TokenResponseDto.of(accessToken, refreshToken);
     }
 }
