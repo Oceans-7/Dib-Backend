@@ -1,9 +1,9 @@
 package com.oceans7.dib.domain.mypage.service;
 
+import com.oceans7.dib.domain.mypage.dto.response.*;
+import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.repository.CouponRepository;
 import com.oceans7.dib.domain.mypage.dto.request.UpdateProfileRequestDto;
-import com.oceans7.dib.domain.mypage.dto.response.DibResponseDto;
-import com.oceans7.dib.domain.mypage.dto.response.MypageResponseDto;
 import com.oceans7.dib.domain.place.entity.Dib;
 import com.oceans7.dib.domain.place.repository.DibRepository;
 import com.oceans7.dib.domain.user.entity.User;
@@ -42,12 +42,27 @@ public class MypageService {
     }
 
     @Transactional(readOnly = true)
-    public List<DibResponseDto> getMyDibs(Long userId) {
+    public DibResponseDto getMyDibs(Long userId) {
         User user = findUser(userId);
 
         List<Dib> dibList = dibRepository.findByUser(user);
 
-        return dibList.stream().map(dib -> DibResponseDto.of(dib)).collect(Collectors.toList());
+        List<DetailDibResponseDto> detailDibResponseDtoList = dibList.stream()
+                .map(dib -> DetailDibResponseDto.of(dib))
+                .collect(Collectors.toList());
+
+        return DibResponseDto.of(detailDibResponseDtoList);
+    }
+
+    @Transactional(readOnly = true)
+    public CouponResponseDto getMyCoupons(Long userId) {
+        List<Coupon> couponList = couponRepository.findPossibleCouponsOrderByClosingDateAsc(userId);
+
+        List<DetailCouponResponseDto> detailCouponResponseDtoList = couponList.stream()
+                .map(DetailCouponResponseDto :: of)
+                .collect(Collectors.toList());
+
+        return CouponResponseDto.of(detailCouponResponseDtoList);
     }
 
     @Transactional

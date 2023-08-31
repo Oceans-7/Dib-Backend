@@ -1,4 +1,4 @@
-package com.oceans7.dib.domain.event.dto.response;
+package com.oceans7.dib.domain.mypage.dto.response;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;

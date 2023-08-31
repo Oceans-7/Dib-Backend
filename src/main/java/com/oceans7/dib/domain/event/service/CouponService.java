@@ -1,7 +1,5 @@
 package com.oceans7.dib.domain.event.service;
 
-import com.oceans7.dib.domain.event.dto.response.CouponResponseDto;
-import com.oceans7.dib.domain.event.dto.response.DetailCouponResponseDto;
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.UseStatus;
@@ -16,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,16 +44,5 @@ public class CouponService {
 
     private ApplicationException handleNotFoundException() {
         return new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION);
-    }
-
-    @Transactional(readOnly = true)
-    public CouponResponseDto getCoupon(Long userId) {
-        List<Coupon> couponList = couponRepository.findPossibleCouponsOrderByClosingDateAsc(userId);
-
-        List<DetailCouponResponseDto> detailCouponResponseDtoList = couponList.stream()
-                .map(DetailCouponResponseDto :: of)
-                .collect(Collectors.toList());
-
-        return CouponResponseDto.of(detailCouponResponseDtoList);
     }
 }
