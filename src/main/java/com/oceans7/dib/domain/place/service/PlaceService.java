@@ -352,24 +352,21 @@ public class PlaceService {
      */
     @Transactional
     public void addPlaceDib(Long userId, Long contentId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
 
-        isMarkedAsDib(user, contentId);
+        Optional<Dib> findDib = dibRepository.findByUserAndContentId(user, contentId);
+        if(findDib.isPresent()) { return; }
 
         // 공통 정보
-        DetailCommonItemResponse commonItem = tourAPIService.getCommonApi(contentId, "")
-                .getDetailCommonItemResponse().get(0);
+        DetailCommonItemResponse commonItem = getCommonItem(contentId);
 
         dibRepository.save(Dib.of(contentId, commonItem.getContentTypeId(), commonItem.getTitle(),
                 TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "), commonItem.getTel(), commonItem.getFirstImage(), user));
     }
 
-    private void isMarkedAsDib(User user, Long contentId) {
-        Optional<Dib> findDib = dibRepository.findByUserAndContentId(user, contentId);
-
-        if(findDib.isPresent()) {
-            throw new ApplicationException(ErrorCode.INVALID_VALUE_EXCEPTION);
-        }
+    private DetailCommonItemResponse getCommonItem(Long contentId) {
+        return tourAPIService.getCommonApi(contentId, "").getDetailCommonItemResponse().get(0);
     }
 
     @Transactional
