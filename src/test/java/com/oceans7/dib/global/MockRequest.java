@@ -4,6 +4,7 @@ import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.UseStatus;
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
+import com.oceans7.dib.domain.mypage.dto.request.UpdateProfileRequestDto;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
@@ -86,5 +87,9 @@ public class MockRequest {
 
     public static Dib testDib(User user) {
         return Dib.of(CONTENT_ID, CONTENT_TYPE.getCode(), "뷰티플레이", "서울특별시 중구 명동1가 1-3 YWCA연합회", "070-4070-9675", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg", user);
+    }
+
+    public static UpdateProfileRequestDto testUpdateProfileReq() {
+        return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
     }
 }
