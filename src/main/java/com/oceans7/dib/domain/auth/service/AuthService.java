@@ -15,9 +15,11 @@ import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -33,7 +35,8 @@ public class AuthService {
     @Value("${kakao.auth.jwt.iss}")
     public String iss;
 
-    public TokenResponseDto kakaologin(KakaoLoginRequestDto kakaoLoginRequestDto) {
+    @Transactional
+    public TokenResponseDto kakaoLogin(KakaoLoginRequestDto kakaoLoginRequestDto) {
 
 
         String idToken = kakaoLoginRequestDto.getIdToken();
@@ -61,6 +64,7 @@ public class AuthService {
                 .orElseGet(() -> userRepository.save(User.of(picture, nickname, SocialType.KAKAO, socialUserId, Role.USER)));
     }
 
+    @Transactional
     public TokenResponseDto regenerateToken(String token) {
         Jws<Claims> claims = jwtTokenUtil.parseToken(token);
         TokenType tokenType = TokenType.valueOf(claims.getBody().get("type", String.class));
@@ -79,7 +83,6 @@ public class AuthService {
         String refreshToken = jwtTokenUtil.generateToken(TokenType.REFRESH_TOKEN, user);
 
         userRefreshToken.updateRefreshToken(refreshToken);
-        userRefreshTokenRepository.save(userRefreshToken);
 
         return TokenResponseDto.of(accessToken, refreshToken);
     }

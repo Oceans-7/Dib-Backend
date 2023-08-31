@@ -26,7 +26,7 @@ public class AuthController {
     public ApplicationResponse<TokenResponseDto> kakaoLogin(
             @Validated @RequestBody KakaoLoginRequestDto kakaoLoginRequestDto
     ) {
-        return ApplicationResponse.ok(authService.kakaologin(kakaoLoginRequestDto));
+        return ApplicationResponse.ok(authService.kakaoLogin(kakaoLoginRequestDto));
     }
 
     @PostMapping("/regenerated-token")
