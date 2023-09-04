@@ -1,9 +1,8 @@
 package com.oceans7.dib.global.util;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.auth.service.TokenType;
+import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.global.api.http.KakaoAuthApi;
 import com.oceans7.dib.global.api.response.kakaoAuth.OpenKeyListResponse;
 import com.oceans7.dib.global.exception.ApplicationException;
@@ -19,10 +18,8 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -42,21 +39,22 @@ public class JwtTokenUtil {
     private static final int REFRESH_TOKEN_EXPIRATION_MS = 14 * 24 * 60 * 60 * 1000;
 
     // jwt 토큰 생성
-    public String generateToken(TokenType tokenType, Long userId, String profileUrl) {
+    public String generateToken(TokenType tokenType, User user) {
         Date now = new Date();
 
         int expireDuration = tokenType == TokenType.REFRESH_TOKEN ? REFRESH_TOKEN_EXPIRATION_MS : ACCESS_TOKEN_EXPIRATION_MS;
 
         Date expiryDate = new Date(now.getTime() + expireDuration);
         Claims claims = Jwts.claims()
-                .setSubject(userId.toString()) // 사용자
+                .setSubject(user.getId().toString()) // 사용자
                 .setIssuedAt(new Date()) // 현재 시간 기반으로 생성
                 .setExpiration(expiryDate) // 만료 시간 세팅
                 ;
-        claims.put("user_id", userId);
-        claims.put("profile_url", profileUrl);
+        claims.put("user_id", user.getId());
+        claims.put("nick_name", user.getNickname());
+        claims.put("profile_url", user.getProfileUrl());
         claims.put("type", tokenType);
-
+        claims.put("role", user.getRole());
         String token = Jwts.builder()
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret) // 사용할 암호화 알고리즘, signature에 들어갈 secret 값 세팅
@@ -70,13 +68,13 @@ public class JwtTokenUtil {
         return jwtSplit[0] + "." + jwtSplit[1] + ".";
     }
 
-    public Jws<Claims> parseJwt(String jwt) {
+    public Jwt<Header, Claims> parseJwt(String jwt) {
         try {
             String jwtWithoutSignature = removeSignature(jwt);
 
             return Jwts.parserBuilder()
                     .build()
-                    .parseClaimsJws(jwtWithoutSignature);
+                    .parseClaimsJwt(jwtWithoutSignature);
 
         } catch (ExpiredJwtException | MalformedJwtException e) {
             throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
@@ -102,7 +100,7 @@ public class JwtTokenUtil {
                     .build()
                     .parseClaimsJws(idToken);
 
-            if (nonce.equals(claims.getBody().get("nonce", String.class))) {
+            if (!nonce.equals(claims.getBody().get("nonce", String.class))) {
                 throw new ApplicationException(ErrorCode.NONCE_NOT_MATCHED);
             }
 
@@ -111,13 +109,13 @@ public class JwtTokenUtil {
         }
     }
 
-    public Jws<Claims> parseAccessToken(String accessToken) {
+    public Jws<Claims> parseToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(accessToken);
 
-            return claims;
+            return Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret)
+                    .build()
+                    .parseClaimsJws(token);
 
         } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
             throw new ApplicationException(ErrorCode.TOKEN_VERIFICATION_EXCEPTION);
