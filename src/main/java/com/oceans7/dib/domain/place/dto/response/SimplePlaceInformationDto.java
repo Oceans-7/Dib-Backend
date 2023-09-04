@@ -28,6 +28,12 @@ public class SimplePlaceInformationDto {
     @Schema(description = "거리", example = "21.0")
     private double distance;
 
+    @Schema(description = "장소 위도", example = "126.9779692")
+    private double mapX;
+
+    @Schema(description = "장소 경도", example = "37.566535")
+    private double mapY;
+
     @Schema(description = "대표 이미지", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg")
     private String firstImage;
 
@@ -42,6 +48,8 @@ public class SimplePlaceInformationDto {
         simplePlaceInformation.contentId = item.getContentId();
         simplePlaceInformation.contentType = getContentTypeByCode(item.getContentTypeId());
         simplePlaceInformation.distance = item.getDist();
+        simplePlaceInformation.mapX = item.getMapX();
+        simplePlaceInformation.mapY = item.getMapY();
         simplePlaceInformation.firstImage = item.getFirstImage();
         simplePlaceInformation.tel = item.getTel();
 

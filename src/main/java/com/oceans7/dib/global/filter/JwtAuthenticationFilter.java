@@ -1,6 +1,5 @@
 package com.oceans7.dib.global.filter;
 
-import com.oceans7.dib.global.util.JwtTokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -39,14 +39,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getToken(HttpServletRequest request) {
-        String authorizationHeader =  request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader("Authorization");
         return authorizationHeader.substring("Bearer ".length());
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludePath = this.permitUrls;
+
         String path = request.getRequestURI();
-        return Arrays.stream(excludePath).anyMatch(path::startsWith);
+        return isPermitUrl(path);
+    }
+
+    private boolean isPermitUrl(String path) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        return Arrays.stream(this.permitUrls).anyMatch(permitUrl -> antPathMatcher.match(permitUrl, path));
     }
 }

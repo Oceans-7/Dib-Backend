@@ -26,12 +26,14 @@ public enum ErrorCode {
     TOKEN_VERIFICATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "A0000", "토큰 검증에 실패했습니다."),
     OPENKEY_NOT_MATCHED(HttpStatus.BAD_REQUEST, "A0001", "일치하는 공개키를 찾을 수 없습니다."),
     NONCE_NOT_MATCHED(HttpStatus.BAD_REQUEST, "A0002", "nonce값이 일치하지 않습니다."),
+    TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "A0003", "인증정보를 찾을 수 없습니다."),
 
     // Event
     ALREADY_ISSUED_EXCEPTION(HttpStatus.BAD_REQUEST, "E0000", "이미 발급된 쿠폰입니다."),
 
     // Mypage
     ALREADY_USED_NICKNAME_EXCEPTION(HttpStatus.BAD_REQUEST, "M0000", "이미 사용중인 닉네임입니다."),
+
     ;
 
     private HttpStatus httpStatus;
