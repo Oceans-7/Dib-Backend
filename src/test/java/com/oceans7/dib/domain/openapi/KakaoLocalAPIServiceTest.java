@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.openapi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.api.http.KakaoApi;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
@@ -14,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-
-import static com.oceans7.dib.global.MockRequest.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -28,15 +27,10 @@ public class KakaoLocalAPIServiceTest {
     @MockBean
     private KakaoApi kakaoApi;
 
-    private LocalResponse searchAddressRes;
-    private LocalResponse geoAddressRes;
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp() {
-        searchAddressRes = MockResponse.testSearchAddressRes();
-        geoAddressRes = MockResponse.testGeoAddressRes();
-
+    void before() {
         objectMapper = new ObjectMapper();
     }
 
@@ -44,11 +38,12 @@ public class KakaoLocalAPIServiceTest {
     @DisplayName("카카오 주소 검색 API 통신 테스트")
     public void callSearchAddressAPITest() throws JsonProcessingException {
         // KakaoApi 인터페이스 # getSearchAddress() Mocking
+        LocalResponse searchAddressRes = MockResponse.testSearchAddressRes();
         String apiResponse = objectMapper.writeValueAsString(searchAddressRes);
-        when(kakaoApi.getSearchAddress(AREA_QUERY)).thenReturn(apiResponse);
+        when(kakaoApi.getSearchAddress(MockRequest.AREA_QUERY)).thenReturn(apiResponse);
 
         // when
-        LocalResponse localResponse = kakaoLocalAPIService.getSearchAddressLocalApi(AREA_QUERY);
+        LocalResponse localResponse = kakaoLocalAPIService.getSearchAddressLocalApi(MockRequest.AREA_QUERY);
         LocalResponse.AddressItem addressItem = localResponse.getAddressItems().get(0);
         LocalResponse.AddressItem.Address address = addressItem.getAddress();
 
@@ -67,11 +62,12 @@ public class KakaoLocalAPIServiceTest {
     @DisplayName("카카오 좌표 -> 주소 전환 API 통신 테스트")
     public void callGeoAddressAPITest() throws JsonProcessingException {
         // KakaoApi 인터페이스 # getGeoAddress() Mocking
+        LocalResponse geoAddressRes = MockResponse.testGeoAddressRes();
         String apiResponse = objectMapper.writeValueAsString(geoAddressRes);
-        when(kakaoApi.getGeoAddress(X, Y)).thenReturn(apiResponse);
+        when(kakaoApi.getGeoAddress(MockRequest.X, MockRequest.Y)).thenReturn(apiResponse);
 
         // when
-        LocalResponse result = kakaoLocalAPIService.getGeoAddressLocalApi(X, Y);
+        LocalResponse result = kakaoLocalAPIService.getGeoAddressLocalApi(MockRequest.X, MockRequest.Y);
         LocalResponse.AddressItem.Address address = result.getAddressItems().get(0).getRoadAddress();
 
         // then

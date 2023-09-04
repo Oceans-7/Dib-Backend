@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
+import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.ResponseWrapper;
 import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
@@ -31,8 +33,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.oceans7.dib.global.MockRequest.*;
-import static com.oceans7.dib.global.MockResponse.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -57,34 +57,10 @@ public class DataGoKrAPIServiceTest {
     @Value("${open-api.data-go-kr.mobile-app}")
     private String mobileApp;
 
-    private final static String YES_OPTION = "Y";
-    private final static int RADIUS = 20000;
-    private final static int MAX_AREA_CODE_SIZE = 50;
-
-    private ResponseWrapper locationBasedAPIRes;
-    private ResponseWrapper areaBasedAPIRes;
-    private ResponseWrapper keywordBasedAPIRes;
-    private ResponseWrapper areaCodeAPIRes;
-    private ResponseWrapper sigunguCodeAPIRes;
-    private ResponseWrapper detailCommonAPIRes;
-    private ResponseWrapper detailIntroAPIRes;
-    private ResponseWrapper detailInfoAPIRes;
-    private ResponseWrapper detailImageAPIRes;
-
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp() {
-        locationBasedAPIRes = testLocationBasedRes();
-        areaBasedAPIRes = testAreaBasedRes();
-        keywordBasedAPIRes = testKeywordBasedRes();
-        areaCodeAPIRes = testAreaCodeRes();
-        sigunguCodeAPIRes = testSigunguCodeRes();
-        detailCommonAPIRes = testDetailCommonRes();
-        detailIntroAPIRes = testDetailIntroRes();
-        detailInfoAPIRes = testDetailInfoRes();
-        detailImageAPIRes = testDetailImageRes();
-
+    void before() {
         objectMapper = new ObjectMapper();
     }
 
@@ -97,13 +73,16 @@ public class DataGoKrAPIServiceTest {
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
         ArrangeType arrangeType = ArrangeType.E;
 
+        ResponseWrapper locationBasedAPIRes = MockResponse.testLocationBasedRes();
         String apiResponse = objectMapper.writeValueAsString(locationBasedAPIRes);
         when(dataGoKrApi.getLocationBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                X, Y, RADIUS, page, pageSize, contentTypeId, arrangeType.name()))
+                MockRequest.X, MockRequest.Y, MockRequest.RADIUS,
+                page, pageSize, contentTypeId, arrangeType.name()))
         .thenReturn(apiResponse);
 
         // when
-        TourAPICommonListResponse list = dataGoKrAPIService.getLocationBasedTourApi(X, Y, page, pageSize, contentTypeId, arrangeType.name());
+        TourAPICommonListResponse list = dataGoKrAPIService.getLocationBasedTourApi(MockRequest.X, MockRequest.Y,
+                page, pageSize, contentTypeId, arrangeType.name());
         TourAPICommonItemResponse item = list.getTourAPICommonItemResponseList().get(0);
 
         // then
@@ -124,6 +103,7 @@ public class DataGoKrAPIServiceTest {
         int page = 1;
         int pageSize = 1;
 
+        ResponseWrapper keywordBasedAPIRes = MockResponse.testKeywordBasedRes();
         String apiResponse = objectMapper.writeValueAsString(keywordBasedAPIRes);
         when(dataGoKrApi.getSearchKeywordTourInfo(serviceKey, mobileOS, mobileApp, dataType,
                 keyword, page, pageSize)).thenReturn(apiResponse);
@@ -152,8 +132,8 @@ public class DataGoKrAPIServiceTest {
         int page = 1;
         int pageSize = 1;
 
-
-        String apiResponse = objectMapper.writeValueAsString(keywordBasedAPIRes);
+        ResponseWrapper areaBasedAPIRes = MockResponse.testAreaBasedRes();
+        String apiResponse = objectMapper.writeValueAsString(areaBasedAPIRes);
         when(dataGoKrApi.getAreaBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType,
                 areaCode, sigunguCode, page, pageSize,
                 contentTypeId, arrangeType))
@@ -178,8 +158,8 @@ public class DataGoKrAPIServiceTest {
         assertThat(item.getFirstImage2().matches(urlPattern)).isEqualTo(true);
         assertThat(item.getAddress1()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
         assertThat(item.getCopyrightDivCd()).isEqualTo("Type1");
-        assertThat(item.getMapX()).isEqualTo(X);
-        assertThat(item.getMapY()).isEqualTo(Y);
+        assertThat(item.getMapX()).isEqualTo(MockRequest.X);
+        assertThat(item.getMapY()).isEqualTo(MockRequest.Y);
         assertThat(item.getCreatedTime()).isEqualTo("20230129232104");
         assertThat(item.getModifiedTime()).isEqualTo("20230208103221");
         assertThat(item.getSigunguCode()).isEqualTo("24");
@@ -192,13 +172,15 @@ public class DataGoKrAPIServiceTest {
         // given
         String seoulCode = "1";
 
+        ResponseWrapper areaCodeAPIRes = MockResponse.testAreaCodeRes();
         String apiResponse = objectMapper.writeValueAsString(areaCodeAPIRes);
         when(dataGoKrApi.getAreaCode(serviceKey, mobileOS, mobileApp, dataType,
-                MAX_AREA_CODE_SIZE, "")).thenReturn(apiResponse);
+                MockRequest.MAX_AREA_CODE_SIZE, "")).thenReturn(apiResponse);
 
+        ResponseWrapper sigunguCodeAPIRes = MockResponse.testSigunguCodeRes();
         apiResponse = objectMapper.writeValueAsString(sigunguCodeAPIRes);
         when(dataGoKrApi.getAreaCode(serviceKey, mobileOS, mobileApp, dataType,
-                MAX_AREA_CODE_SIZE, seoulCode)).thenReturn(apiResponse);
+                MockRequest.MAX_AREA_CODE_SIZE, seoulCode)).thenReturn(apiResponse);
 
         // when
         AreaCodeList areaList = dataGoKrAPIService.getAreaCodeApi("");
@@ -230,9 +212,10 @@ public class DataGoKrAPIServiceTest {
         Long contentId = (long) 2946230;
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
 
+        ResponseWrapper detailCommonAPIRes = MockResponse.testDetailCommonRes();
         String apiResponse = objectMapper.writeValueAsString(detailCommonAPIRes);
         when(dataGoKrApi.getTourCommonInfo(serviceKey, mobileOS, mobileApp, dataType, contentId, contentTypeId,
-                YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION))
+                MockRequest.YES_OPTION, MockRequest.YES_OPTION, MockRequest.YES_OPTION, MockRequest.YES_OPTION, MockRequest.YES_OPTION, MockRequest.YES_OPTION))
                 .thenReturn(apiResponse);
 
         // when
@@ -252,6 +235,7 @@ public class DataGoKrAPIServiceTest {
         Long contentId = (long) 2946230;
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
 
+        ResponseWrapper detailIntroAPIRes = MockResponse.testDetailIntroRes();
         String apiResponse = objectMapper.writeValueAsString(detailIntroAPIRes);
         when(dataGoKrApi.getTourIntroInfo(serviceKey, mobileOS, mobileApp, dataType,
                 contentId, contentTypeId))
@@ -279,6 +263,7 @@ public class DataGoKrAPIServiceTest {
         Long contentId = (long) 2946230;
         String contentTypeId = String.valueOf(ContentType.TOURIST_SPOT.getCode());
 
+        ResponseWrapper detailInfoAPIRes = MockResponse.testDetailInfoRes();
         String apiResponse = objectMapper.writeValueAsString(detailInfoAPIRes);
         when(dataGoKrApi.getTourInfo(serviceKey, mobileOS, mobileApp, dataType,
                 contentId, contentTypeId))
@@ -301,9 +286,10 @@ public class DataGoKrAPIServiceTest {
         //given
         Long contentId = (long) 2946230;
 
+        ResponseWrapper detailImageAPIRes = MockResponse.testDetailImageRes();
         String apiResponse = objectMapper.writeValueAsString(detailImageAPIRes);
         when(dataGoKrApi.getTourImageInfo(serviceKey, mobileOS, mobileApp, dataType,
-                contentId, YES_OPTION))
+                contentId, MockRequest.YES_OPTION))
                 .thenReturn(apiResponse);
 
         // when

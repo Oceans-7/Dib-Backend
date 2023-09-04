@@ -3,7 +3,6 @@ package com.oceans7.dib.domain.location.controller;
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.location.service.LocationService;
 import com.oceans7.dib.global.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,18 +28,12 @@ public class LocationControllerTest {
     @MockBean
     private LocationService locationService;
 
-    private SearchLocationRequestDto searchLocationReq;
-
-    @BeforeEach
-    public void setUp() {
-        this.searchLocationReq = MockRequest.testSearchLocationReq();
-    }
-
     @Test
     @DisplayName("좌표 기준 주소 및 날씨 조회 테스트")
     @WithMockUser("user1")
     public void searchPlaceTest() throws Exception {
         // given
+        SearchLocationRequestDto searchLocationReq = MockRequest.testSearchLocationReq();
         when(locationService.searchPlace(searchLocationReq))
                 .thenReturn(MockResponse.testSearchPlaceRes());
 

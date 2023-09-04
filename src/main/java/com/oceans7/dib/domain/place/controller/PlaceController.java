@@ -18,10 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "place", description = "관광 정보 API")
 @RestController
@@ -74,5 +71,27 @@ public class PlaceController {
     @GetMapping("/detail")
     public ApplicationResponse<DetailPlaceInformationResponseDto> getPlaceDetail(@ModelAttribute @Validated GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
             return ApplicationResponse.ok(placeService.getPlaceDetail(getPlaceDetailRequestDto));
+    }
+
+    @Operation(summary = "관광 정보 찜하기", description = "콘텐츠 ID를 입력받아 찜하기.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @PostMapping("/dib/{contentId}")
+    public ApplicationResponse addPlaceDib(@PathVariable("contentId") Long contentId) {
+        placeService.addPlaceDib((long)1, contentId);
+        return ApplicationResponse.ok();
+    }
+
+    @Operation(summary = "관광 정보 찜 해제", description = "콘텐츠 ID를 입력받아 찜 해제하기.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "C0002", description = "올바르지 않은 요청 값", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    @DeleteMapping("/dib/{contentId}")
+    public ApplicationResponse removePlaceDib(@PathVariable("contentId") Long contentId) {
+        placeService.removePlaceDib((long)1, contentId);
+        return ApplicationResponse.ok();
     }
 }

@@ -43,4 +43,9 @@ public class User extends BaseEntity {
 
         return user;
     }
+
+    public void updateProfile(String nickname, String profileUrl) {
+        this.nickname = nickname;
+        this.profileUrl = profileUrl;
+    }
 }

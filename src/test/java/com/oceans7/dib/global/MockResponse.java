@@ -32,6 +32,9 @@ import java.util.stream.Collectors;
 import static com.oceans7.dib.global.MockRequest.*;
 
 public class MockResponse {
+    public final static double MIN_DISTANCE = 0.0;
+    public final static double MAX_DISTANCE = 20.0;
+
     // --- KakaoLocalAPIService Test Mock Response
     private static Address setAddress() {
         return new Address("서울 중구", "서울", "중구");
