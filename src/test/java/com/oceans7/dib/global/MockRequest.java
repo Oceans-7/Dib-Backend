@@ -35,11 +35,10 @@ public class MockRequest {
 
     public final static int NCST_CALLABLE_TIME = 40;
     public final static int FCST_CALLABLE_TIME = 60;
+
     public final static int BASE_PAGE = 1;
     public final static int NCST_PAGE_SIZE = 8;
     public final static int FCST_PAGE_SIZE = 60;
-
-
 
     public static User testUser() {
         return User.of("profile_img", "oceans", SocialType.KAKAO, "dib123", Role.USER);

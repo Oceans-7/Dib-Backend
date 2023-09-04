@@ -10,7 +10,6 @@ import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.api.service.DataGoKrAPIService;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.oceans7.dib.global.MockResponse.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -36,41 +34,18 @@ public class PlaceServiceTest {
     @MockBean
     private KakaoLocalAPIService kakaoLocalAPIService;
 
-    private GetPlaceRequestDto placeReq;
-    private GetPlaceRequestDto placeWithSortingReq;
-    private GetPlaceRequestDto placeWithAreaReq;
-    private GetPlaceRequestDto placeWithAreaExceptionReq;
-    private SearchPlaceRequestDto searchReq;
-    private SearchPlaceRequestDto searchAreaReq;
-    private SearchPlaceRequestDto searchNotFoundExceptionReq;
-    private GetPlaceDetailRequestDto placeDetailReq;
-
-    private final static double MIN_DISTANCE = 0.0;
-    private final static double MAX_DISTANCE = 20.0;
-
-    @BeforeEach
-    public void setUp() {
-        placeReq = MockRequest.testPlaceReq();
-        placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
-        placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
-        placeWithAreaExceptionReq = MockRequest.testPlaceAreaExceptionReq();
-        searchReq = MockRequest.testSearchReq();
-        searchAreaReq = MockRequest.testSearchAreaReq();
-        searchNotFoundExceptionReq = MockRequest.testSearchNotFoundExceptionReq();
-        placeDetailReq = MockRequest.testPlaceDetailReq();
-    }
-
     @Test
     @DisplayName("관광 정보 리스트 조회 테스트 : 위치 기반")
     public void getPlaceTest() {
         // given
+        GetPlaceRequestDto placeReq = MockRequest.testPlaceReq();
         String contentType = String.valueOf(placeReq.getContentType());
         String arrangeType = "";
 
         // mocking
         when(tourAPIService.getLocationBasedTourApi(
                 placeReq.getMapX(), placeReq.getMapY(), placeReq.getPage(), placeReq.getPageSize(), contentType, arrangeType))
-                .thenReturn(testPlaceRes());
+                .thenReturn(MockResponse.testPlaceRes());
 
         // when
         PlaceResponseDto placeRes = placeService.getPlace(placeReq, contentType, arrangeType);
@@ -87,7 +62,7 @@ public class PlaceServiceTest {
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
         assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
-        assertThat(info.getDistance()).isBetween(MIN_DISTANCE, MAX_DISTANCE);
+        assertThat(info.getDistance()).isBetween(MockResponse.MIN_DISTANCE, MockResponse.MAX_DISTANCE);
         assertThat(info.getDistance()).isEqualTo(1.0);
     }
 
@@ -95,13 +70,14 @@ public class PlaceServiceTest {
     @DisplayName("관광 정보 리스트 조회 [정렬] 테스트 : 위치 기반")
     public void getPlaceWithSortingTest() {
         // given
+        GetPlaceRequestDto placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
         String contentType = String.valueOf(placeWithSortingReq.getContentType());
         String arrangeType = String.valueOf(placeWithSortingReq.getArrangeType());
 
         when(tourAPIService.getLocationBasedTourApi(
                 placeWithSortingReq.getMapX(), placeWithSortingReq.getMapY(),
                 placeWithSortingReq.getPage(), placeWithSortingReq.getPageSize(), contentType, arrangeType))
-                .thenReturn(testPlaceRes());
+                .thenReturn(MockResponse.testPlaceRes());
 
         // when
         PlaceResponseDto placeRes = placeService.getPlace(placeWithSortingReq, contentType, arrangeType);
@@ -113,7 +89,7 @@ public class PlaceServiceTest {
 
         double cmpDistance = 0.0;
         for(SimplePlaceInformationDto place : placeRes.getPlaces()) {
-            assertThat(place.getDistance()).isBetween(MIN_DISTANCE, MAX_DISTANCE);
+            assertThat(place.getDistance()).isBetween(MockResponse.MIN_DISTANCE, MockResponse.MAX_DISTANCE);
 
             // 거리순 정렬 확인
             assertThat(place.getDistance()).isGreaterThanOrEqualTo(cmpDistance);
@@ -125,16 +101,17 @@ public class PlaceServiceTest {
     @DisplayName("관광 정보 리스트 조회 테스트 : 지역 기반")
     public void getAreaPlaceTest() {
         // given
+        GetPlaceRequestDto placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
         String contentType = String.valueOf(placeWithAreaReq.getContentType());
         String arrangeType = "";
         String areaCode = "1";
         String sigunguCode = "24";
 
-        when(tourAPIService.getAreaCodeApi("")).thenReturn(testPlaceAreaCodeRes());
-        when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(testPlaceSigunguCodeRes());
+        when(tourAPIService.getAreaCodeApi("")).thenReturn(MockResponse.testPlaceAreaCodeRes());
+        when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
         when(tourAPIService.getAreaBasedTourApi(
                 areaCode, sigunguCode, placeWithAreaReq.getPage(), placeWithAreaReq.getPageSize(), contentType, arrangeType))
-                .thenReturn(testAreaPlaceRes());
+                .thenReturn(MockResponse.testAreaPlaceRes());
 
         // when
         PlaceResponseDto placeRes = placeService.getPlace(placeWithAreaReq, contentType, arrangeType);
@@ -160,12 +137,13 @@ public class PlaceServiceTest {
     @DisplayName("[exception] 유효하지 않은 지역 조회 테스트")
     public void getAreaPlaceNotFoundAreaItemExceptionTest() {
         // given
+        GetPlaceRequestDto placeWithAreaExceptionReq = MockRequest.testPlaceAreaExceptionReq();
         String contentType = "";
         String arrangeType = "";
         String areaCode = placeWithAreaExceptionReq.getArea();
 
-        when(tourAPIService.getAreaCodeApi("")).thenReturn(testPlaceAreaCodeRes());
-        when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(testPlaceSigunguCodeRes());
+        when(tourAPIService.getAreaCodeApi("")).thenReturn(MockResponse.testPlaceAreaCodeRes());
+        when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
 
         // when & then
         assertThrows(ApplicationException.class, () -> placeService.getPlace(placeWithAreaExceptionReq, contentType, arrangeType));
@@ -175,10 +153,11 @@ public class PlaceServiceTest {
     @DisplayName("관광 정보 [키워드] 검색 테스트")
     public void searchPlaceTest() {
         // given
+        SearchPlaceRequestDto searchReq = MockRequest.testSearchReq();
         when(kakaoLocalAPIService.getSearchAddressLocalApi(searchReq.getKeyword()))
-                .thenReturn(testSearchNoAddressRes());
+                .thenReturn(MockResponse.testSearchNoAddressRes());
         when(tourAPIService.getSearchKeywordTourApi(searchReq.getKeyword(), searchReq.getPage(), searchReq.getPageSize()))
-                .thenReturn(testSearchRes());
+                .thenReturn(MockResponse.testSearchRes());
 
         // when
         SearchPlaceResponseDto searchRes = placeService.searchPlace(searchReq);
@@ -204,8 +183,9 @@ public class PlaceServiceTest {
     @DisplayName("[exception] 검색 결과 없음 예외 테스트")
     public void searchPlaceNotFoundItemExceptionTest() {
         // given
+        SearchPlaceRequestDto searchNotFoundExceptionReq = MockRequest.testSearchNotFoundExceptionReq();
         when(kakaoLocalAPIService.getSearchAddressLocalApi(searchNotFoundExceptionReq.getKeyword()))
-                .thenReturn(testSearchNoAddressRes());
+                .thenReturn(MockResponse.testSearchNoAddressRes());
         when(tourAPIService.getSearchKeywordTourApi(searchNotFoundExceptionReq.getKeyword(), searchNotFoundExceptionReq.getPage(), searchNotFoundExceptionReq.getPageSize()))
                 .thenReturn(MockResponse.testNoResultRes());
 
@@ -217,8 +197,9 @@ public class PlaceServiceTest {
     @DisplayName("관광 정보 [지역] 검색 테스트")
     public void searchAreaPlaceTest() {
         // given
+        SearchPlaceRequestDto searchAreaReq = MockRequest.testSearchAreaReq();
         when(kakaoLocalAPIService.getSearchAddressLocalApi(searchAreaReq.getKeyword()))
-                .thenReturn(testSearchAddressRes());
+                .thenReturn(MockResponse.testSearchAddressRes());
 
         // when
         SearchPlaceResponseDto searchRes = placeService.searchPlace(searchAreaReq);
@@ -242,12 +223,13 @@ public class PlaceServiceTest {
     @DisplayName("관광 정보 상세 조회 테스트")
     public void getPlaceDetailTest() {
         // given
+        GetPlaceDetailRequestDto placeDetailReq = MockRequest.testPlaceDetailReq();
         String contentType = String.valueOf(placeDetailReq.getContentType().getCode());
 
-        when(tourAPIService.getCommonApi(placeDetailReq.getContentId(), contentType)).thenReturn(testPlaceCommonRes());
-        when(tourAPIService.getIntroApi(placeDetailReq.getContentId(), contentType)).thenReturn(testPlaceIntroRes());
-        when(tourAPIService.getInfoApi(placeDetailReq.getContentId(), contentType)).thenReturn(testPlaceInfoRes());
-        when(tourAPIService.getImageApi(placeDetailReq.getContentId())).thenReturn(testPlaceImageRes());
+        when(tourAPIService.getCommonApi(placeDetailReq.getContentId(), contentType)).thenReturn(MockResponse.testPlaceCommonRes());
+        when(tourAPIService.getIntroApi(placeDetailReq.getContentId(), contentType)).thenReturn(MockResponse.testPlaceIntroRes());
+        when(tourAPIService.getInfoApi(placeDetailReq.getContentId(), contentType)).thenReturn(MockResponse.testPlaceInfoRes());
+        when(tourAPIService.getImageApi(placeDetailReq.getContentId())).thenReturn(MockResponse.testPlaceImageRes());
 
         // when
         DetailPlaceInformationResponseDto detailRes = placeService.getPlaceDetail(placeDetailReq);

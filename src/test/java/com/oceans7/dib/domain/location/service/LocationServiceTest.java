@@ -4,11 +4,10 @@ import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
-import com.oceans7.dib.global.util.CoordinateUtil;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-import static com.oceans7.dib.global.MockResponse.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -50,17 +48,17 @@ public class LocationServiceTest {
         String baseDate, baseTime, fcstDate, fcstTime;
 
         when(kakaoLocalAPIService.getGeoAddressLocalApi(searchLocationReq.getMapX(), searchLocationReq.getMapY()))
-                .thenReturn(testGeoAddressRes());
+                .thenReturn(MockResponse.testGeoAddressRes());
 
         baseDate = calculateBaseDate(MockRequest.NCST_CALLABLE_TIME);
         baseTime = calculateBaseTime(MockRequest.NCST_CALLABLE_TIME);
         when(vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime))
-                .thenReturn(testLocationNcstRes(baseDate, baseTime));
+                .thenReturn(MockResponse.testLocationNcstRes(baseDate, baseTime));
 
         fcstDate = calculateBaseDate(MockRequest.FCST_CALLABLE_TIME);
         fcstTime = calculateBaseTime(MockRequest.FCST_CALLABLE_TIME);
         when(vilageFcstAPIService.getUltraForecast(baseX, baseY, fcstDate, fcstTime))
-                .thenReturn(testLocationFcstRes(baseDate, fcstTime, fcstDate, nowTimeFormat));
+                .thenReturn(MockResponse.testLocationFcstRes(baseDate, fcstTime, fcstDate, nowTimeFormat));
 
         // when
         LocationResponseDto response = locationService.searchPlace(searchLocationReq);
@@ -97,7 +95,7 @@ public class LocationServiceTest {
         SearchLocationRequestDto searchXYExceptionReq = MockRequest.testSearchLocationXYExceptionReq();
 
         when(kakaoLocalAPIService.getGeoAddressLocalApi(searchXYExceptionReq.getMapX(), searchXYExceptionReq.getMapY()))
-                .thenReturn(testGeoAddressXYExceptionRes());
+                .thenReturn(MockResponse.testGeoAddressXYExceptionRes());
 
         // when then
         assertThrows(ApplicationException.class, () -> locationService.searchPlace(searchXYExceptionReq));
