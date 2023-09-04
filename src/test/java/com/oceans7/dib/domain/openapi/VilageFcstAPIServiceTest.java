@@ -9,7 +9,6 @@ import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
-import com.oceans7.dib.global.util.CoordinateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,27 +36,11 @@ public class VilageFcstAPIServiceTest {
     @Value("${open-api.data-go-kr.data-type}")
     private String dataType;
 
-    private final static int BASE_PAGE = 1;
-    private final static int NCST_PAGE_SIZE = 8;
-    private final static int FCST_PAGE_SIZE = 60;
-
-    private ResponseWrapper ultraSrtNcstAPIRes;
-    private ResponseWrapper ultraFcstAPIRes;
-
     private ObjectMapper objectMapper;
-
-    private int baseX, baseY;
 
     @BeforeEach
     public void before() {
-        ultraSrtNcstAPIRes = MockResponse.testNcstRes();
-        ultraFcstAPIRes = MockResponse.testFcstRes();
-
         objectMapper = new ObjectMapper();
-
-        CoordinateUtil.LatXLngY grid = CoordinateUtil.convertGRID_GPS(MockRequest.X, MockRequest.Y);
-        this.baseX = (int)grid.x;
-        this.baseY = (int)grid.y;
     }
 
     @Test
@@ -66,11 +49,14 @@ public class VilageFcstAPIServiceTest {
         // given
         String baseDate = "20230726";
         String baseTime = "0100";
+        int baseX = MockRequest.testBaseX();
+        int baseY = MockRequest.testBaseY();
 
         // when
+        ResponseWrapper ultraSrtNcstAPIRes = MockResponse.testNcstRes();
         String apiResponse = objectMapper.writeValueAsString(ultraSrtNcstAPIRes);
         when(dataGoKrApi.getNowForecastInfo(serviceKey, dataType, baseX, baseY,
-                baseDate, baseTime, BASE_PAGE, NCST_PAGE_SIZE))
+                baseDate, baseTime, MockRequest.BASE_PAGE, MockRequest.NCST_PAGE_SIZE))
                 .thenReturn(apiResponse);
 
         FcstAPICommonListResponse list = vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime);
@@ -99,11 +85,14 @@ public class VilageFcstAPIServiceTest {
         String baseDate = "20230726";
         String baseTime = "0000";
         String fcstTime = "0100";
+        int baseX = MockRequest.testBaseX();
+        int baseY = MockRequest.testBaseY();
 
         // when
+        ResponseWrapper ultraFcstAPIRes = MockResponse.testFcstRes();
         String apiResponse = objectMapper.writeValueAsString(ultraFcstAPIRes);
         when(dataGoKrApi.getUltraForecastInfo(serviceKey, dataType, baseX, baseY,
-                baseDate, baseTime, BASE_PAGE, FCST_PAGE_SIZE))
+                baseDate, baseTime, MockRequest.BASE_PAGE, MockRequest.FCST_PAGE_SIZE))
                 .thenReturn(apiResponse);
 
         FcstAPICommonListResponse list = vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime);

@@ -12,6 +12,7 @@ import com.oceans7.dib.domain.place.repository.DibRepository;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockRequest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,24 +43,21 @@ public class MypageServiceTest {
     UserRepository userRepository;
 
     private User testUser;
-    private UpdateProfileRequestDto updateProfileReq;
 
     @BeforeEach
     public void before() {
         testUser = userRepository.save(MockRequest.testUser());
-
-        updateProfileReq = MockRequest.testUpdateProfileReq();
     }
 
-    public CouponGroup makeCouponGroup() {
+    private CouponGroup makeCouponGroup() {
         return couponGroupRepository.save(MockRequest.testCouponGroup());
     }
 
-    public Coupon issueCoupon(CouponGroup testCouponGroup) {
+    private Coupon issueCoupon(CouponGroup testCouponGroup) {
         return couponRepository.save(MockRequest.testCoupon(testUser, testCouponGroup));
     }
 
-    public Dib makeDib() {
+    private Dib makeDib() {
         return dibRepository.save(MockRequest.testDib(testUser));
     }
 
@@ -139,6 +135,7 @@ public class MypageServiceTest {
     @DisplayName("프로필 정보 수정")
     public void updateMyProfile() {
         // given
+        UpdateProfileRequestDto updateProfileReq = MockRequest.testUpdateProfileReq();
 
         // when
         mypageService.updateMyProfile(testUser.getId(), updateProfileReq);

@@ -29,18 +29,12 @@ public class LocationControllerTest {
     @MockBean
     private LocationService locationService;
 
-    private SearchLocationRequestDto searchLocationReq;
-
-    @BeforeEach
-    public void setUp() {
-        this.searchLocationReq = MockRequest.testSearchLocationReq();
-    }
-
     @Test
     @DisplayName("좌표 기준 주소 및 날씨 조회 테스트")
     @WithMockUser("user1")
     public void searchPlaceTest() throws Exception {
         // given
+        SearchLocationRequestDto searchLocationReq = MockRequest.testSearchLocationReq();
         when(locationService.searchPlace(searchLocationReq))
                 .thenReturn(MockResponse.testSearchPlaceRes());
 

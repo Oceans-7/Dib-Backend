@@ -14,6 +14,7 @@ import com.oceans7.dib.domain.place.entity.Dib;
 import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
+import com.oceans7.dib.global.util.CoordinateUtil;
 
 import java.time.LocalDate;
 
@@ -25,8 +26,20 @@ public class MockRequest {
     public static final ContentType CONTENT_TYPE = ContentType.TOURIST_SPOT;
     public static final ArrangeType ARRANGE_TYPE = ArrangeType.E;
 
+    public final static String YES_OPTION = "Y";
+    public final static int RADIUS = 20000;
+    public final static int MAX_AREA_CODE_SIZE = 50;
+
     public static final double X = 126.997555182293;
     public static final double Y = 37.5638077703601;
+
+    public final static int NCST_CALLABLE_TIME = 40;
+    public final static int FCST_CALLABLE_TIME = 60;
+    public final static int BASE_PAGE = 1;
+    public final static int NCST_PAGE_SIZE = 8;
+    public final static int FCST_PAGE_SIZE = 60;
+
+
 
     public static User testUser() {
         return User.of("profile_img", "oceans", SocialType.KAKAO, "dib123", Role.USER);
@@ -75,6 +88,18 @@ public class MockRequest {
 
     public static SearchLocationRequestDto testSearchLocationXYExceptionReq() {
         return new SearchLocationRequestDto(0, 0);
+    }
+
+    public static int testBaseX() {
+        return (int) testBaseXY().x;
+    }
+
+    public static int testBaseY() {
+        return (int) testBaseXY().y;
+    }
+
+    private static CoordinateUtil.LatXLngY testBaseXY() {
+        return CoordinateUtil.convertGRID_GPS(X, Y);
     }
 
     public static CouponGroup testCouponGroup() {

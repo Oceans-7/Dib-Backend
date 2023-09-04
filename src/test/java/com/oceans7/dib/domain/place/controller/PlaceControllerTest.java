@@ -53,7 +53,7 @@ public class PlaceControllerTest {
     private GetPlaceDetailRequestDto placeDetailReq;
 
     @BeforeEach
-    public void setUp() {
+    public void before() {
         placeReq = MockRequest.testPlaceReq();
         placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
         placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
