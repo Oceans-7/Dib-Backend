@@ -59,7 +59,7 @@ public class PlaceController {
     })
     @GetMapping("/search")
     public ApplicationResponse<SearchPlaceResponseDto> searchPlace(@ModelAttribute @Validated SearchPlaceRequestDto searchPlaceRequestDto) {
-        return ApplicationResponse.ok(placeService.searchPlace(searchPlaceRequestDto));
+        return ApplicationResponse.ok(placeService.searchKeyword(searchPlaceRequestDto));
     }
 
     @Operation(summary = "관광 정보 상세 조회", description = "콘텐츠 ID와 콘텐츠 타입을 입력 받아 관광 상세 정보를 조회한다.")

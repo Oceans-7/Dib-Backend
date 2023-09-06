@@ -34,15 +34,15 @@ public class SearchPlaceResponseDto {
     @Schema(description = "지역명 검색 시 true: 지역명 검색 시 areas 변수로 결과 전달", example = "true")
     private boolean isAreaSearch;
 
-    public static SearchPlaceResponseDto of(String keyword, List<SimplePlaceInformationDto> simpleDto,
-                                            TourAPICommonListResponse list, boolean isAreaSearch) {
+    public static SearchPlaceResponseDto of(String keyword, List<SimplePlaceInformationDto> simpleDto, boolean isAreaSearch,
+                                            int count, int page, int pageSize) {
         SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
 
         searchPlaceResponse.keyword = keyword;
         searchPlaceResponse.places = simpleDto;
-        searchPlaceResponse.count = list.getTotalCount();
-        searchPlaceResponse.page = list.getPage();
-        searchPlaceResponse.pageSize = list.getPageSize();
+        searchPlaceResponse.count = count;
+        searchPlaceResponse.page = page;
+        searchPlaceResponse.pageSize = pageSize;
         searchPlaceResponse.isAreaSearch = isAreaSearch;
 
         return searchPlaceResponse;

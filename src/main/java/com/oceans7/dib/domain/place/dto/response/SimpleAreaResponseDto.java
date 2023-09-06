@@ -27,16 +27,16 @@ public class SimpleAreaResponseDto {
     @Schema(description = "장소 경도", example = "37.566535")
     private double mapY;
 
-    public static SimpleAreaResponseDto of(String address, double distance, String areaName, String sigunguName,
-                                           double mapX, double mapY) {
+    public static SimpleAreaResponseDto of(String address, String areaName, String sigunguName,
+                                           double mapX, double mapY, double distance) {
         SimpleAreaResponseDto simpleAreaResponseDto = new SimpleAreaResponseDto();
 
         simpleAreaResponseDto.address = address;
-        simpleAreaResponseDto.distance = distance;
         simpleAreaResponseDto.areaName = areaName;
         simpleAreaResponseDto.sigunguName = sigunguName;
         simpleAreaResponseDto.mapX = mapX;
         simpleAreaResponseDto.mapY = mapY;
+        simpleAreaResponseDto.distance = distance;
 
         return simpleAreaResponseDto;
     }

@@ -378,12 +378,12 @@ public class MockResponse {
                 .map(SimplePlaceInformationDto :: of)
                 .collect(Collectors.toList());
 
-        return SearchPlaceResponseDto.of(KEYWORD_QUERY, simpleDto, testSearchRes(), false);
+        return SearchPlaceResponseDto.of(KEYWORD_QUERY, simpleDto, false, testSearchRes().getTotalCount(), testSearchRes().getPage(), testSearchRes().getPageSize());
     }
 
     public static  SearchPlaceResponseDto testSearchPlaceBasedAreaRes() {
         List<SimpleAreaResponseDto> simpleDto = new ArrayList<>();
-        simpleDto.add(SimpleAreaResponseDto.of("서울 중구", 1000.1711716167842, "서울", "중구", X, Y));
+        simpleDto.add(SimpleAreaResponseDto.of("서울 중구", "서울", "중구", X, Y, 1000.1711716167842));
         return SearchPlaceResponseDto.of(AREA_QUERY, simpleDto, true);
     }
 

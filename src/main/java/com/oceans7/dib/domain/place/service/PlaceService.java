@@ -158,70 +158,84 @@ public class PlaceService {
     /**
      * 관광 정보 키워드 검색
      */
-    public SearchPlaceResponseDto searchPlace(SearchPlaceRequestDto request) {
-        LocalResponse local = kakaoLocalAPIService.getSearchAddressLocalApi(request.getKeyword());
-
-        if(isLocationName(local)) {
-            List<SimpleAreaResponseDto> simpleDto = searchAreaKeyword(local, request.getMapX(), request.getMapY());
-            return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, true);
+    public SearchPlaceResponseDto searchKeyword(SearchPlaceRequestDto request) {
+        if(isLocationKeyword(request.getKeyword())) {
+            return searchAreaKeyword(request);
         } else {
-            TourAPICommonListResponse apiResponse = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize());
-
-            if(apiResponse.getTotalCount() == 0) {
-                throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION);
-            }
-            List<SimplePlaceInformationDto> simpleDto = searchPlaceKeyword(request, apiResponse);
-            return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, apiResponse, false);
+            return searchPlaceKeyword(request);
         }
     }
 
-    private boolean isLocationName(LocalResponse local) {
-        return ValidatorUtil.isNotEmpty(local.getAddressItems());
+    /**
+     * 키워드의 지역명 여부
+     */
+    private boolean isLocationKeyword(String keyword) {
+        LocalResponse localResponse = kakaoLocalAPIService.getSearchAddressLocalApi(keyword);
+        return ValidatorUtil.isNotEmpty(localResponse.getAddressItems());
     }
 
     /**
-     * 관광 정보 키워드 검색 -> 지역명 검색
+     * 지역명 검색
+     * @return 지역명 기반 SearchPlaceResponseDto 타입의 Response
      */
-    private List<SimpleAreaResponseDto> searchAreaKeyword(LocalResponse local, double mapX, double mapY) {
-        List<SimpleAreaResponseDto> areaList = new ArrayList<>();
+    private SearchPlaceResponseDto searchAreaKeyword(SearchPlaceRequestDto request) {
+        boolean isLocationSearch = true;
+        LocalResponse localResponse = getSearchAddressLocalApi(request);
 
-        for(AddressItem addressItem : local.getAddressItems()) {
-            String address, areaName, sigunguName;
-            double distance, areaX, areaY;
+        List<SimpleAreaResponseDto> simpleDto = transformApiResponseToSimpleArea(localResponse, request.getMapX(), request.getMapY());
 
-            areaX = addressItem.getX();
-            areaY = addressItem.getY();
-            distance = CoordinateUtil.calculateDistance(mapX, mapY, areaX, areaY);
-
-            if(addressItem.getAddressType().equals("REGION")) {
-                Address addr = addressItem.getAddress();
-                address = addr.getAddressName();
-                areaName = addr.getRegion1depthName();
-                sigunguName = addr.getRegion2depthName();
-            } else {
-                Address addr = addressItem.getRoadAddress();
-                address = addr.getAddressName();
-                areaName = addr.getRegion1depthName();
-                sigunguName = addr.getRegion2depthName();
-            }
-            areaList.add(SimpleAreaResponseDto.of(address, distance, areaName, sigunguName, areaX, areaY));
-        }
-
-        return areaList;
+        return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, isLocationSearch);
     }
 
     /**
-     * 관광 정보 키워드 검색 -> 단순 검색
+     * 지역명 기반 KAKAO LOCAL API 통신
+     * @return 지역명 기반 LocalResponse 타입의 KAKAO LOCAL API Response
      */
-    private List<SimplePlaceInformationDto> searchPlaceKeyword(SearchPlaceRequestDto request, TourAPICommonListResponse apiResponse) {
+    private LocalResponse getSearchAddressLocalApi(SearchPlaceRequestDto request) {
+        return kakaoLocalAPIService.getSearchAddressLocalApi(request.getKeyword());
+    }
 
-        apiResponse.getTourAPICommonItemResponseList().stream()
-                .forEach(item -> { item.calculateDistance(request.getMapX(), request.getMapY()); });
-
-        return apiResponse.getTourAPICommonItemResponseList().stream()
-                .map(SimplePlaceInformationDto :: of)
+    /**
+     * KAKAO LOCAL API 응답을 SimpleAreaResponseDto 리스트로 변환
+     */
+    private List<SimpleAreaResponseDto> transformApiResponseToSimpleArea(LocalResponse localResponse, double reqX, double reqY) {
+        String regionAddressType = "REGION";
+        return localResponse.getAddressItems().stream()
+                .map(item -> {
+                    Address addressInfo = item.getAddressType().equals(regionAddressType) ? item.getAddress() : item.getRoadAddress();
+                    return SimpleAreaResponseDto.of(
+                            addressInfo.getAddressName(), addressInfo.getRegion1depthName(), addressInfo.getRegion2depthName(),
+                            item.getX(), item.getY(), CoordinateUtil.calculateDistance(reqX, reqY, item.getX(), item.getY()));
+                })
                 .collect(Collectors.toList());
+    }
 
+    /**
+     * 관광 정보 검색
+     * @return 키워드 기반 SearchPlaceResponseDto 타입의 Response
+     */
+    private SearchPlaceResponseDto searchPlaceKeyword(SearchPlaceRequestDto request) {
+        boolean isLocationSearch = false;
+        TourAPICommonListResponse apiResponseList = getSearchKeywordTourApi(request);
+
+        apiResponseList.getTourAPICommonItemResponseList().stream()
+                .forEach(item -> item.calculateDistance(request.getMapX(), request.getMapY()));
+
+        List<SimplePlaceInformationDto> simpleDto = transformApiResponseToSimplePlace(apiResponseList);
+
+        return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, isLocationSearch, apiResponseList.getTotalCount(), apiResponseList.getPage(), apiResponseList.getPageSize());
+    }
+
+    /**
+     * 키워드 기반 TOUR API 통신
+     * @return 키워드 기반 TourAPICommonListResponse 타입의 TOUR API Response
+     */
+    private TourAPICommonListResponse getSearchKeywordTourApi(SearchPlaceRequestDto request) {
+        TourAPICommonListResponse apiResponseList = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize());
+
+        notFoundApiItemException(apiResponseList.getTotalCount());
+
+        return apiResponseList;
     }
 
     /**

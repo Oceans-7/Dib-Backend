@@ -263,7 +263,7 @@ public class PlaceControllerTest {
     public void searchPlaceTest() throws Exception {
         //given
         SearchPlaceRequestDto searchReq = MockRequest.testSearchReq();
-        when(placeService.searchPlace(searchReq))
+        when(placeService.searchKeyword(searchReq))
                 .thenReturn(MockResponse.testSearchPlaceBasedKeywordRes());
 
         // when
@@ -297,7 +297,7 @@ public class PlaceControllerTest {
     public void searchAreaTest() throws Exception {
         //given
         SearchPlaceRequestDto searchAreaReq = MockRequest.testSearchAreaReq();
-        when(placeService.searchPlace(searchAreaReq))
+        when(placeService.searchKeyword(searchAreaReq))
                 .thenReturn(MockResponse.testSearchPlaceBasedAreaRes());
 
         // when
@@ -330,7 +330,7 @@ public class PlaceControllerTest {
     public void searchPlaceNotFoundItemExceptionTest() throws Exception {
         //given
         SearchPlaceRequestDto searchNotFoundExceptionReq = MockRequest.testSearchNotFoundExceptionReq();
-        when(placeService.searchPlace(searchNotFoundExceptionReq))
+        when(placeService.searchKeyword(searchNotFoundExceptionReq))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when

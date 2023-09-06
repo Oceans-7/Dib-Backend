@@ -160,7 +160,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testSearchRes());
 
         // when
-        SearchPlaceResponseDto searchRes = placeService.searchPlace(searchReq);
+        SearchPlaceResponseDto searchRes = placeService.searchKeyword(searchReq);
         SimplePlaceInformationDto info = searchRes.getPlaces().get(0);
 
         // then
@@ -190,7 +190,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testNoResultRes());
 
         // then
-        assertThrows(ApplicationException.class, () -> placeService.searchPlace(searchNotFoundExceptionReq));
+        assertThrows(ApplicationException.class, () -> placeService.searchKeyword(searchNotFoundExceptionReq));
     }
 
     @Test
@@ -202,7 +202,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testSearchAddressRes());
 
         // when
-        SearchPlaceResponseDto searchRes = placeService.searchPlace(searchAreaReq);
+        SearchPlaceResponseDto searchRes = placeService.searchKeyword(searchAreaReq);
         SimpleAreaResponseDto info = searchRes.getAreas().get(0);
 
         // then
