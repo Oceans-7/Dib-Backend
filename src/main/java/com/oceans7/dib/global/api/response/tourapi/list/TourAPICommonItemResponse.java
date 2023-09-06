@@ -2,6 +2,7 @@ package com.oceans7.dib.global.api.response.tourapi.list;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oceans7.dib.global.util.CoordinateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,29 +28,18 @@ public class TourAPICommonItemResponse {
     @JsonProperty("tel")
     private String tel;
 
-    // 대표이미지 (원본)
-    @JsonProperty("firstimage")
-    private String firstImage;
-
     // 대표이미지 (썸네일)
     @JsonProperty("firstimage2")
-    private String firstImage2;
+    private String thumbnail;
+
+    @JsonProperty("addr1")
+    private String addr1;
+
+    @JsonProperty("addr2")
+    private String addr2;
 
     // 주소
-    @JsonProperty("addr1")
-    private String address1;
-
-    // 상세 주소
-    @JsonProperty("addr2")
-    private String address2;
-
-    // 저작권 유형
-    /**
-     * Type1 : 제 1유형(출처표시-권장)
-     * Type3 : 제 3유형(제 1유형 + 변경금지)
-     */
-    @JsonProperty("cpyrhtDivCd")
-    private String copyrightDivCd;
+    private String address;
 
     // GPS X좌표
     @JsonProperty("mapx")
@@ -59,47 +49,25 @@ public class TourAPICommonItemResponse {
     @JsonProperty("mapy")
     private double mapY;
 
-    // 콘텐츠 최초 등록일
-    @JsonProperty("createdtime")
-    private String createdTime;
-
-    // 콘텐츠 수정일
-    @JsonProperty("modifiedtime")
-    private String modifiedTime;
-
-    // 위치 기반 : 중심 좌표로부터 거리 (m)
-    @JsonProperty("dist")
-    private double dist;
-
-    // 지역 기반 : 우편번호
-    @JsonProperty("zipcode")
-    private String zipcode;
-
-    // 교과서 속 여행지 여부
-    @JsonProperty("booktour")
-    private String bookTour;
-
-    // 시군구 코드
-    @JsonProperty("sigungucode")
-    private String sigunguCode;
+    // 좌표로부터 거리 (m)
+    private double distance;
 
     // 지역 코드
     @JsonProperty("areacode")
     private String areaCode;
 
-    // 대분류
-    @JsonProperty("cat1")
-    private String cat1;
+    // 시군구 코드
+    @JsonProperty("sigungucode")
+    private String sigunguCode;
 
-    // 중분류
-    @JsonProperty("cat2")
-    private String cat2;
+    public String getAddress() {
+        return String.format("%s %s", this.addr1, this.addr2);
+    }
 
-    // 소분류
-    @JsonProperty("cat3")
-    private String cat3;
-
-    public void updateDistance(double dist) {
-        this.dist = dist;
+    public void convertDistanceMetersToKilometers() {
+        this.distance = CoordinateUtil.convertMetersToKilometers(this.distance);
+    }
+    public void calculateDistance(double requestX, double requestY) {
+        this.distance = CoordinateUtil.calculateDistance(requestX, requestY, this.mapX, this.mapY);
     }
 }

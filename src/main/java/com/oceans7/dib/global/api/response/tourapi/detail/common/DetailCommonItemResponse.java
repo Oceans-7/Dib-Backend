@@ -21,11 +21,8 @@ public class DetailCommonItemResponse extends TourAPICommonItemResponse {
     private String overview;
 
     public DetailCommonItemResponse(TourAPICommonItemResponse item, String homepageUrl, String overview) {
-        super(item.getContentId(), item.getContentTypeId(), item.getTitle(), item.getTel(),
-                item.getFirstImage(), item.getFirstImage2(), item.getAddress1(), item.getAddress2(),
-                item.getCopyrightDivCd(), item.getMapX(), item.getMapY(),
-                item.getCreatedTime(), item.getModifiedTime(), item.getDist(), item.getZipcode(),
-                item.getBookTour(), item.getSigunguCode(), item.getAreaCode(), item.getCat1(), item.getCat2(), item.getCat3());
+        super(item.getContentId(), item.getContentTypeId(), item.getTitle(), item.getTel(), item.getThumbnail(),
+                item.getAddr1(), item.getAddr2(), item.getAddress(), item.getMapX(), item.getMapY(), item.getDistance(),  item.getAreaCode(), item.getSigunguCode());
         this.homepageUrl = homepageUrl;
         this.overview = overview;
     }

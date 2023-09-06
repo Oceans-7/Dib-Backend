@@ -19,7 +19,8 @@ public class CoordinateUtil {
 
     // m -> km 변환
     public static double convertMetersToKilometers(double meters) {
-        return round(meters / 1000.0);
+        if(ValidatorUtil.isNotEmpty(meters)) return round(meters / 1000.0);
+        else return 0.0;
     }
 
     // 반올림

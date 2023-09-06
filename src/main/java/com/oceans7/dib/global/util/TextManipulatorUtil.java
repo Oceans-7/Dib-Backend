@@ -47,17 +47,6 @@ public class TextManipulatorUtil {
         return null;
     }
 
-    public static String concatenateStrings(String str1, String str2, String prefix) {
-        if(ValidatorUtil.isNotEmpty(str1)) {
-            if(ValidatorUtil.isNotEmpty(str2)) {
-                return str1 + prefix + str2;
-            }
-            return str1;
-        }
-
-        return null;
-    }
-
     public static String concatenateStrings(String str1, String str2, String prefix1, String prefix2) {
         if(ValidatorUtil.isNotEmpty(str1) && ValidatorUtil.isNotEmpty(str2)) {
             return prefix1 + str1 + prefix2 + str2;

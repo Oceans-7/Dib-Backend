@@ -58,10 +58,10 @@ public class PlaceServiceTest {
 
         assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.getDistance()).isBetween(MockResponse.MIN_DISTANCE, MockResponse.MAX_DISTANCE);
         assertThat(info.getDistance()).isEqualTo(1.0);
     }
@@ -124,10 +124,10 @@ public class PlaceServiceTest {
 
         assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.getAddress().contains(placeWithAreaReq.getArea()) &&
                 info.getAddress().contains(placeWithAreaReq.getSigungu())
         ).isTrue();
@@ -173,10 +173,10 @@ public class PlaceServiceTest {
 
         assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
     }
 
     @Test
@@ -237,7 +237,7 @@ public class PlaceServiceTest {
         // then
         assertThat(detailRes.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(detailRes.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(detailRes.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(detailRes.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(detailRes.getTitle()).isEqualTo("뷰티플레이");
         assertThat(detailRes.getMapX()).isEqualTo(126.997555182293);
         assertThat(detailRes.getMapY()).isEqualTo(37.5638077703601);

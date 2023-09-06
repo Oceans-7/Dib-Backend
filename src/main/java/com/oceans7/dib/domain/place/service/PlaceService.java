@@ -50,76 +50,109 @@ public class PlaceService {
     private final DibRepository dibRepository;
 
     /**
-     * 관광 정보 리스트 조회
+     * 관광 정보 리스트 조회 (위치 기반/지역 필터링)
+     * @return PlaceResponseDto 타입의 Response
      */
     public PlaceResponseDto getPlace(GetPlaceRequestDto request, String contentType, String arrangeType) {
-        TourAPICommonListResponse apiResponse;
-
         if(ValidatorUtil.isNotEmpty(request.getArea())) {
-            apiResponse = getPlaceByArea(request, contentType, arrangeType);
+            return getAreaBasedPlace(request, contentType, arrangeType);
         } else {
-            apiResponse = getPlaceByLocation(request, contentType, arrangeType);
+            return getLocationBasedPlace(request, contentType, arrangeType);
         }
-
-        if(apiResponse.getTotalCount() == 0) {
-            throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION);
-        }
-
-        List<SimplePlaceInformationDto> simpleDto = apiResponse.getTourAPICommonItemResponseList().stream()
-                .map(SimplePlaceInformationDto :: of)
-                .collect(Collectors.toList());
-
-        return PlaceResponseDto.of(simpleDto, apiResponse, request.getArrangeType());
     }
 
     /**
-     * 위치 기반 관광 정보 조회
+     * 위치 기반 관광 정보 리스트 조회
+     * @return 위치 기반 PlaceResponseDto 타입의 Response
      */
-    private TourAPICommonListResponse getPlaceByLocation(GetPlaceRequestDto request, String contentType, String arrangeType) {
-        TourAPICommonListResponse apiResponse = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(),
-                request.getPage(), request.getPageSize(), contentType, arrangeType);
+    private PlaceResponseDto getLocationBasedPlace(GetPlaceRequestDto request, String contentType, String arrangeType) {
+        TourAPICommonListResponse tourAPIResponseList = getLocationBasedTourApi(request, contentType, arrangeType);
 
-        apiResponse.getTourAPICommonItemResponseList().stream()
-                .forEach(item -> {
-                    double distance = CoordinateUtil.convertMetersToKilometers(item.getDist());
-                    item.updateDistance(distance);
-                });
+        tourAPIResponseList.getTourAPICommonItemResponseList().stream()
+                .forEach(item ->  item.convertDistanceMetersToKilometers());
 
-        return apiResponse;
+        List<SimplePlaceInformationDto> simplePlaceResponse = transformApiResponseToSimplePlace(tourAPIResponseList);
+
+        return PlaceResponseDto.of(simplePlaceResponse, tourAPIResponseList.getTotalCount(), tourAPIResponseList.getPage(), tourAPIResponseList.getPageSize(), request.getArrangeType());
     }
 
     /**
-     * 지역 기반 관광 정보 조회
+     * 위치 기반 TOUR API 통신
+     * @return 위치 기반 TourAPICommonListResponse 타입의 TOUR API Response
      */
-    private TourAPICommonListResponse getPlaceByArea(GetPlaceRequestDto request, String contentType, String arrangeType) {
+    private TourAPICommonListResponse getLocationBasedTourApi(GetPlaceRequestDto request, String contentType, String arrangeType) {
+        TourAPICommonListResponse tourAPIResponseList = tourAPIService.getLocationBasedTourApi(
+                request.getMapX(), request.getMapY(), request.getPage(), request.getPageSize(), contentType, arrangeType);
+
+        notFoundApiItemException(tourAPIResponseList.getTotalCount());
+
+        return tourAPIResponseList;
+    }
+
+    /**
+     * 예외 처리
+     * TOUR API 응답 아이템이 존재하지 않음
+     */
+    private void notFoundApiItemException(int totalCountOfApiResponse) {
+        if(totalCountOfApiResponse == 0) { throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION); }
+    }
+
+    /**
+     * 지역 기반 관광 정보 리스트 조회
+     * @return 지역 기반 PlaceResponseDto 타입의 Response
+     */
+    private PlaceResponseDto getAreaBasedPlace(GetPlaceRequestDto request, String contentType, String arrangeType) {
+        TourAPICommonListResponse tourAPIResponseList = getAreaBasedTourApi(request, contentType, arrangeType);
+
+        tourAPIResponseList.getTourAPICommonItemResponseList().stream()
+                .forEach(item -> item.calculateDistance(request.getMapX(), request.getMapY()));
+
+        List<SimplePlaceInformationDto> simplePlaceResponse = transformApiResponseToSimplePlace(tourAPIResponseList);
+
+        return PlaceResponseDto.of(simplePlaceResponse, tourAPIResponseList.getTotalCount(), tourAPIResponseList.getPage(), tourAPIResponseList.getPageSize(), request.getArrangeType());
+    }
+
+    /**
+     * 지역 기반 TOUR API 통신
+     * @return 지역 기반 TourAPICommonListResponse 타입의 TOUR API Response
+     */
+    private TourAPICommonListResponse getAreaBasedTourApi(GetPlaceRequestDto request, String contentType, String arrangeType) {
         String areaCode, sigunguCode = "";
 
-        areaCode = findAreaCode("", request.getArea());
+        areaCode = getAreaCodeApi("", request.getArea());
         if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
-            sigunguCode = findAreaCode(areaCode, request.getSigungu());
+            sigunguCode = getAreaCodeApi(areaCode, request.getSigungu());
         }
 
-        TourAPICommonListResponse apiResponse = tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode,
-                request.getPage(), request.getPageSize(), contentType, arrangeType);
-
-        apiResponse.getTourAPICommonItemResponseList().stream()
-                .forEach(item -> {
-                    double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
-                    item.updateDistance(distance);
-                });
-
-        return apiResponse;
+        return tourAPIService.getAreaBasedTourApi(
+                areaCode, sigunguCode, request.getPage(), request.getPageSize(), contentType, arrangeType);
     }
 
-    private String findAreaCode(String areaCode, String areaName) {
+    /**
+     * 지역 코드 조회 TOUR API 통신
+     * @return 지역 코드
+     */
+    private String getAreaCodeApi(String areaCode, String areaName) {
         AreaCodeList areaCodeList = tourAPIService.getAreaCodeApi(areaCode);
         String findCode = areaCodeList.getAreaCodeByName(areaName);
 
-        if(ValidatorUtil.isEmpty(findCode)) {
-            throw new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME);
-        }
+        notFoundAreaItemException(findCode);
 
         return findCode;
+    }
+
+    /**
+     * TOUR API 지역 코드 조회 응답 아이템 카운트가 0일 때 발생하는 예외 처리
+     */
+    private void notFoundAreaItemException(String findCode) {
+        if (ValidatorUtil.isEmpty(findCode)) { throw new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME); }
+    }
+
+    /**
+     * TOUR API 응답 리스트를 SimplePlaceInformationDto 리스트로 변환
+     */
+    private List<SimplePlaceInformationDto> transformApiResponseToSimplePlace (TourAPICommonListResponse tourAPIResponseList) {
+        return tourAPIResponseList.getTourAPICommonItemResponseList().stream().map(SimplePlaceInformationDto :: of).collect(Collectors.toList());
     }
 
     /**
@@ -183,10 +216,7 @@ public class PlaceService {
     private List<SimplePlaceInformationDto> searchPlaceKeyword(SearchPlaceRequestDto request, TourAPICommonListResponse apiResponse) {
 
         apiResponse.getTourAPICommonItemResponseList().stream()
-                .forEach(item -> {
-                    double distance = CoordinateUtil.calculateDistance(request.getMapX(), request.getMapY(), item.getMapX(), item.getMapY());
-                    item.updateDistance(distance);
-                });
+                .forEach(item -> { item.calculateDistance(request.getMapX(), request.getMapY()); });
 
         return apiResponse.getTourAPICommonItemResponseList().stream()
                 .map(SimplePlaceInformationDto :: of)
@@ -361,8 +391,7 @@ public class PlaceService {
         // 공통 정보
         DetailCommonItemResponse commonItem = getCommonItem(contentId);
 
-        dibRepository.save(Dib.of(contentId, commonItem.getContentTypeId(), commonItem.getTitle(),
-                TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " "), commonItem.getTel(), commonItem.getFirstImage(), user));
+        dibRepository.save(Dib.of(contentId, commonItem.getContentTypeId(), commonItem.getTitle(), commonItem.getAddress(), commonItem.getTel(), commonItem.getThumbnail(), user));
     }
 
     private DetailCommonItemResponse getCommonItem(Long contentId) {

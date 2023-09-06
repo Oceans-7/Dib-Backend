@@ -44,13 +44,13 @@ public class SimplePlaceInformationDto {
         SimplePlaceInformationDto simplePlaceInformation = new SimplePlaceInformationDto();
 
         simplePlaceInformation.title = item.getTitle();
-        simplePlaceInformation.address = item.getAddress1() + item.getAddress2();
+        simplePlaceInformation.address = item.getAddress();
         simplePlaceInformation.contentId = item.getContentId();
         simplePlaceInformation.contentType = getContentTypeByCode(item.getContentTypeId());
-        simplePlaceInformation.distance = item.getDist();
+        simplePlaceInformation.distance = item.getDistance();
         simplePlaceInformation.mapX = item.getMapX();
         simplePlaceInformation.mapY = item.getMapY();
-        simplePlaceInformation.firstImage = item.getFirstImage();
+        simplePlaceInformation.firstImage = item.getThumbnail();
         simplePlaceInformation.tel = item.getTel();
 
         return simplePlaceInformation;

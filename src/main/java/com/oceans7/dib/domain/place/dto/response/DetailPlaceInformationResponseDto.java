@@ -84,7 +84,7 @@ public class DetailPlaceInformationResponseDto {
         response.contentId = commonItem.getContentId();
         response.contentType = getContentTypeByCode(commonItem.getContentTypeId());
         response.title = commonItem.getTitle();
-        response.address = TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " ");
+        response.address = commonItem.getAddress();
         response.mapX = commonItem.getMapX();
         response.mapY = commonItem.getMapY();
         response.introduce = TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview());

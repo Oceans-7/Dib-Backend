@@ -89,7 +89,7 @@ public class DataGoKrAPIServiceTest {
         assertThat(list.getPage()).isEqualTo(page);
         assertThat(list.getPageSize()).isEqualTo(pageSize);
 
-        assertThat(item.getDist()).isEqualTo(1000.1711716167842);
+        assertThat(item.getDistance()).isEqualTo(1000.1711716167842);
         assertThat(item.getContentTypeId()).isEqualTo(ContentType.TOURIST_SPOT.getCode());
 
         assertTourAPI(item);
@@ -144,7 +144,7 @@ public class DataGoKrAPIServiceTest {
         TourAPICommonItemResponse item = list.getTourAPICommonItemResponseList().get(0);
 
         // then
-        assertThat(item.getAddress1().contains("서울") && item.getAddress1().contains("중구")).isEqualTo(true);
+        assertThat(item.getAddress().contains("서울") && item.getAddress().contains("중구")).isEqualTo(true);
         assertTourAPI(item);
     }
 
@@ -154,14 +154,10 @@ public class DataGoKrAPIServiceTest {
         assertThat(item.getContentId()).isEqualTo(2946230);
         assertThat(item.getTitle()).isEqualTo("뷰티플레이");
         assertThat(item.getTel()).isEqualTo("");
-        assertThat(item.getFirstImage().matches(urlPattern)).isEqualTo(true);
-        assertThat(item.getFirstImage2().matches(urlPattern)).isEqualTo(true);
-        assertThat(item.getAddress1()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
-        assertThat(item.getCopyrightDivCd()).isEqualTo("Type1");
+        assertThat(item.getThumbnail().matches(urlPattern)).isEqualTo(true);
+        assertThat(item.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(item.getMapX()).isEqualTo(MockRequest.X);
         assertThat(item.getMapY()).isEqualTo(MockRequest.Y);
-        assertThat(item.getCreatedTime()).isEqualTo("20230129232104");
-        assertThat(item.getModifiedTime()).isEqualTo("20230208103221");
         assertThat(item.getSigunguCode()).isEqualTo("24");
         assertThat(item.getAreaCode()).isEqualTo("1");
     }

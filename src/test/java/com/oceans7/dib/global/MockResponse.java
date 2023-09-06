@@ -61,37 +61,25 @@ public class MockResponse {
     }
 
     // --- DataGoKrAPIService Test Mock Response
-    private static TourAPICommonItemResponse setCommonTourItem(double dist, String zipcode) {
+    private static TourAPICommonItemResponse setCommonTourItem(double dist) {
         return new TourAPICommonItemResponse(
                 CONTENT_ID, CONTENT_TYPE.getCode(),
                 "뷰티플레이", "",
-                "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg",
                 "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg",
-                "서울특별시 중구 명동1가 1-3 YWCA연합회", "",
-                "Type1", X, Y,
-                "20230129232104", "20230208103221",
-                dist, zipcode, "",
-                "24", "1",
-                "A03", "A0302", "A03022600");
+                "서울특별시 중구 명동1가 1-3 YWCA연합회", "", "", X, Y, dist, "1", "24");
     }
 
-    private static TourAPICommonItemResponse setCommonTourItem2(double dist, String zipcode) {
+    private static TourAPICommonItemResponse setCommonTourItem2(double dist) {
         return new TourAPICommonItemResponse(
                 CONTENT_ID, CONTENT_TYPE.getCode(),
                 "서울 남현동 요지", "",
-                "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg",
                 "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg",
-                "서울특별시 관악구 남현3길 60", "(남현동)",
-                "Type1", X, Y,
-                "20230129232104", "20230208103221",
-                dist, zipcode, "",
-                "24", "1",
-                "A02", "A0201", "A02010700");
+                "서울특별시 관악구 남현3길 60", "(남현동)", "", X, Y, dist, "1", "24");
     }
 
     public static ResponseWrapper testLocationBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(1000.1711716167842, null));
+        item.add(setCommonTourItem(1000.1711716167842));
         return new ResponseWrapper(
                 new Response(
                         TourAPICommonListResponse.builder()
@@ -105,7 +93,7 @@ public class MockResponse {
 
     public static ResponseWrapper testAreaBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(0, "04538"));
+        item.add(setCommonTourItem(0));
         return new ResponseWrapper(
                 new Response(
                         TourAPICommonListResponse.builder()
@@ -119,7 +107,7 @@ public class MockResponse {
 
     public static ResponseWrapper testKeywordBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(0, null));
+        item.add(setCommonTourItem(0));
         return new ResponseWrapper(
                 new Response(
                         TourAPICommonListResponse.builder()
@@ -156,7 +144,7 @@ public class MockResponse {
     }
 
     private static DetailCommonItemResponse setDetailCommonItem() {
-        return new DetailCommonItemResponse(setCommonTourItem(0, "04538"),"www.beautyplay.kr", "");
+        return new DetailCommonItemResponse(setCommonTourItem(0),"www.beautyplay.kr", "");
     }
 
     public static ResponseWrapper testDetailCommonRes() {
@@ -257,8 +245,8 @@ public class MockResponse {
     // --- PlaceService Test Mock Response
     public static TourAPICommonListResponse testPlaceRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(1000.1711716167842, null));
-        item.add(setCommonTourItem2(10001.983304508862, null));
+        item.add(setCommonTourItem(1000.1711716167842));
+        item.add(setCommonTourItem2(10001.983304508862));
         return TourAPICommonListResponse.builder()
                                 .tourAPICommonItemResponseList(item)
                                 .page(1)
@@ -285,7 +273,7 @@ public class MockResponse {
 
     public static TourAPICommonListResponse testAreaPlaceRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(1000.1711716167842, "04538"));
+        item.add(setCommonTourItem(1000.1711716167842));
         return TourAPICommonListResponse.builder()
                 .tourAPICommonItemResponseList(item)
                 .page(1)
@@ -300,7 +288,7 @@ public class MockResponse {
 
     public static TourAPICommonListResponse testSearchRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(1000.1711716167842, null));
+        item.add(setCommonTourItem(1000.1711716167842));
         return TourAPICommonListResponse.builder()
                 .tourAPICommonItemResponseList(item)
                 .page(1)
@@ -373,7 +361,7 @@ public class MockResponse {
                 .map(SimplePlaceInformationDto :: of)
                 .collect(Collectors.toList());
 
-        return PlaceResponseDto.of(simpleDto, testPlaceRes(), arrangeType);
+        return PlaceResponseDto.of(simpleDto, testPlaceRes().getTotalCount(), testPlaceRes().getPage(), testPlaceRes().getPageSize(), arrangeType);
     }
 
     public static PlaceResponseDto testGetPlaceBasedAreaRes() {
@@ -382,7 +370,7 @@ public class MockResponse {
                 .map(SimplePlaceInformationDto :: of)
                 .collect(Collectors.toList());
 
-        return PlaceResponseDto.of(simpleDto, testAreaPlaceRes(), arrangeType);
+        return PlaceResponseDto.of(simpleDto, testAreaPlaceRes().getTotalCount(), testAreaPlaceRes().getPage(), testAreaPlaceRes().getPageSize(), arrangeType);
     }
 
     public static SearchPlaceResponseDto testSearchPlaceBasedKeywordRes() {
