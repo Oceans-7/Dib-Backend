@@ -148,28 +148,20 @@ public class MockResponse {
     }
 
     public static ResponseWrapper testDetailCommonRes() {
-        List<DetailCommonItemResponse> item = new ArrayList<>();
-        item.add(setDetailCommonItem());
-
         return new ResponseWrapper(
-                new Response(new DetailCommonListResponse(item))
+                new Response(new DetailCommonListResponse(setDetailCommonItem()))
         );
     }
 
     private static SpotItemResponse setDetailIntroItem() {
         return new SpotItemResponse(
-                CONTENT_ID, CONTENT_TYPE.getCode(),
-                "070-4070-9675",
-                "", "", "",
+                "070-4070-9675", "", "", "", "",
                 "일요일", "10:00~19:00(뷰티 체험은 18:00까지)");
     }
 
     public static ResponseWrapper testDetailIntroRes() {
-        List<SpotItemResponse> item = new ArrayList<>();
-        item.add(setDetailIntroItem());
-
         return new ResponseWrapper(
-                new Response(new SpotIntroResponse(item))
+                new Response(new SpotIntroResponse(setDetailIntroItem()))
         );
     }
 
@@ -308,17 +300,11 @@ public class MockResponse {
     }
 
     public static DetailCommonListResponse testPlaceCommonRes() {
-        List<DetailCommonItemResponse> item = new ArrayList<>();
-        item.add(setDetailCommonItem());
-
-        return new DetailCommonListResponse(item);
+        return new DetailCommonListResponse(setDetailCommonItem());
     }
 
     public static SpotIntroResponse testPlaceIntroRes() {
-        List<SpotItemResponse> item = new ArrayList<>();
-        item.add(setDetailIntroItem());
-
-        return new SpotIntroResponse(item);
+        return new SpotIntroResponse(setDetailIntroItem());
     }
 
     public static DetailInfoListResponse testPlaceInfoRes() {
@@ -388,24 +374,30 @@ public class MockResponse {
     }
 
     public static DetailPlaceInformationResponseDto testGetDetailPlaceRes() {
-        DetailCommonItemResponse commonItem = setDetailCommonItem();
-        SpotItemResponse spotItem = setDetailIntroItem();
-        DetailInfoItemResponse infoItem = setDetailInfoItem();
-        List<DetailImageItemResponse> imageItems = setDetailImageItem();
+        DetailCommonItemResponse commonApiResponseMock = setDetailCommonItem();
+        SpotItemResponse introApiReponseApi = setDetailIntroItem();
 
-        List<String> imageUrls = imageItems.stream()
-                .map(image -> image.getOriginImageUrl())
-                .collect(Collectors.toList());
+        return DetailPlaceInformationResponseDto.of(CONTENT_ID, CONTENT_TYPE, commonApiResponseMock.getTitle(), commonApiResponseMock.getAddress(),
+                commonApiResponseMock.getMapX(), commonApiResponseMock.getMapY(), commonApiResponseMock.extractOverview(), commonApiResponseMock.extractHomepageUrl(),
+                introApiReponseApi.extractUseTime(), introApiReponseApi.extractTel(), introApiReponseApi.extractRestDate(), introApiReponseApi.extractReservationUrl(), introApiReponseApi.extractEventDate(),
+                testFacilityInfo(), testImageUrlList());
+    }
 
-        DetailPlaceInformationResponseDto mock = DetailPlaceInformationResponseDto.of(commonItem, imageUrls);
+    public static List<DetailPlaceInformationResponseDto.FacilityInfo> testFacilityInfo() {
+        SpotItemResponse introApiReponseApi = setDetailIntroItem();
 
         List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
-        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(spotItem.getCheckBabyCarriage())));
-        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(spotItem.getCheckCreditCard())));
-        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(spotItem.getCheckPet())));
+        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(introApiReponseApi.getCheckBabyCarriage())));
+        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(introApiReponseApi.getCheckCreditCard())));
+        facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(introApiReponseApi.getCheckPet())));
         facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.RESTROOM, true));
+        return facilityInfo;
+    }
 
-        mock.updateItem(spotItem.getUseTime(), spotItem.getInfoCenter(), spotItem.getRestDate(), null, null, facilityInfo);
-        return mock;
+    public static List<String> testImageUrlList() {
+        List<DetailImageItemResponse> imageItems = setDetailImageItem();
+        return imageItems.stream()
+                .map(image -> image.getOriginImageUrl())
+                .collect(Collectors.toList());
     }
 }

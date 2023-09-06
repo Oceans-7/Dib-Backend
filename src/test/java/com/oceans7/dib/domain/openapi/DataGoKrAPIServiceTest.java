@@ -216,7 +216,7 @@ public class DataGoKrAPIServiceTest {
 
         // when
         DetailCommonListResponse list = dataGoKrAPIService.getCommonApi(contentId, contentTypeId);
-        DetailCommonItemResponse item = list.getDetailCommonItemResponse().get(0);
+        DetailCommonItemResponse item = list.getDetailCommonItemResponse();
 
         //then
         assertThat(item.getHomepageUrl()).isEqualTo("www.beautyplay.kr");
@@ -239,11 +239,9 @@ public class DataGoKrAPIServiceTest {
 
         // when
         DetailIntroResponse detailIntroItem = dataGoKrAPIService.getIntroApi(contentId, contentTypeId);
-        SpotItemResponse item = ((SpotIntroResponse) detailIntroItem).getSpotItemResponses().get(0);
+        SpotItemResponse item = ((SpotIntroResponse) detailIntroItem).getSpotItemResponse();
 
         // then
-        assertThat(item.getContentId()).isEqualTo(contentId);
-        assertThat(item.getContentTypeId()).isEqualTo(ContentType.TOURIST_SPOT.getCode());
         assertThat(item.getInfoCenter()).isEqualTo("070-4070-9675");
         assertThat(item.getCheckBabyCarriage()).isEqualTo("");
         assertThat(item.getCheckCreditCard()).isEqualTo("");

@@ -12,20 +12,21 @@ import com.oceans7.dib.domain.place.repository.DibRepository;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
-import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem.*;
+import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
+import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListResponse;
+import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListResponse;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemFactoryImpl;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.CoordinateUtil;
-import com.oceans7.dib.global.util.TextManipulatorUtil;
 import com.oceans7.dib.global.util.ValidatorUtil;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse;
-import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse.*;
-import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.global.api.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
 import com.oceans7.dib.global.api.service.DataGoKrAPIService;
@@ -242,153 +243,95 @@ public class PlaceService {
      * 관광 정보 상세 조회
      */
     public DetailPlaceInformationResponseDto getPlaceDetail(GetPlaceDetailRequestDto request) {
+        Long contentId = request.getContentId();
+        String contentType = String.valueOf(request.getContentType().getCode());
+
         // 공통 정보
-        DetailCommonItemResponse commonItem = tourAPIService
-                .getCommonApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
-                .getDetailCommonItemResponse().get(0);
+        DetailCommonItemResponse commonAPIResponseItem = getCommonApi(contentId, contentType).getDetailCommonItemResponse();
 
         // 소개 정보
-        DetailIntroResponse introApiResponse = tourAPIService
-                .getIntroApi(request.getContentId(), String.valueOf(request.getContentType().getCode()));
+        DetailIntroResponse introApiResponse = getIntroApi(contentId, contentType);
 
-        // 반복 정보
-        List<DetailInfoItemResponse> infoItems = null;
-        if(request.getContentType() == ContentType.TOURIST_SPOT) {
-            infoItems = tourAPIService
-                    .getInfoApi(request.getContentId(), String.valueOf(request.getContentType().getCode()))
-                    .getDetailInfoItemResponses();
-        }
+        DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
+        DetailIntroItemResponse introApiResponseItem = detailIntroItemFactory.getIntroItem(request.getContentType(), introApiResponse);
 
         // 이미지 정보
-        List<String> images = null;
-        List<DetailImageItemResponse> imageItem =  tourAPIService
-                .getImageApi(request.getContentId())
-                .getDetailImageItemResponses();
+        List<DetailImageItemResponse> imageApiResponseItemList = getImageApi(contentId).getDetailImageItemResponses();
+        List<String> imageUrlList = (ValidatorUtil.isNotEmpty(imageApiResponseItemList)) ?
+                transformImageUrlToString(imageApiResponseItemList) : null;
 
-        if(ValidatorUtil.isNotEmpty(imageItem)) {
-            images = imageItem.stream()
-                    .map(image -> image.getOriginImageUrl())
-                    .collect(Collectors.toList());
-        }
+        // 반복 정보
+        List<DetailInfoItemResponse> infoApiResponseList = (request.getContentType() == ContentType.TOURIST_SPOT) ?
+                getInfoApi(contentId, contentType).getDetailInfoItemResponses() : null;
 
-        return handleApiResponse(introApiResponse, infoItems,
-                DetailPlaceInformationResponseDto.of(commonItem, images));
+        // 편의 시설 정보
+        List<FacilityInfo> facilityInfoList = introApiResponseItem.getFacilityAvailabilityInfo();
+        facilityInfoList.addAll(getFacilityInfoByInfoApiResponse(infoApiResponseList));
+
+        return DetailPlaceInformationResponseDto.of(request.getContentId(), request.getContentType(), commonAPIResponseItem.getTitle(), commonAPIResponseItem.getAddress(),
+                commonAPIResponseItem.getMapX(), commonAPIResponseItem.getMapY(), commonAPIResponseItem.extractOverview(), commonAPIResponseItem.extractHomepageUrl(),
+                introApiResponseItem.extractUseTime(), introApiResponseItem.extractTel(), introApiResponseItem.extractRestDate(), introApiResponseItem.extractReservationUrl(), introApiResponseItem.extractEventDate(),
+                facilityInfoList, imageUrlList);
     }
 
     /**
-     * content type에 따라 intro item을 설정한다.
+     * 공통 정보 조회 TOUR API 통신
+     * @return DetailCommonListResponse 타입의 TOUR API Response
      */
-    private DetailPlaceInformationResponseDto handleApiResponse(DetailIntroResponse introApiResponse, List<DetailInfoItemResponse> infoItems, DetailPlaceInformationResponseDto response) {
-        String useTime = null;
-        String tel = null;
-        String restDate = null;
-        String reservationUrl = null;
-        String eventDate = null;
-        List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+    private DetailCommonListResponse getCommonApi(Long contentId, String contentType) {
+        return tourAPIService.getCommonApi(contentId, contentType);
+    }
 
-        if (introApiResponse instanceof SpotIntroResponse) {
-            SpotItemResponse spotItem = ((SpotIntroResponse) introApiResponse).getSpotItemResponses().get(0);
+    /**
+     * 소개 정보 조회 TOUR API 통신
+     * @return DetailIntroResponse 타입의 TOUR API Response
+     */
+    private DetailIntroResponse getIntroApi(Long contentId, String contentType) {
+        return tourAPIService.getIntroApi(contentId, contentType);
+    }
 
-            useTime = TextManipulatorUtil.replaceBrWithNewLine(spotItem.getUseTime());
-            tel = TextManipulatorUtil.extractTel(spotItem.getInfoCenter());
-            restDate = TextManipulatorUtil.replaceBrWithNewLine(spotItem.getRestDate());
+    /**
+     * 반복 정보 조회 TOUR API 통신
+     * @return DetailInfoListResponse 타입의 TOUR API Response
+     */
+    private DetailInfoListResponse getInfoApi(Long contentId, String contentType) {
+        return tourAPIService.getInfoApi(contentId, contentType);
+    }
 
-            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(spotItem.getCheckBabyCarriage())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(spotItem.getCheckCreditCard())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(spotItem.getCheckPet())));
+    /**
+     * 이미지 정보 조회 TOUR API 통신
+     * @return DetailImageListResponse 타입의 TOUR API Response
+     */
+    private DetailImageListResponse getImageApi(Long contentId) {
+        return tourAPIService.getImageApi(contentId);
+    }
 
-            if(ValidatorUtil.isNotEmpty(infoItems)) {
-                boolean flagOfRestroom = false;
-                boolean flagOfDisable = false;
+    /**
+     * TOUR API 이미지 응답 리스트에서 URL만 추출하여 String 리스트로 변환
+     * @return
+     */
+    private List<String> transformImageUrlToString(List<DetailImageItemResponse> imageApiResponseItemList) {
+        return imageApiResponseItemList.stream().map(image -> image.getOriginImageUrl()).collect(Collectors.toList());
+    }
 
-                for(DetailInfoItemResponse item : infoItems) {
-                    if(item.getInfoName().contains("화장실")) {
-                        flagOfRestroom = true;
-                    }
-                    if(item.getInfoName().contains("장애인 편의시설")) {
-                        flagOfDisable = true;
-                    }
-                }
+    private List<FacilityInfo> getFacilityInfoByInfoApiResponse(List<DetailInfoItemResponse> infoApiResponseList) {
+        List<FacilityInfo> facilityInfoList = new ArrayList<>();
+        String restroomName = "화장실";
+        String disableName = "장애인 편의시설";
 
-                facilityInfo.add(FacilityInfo.of(FacilityType.RESTROOM, flagOfRestroom));
-                facilityInfo.add(FacilityInfo.of(FacilityType.DISABLED_PERSON_FACILITY, flagOfDisable));
+        if(ValidatorUtil.isNotEmpty(infoApiResponseList)) {
+            boolean flagOfRestroom = false;
+            boolean flagOfDisable = false;
+
+            for(DetailInfoItemResponse infoItem : infoApiResponseList) {
+                if(infoItem.getInfoName().contains(restroomName)) { flagOfRestroom = true; }
+                if(infoItem.getInfoName().contains(disableName)) { flagOfDisable = true; }
             }
-        } else if (introApiResponse instanceof CultureIntroResponse) {
-            CultureItemResponse cultureItem = ((CultureIntroResponse) introApiResponse).getCultureItemResponse().get(0);
 
-            useTime = TextManipulatorUtil.replaceBrWithNewLine(cultureItem.getUseTime());
-            tel = TextManipulatorUtil.extractTel(cultureItem.getInfoCenter());
-            restDate = TextManipulatorUtil.replaceBrWithNewLine(cultureItem.getRestDate());
-
-            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(cultureItem.getCheckBabyCarriage())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(cultureItem.getCheckCreditCard())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(cultureItem.getCheckParking())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(cultureItem.getCheckPet())));
-
-        } else if (introApiResponse instanceof EventIntroResponse) {
-            EventItemResponse eventItem = ((EventIntroResponse) introApiResponse).getEventItemResponse().get(0);
-
-            useTime = TextManipulatorUtil.prefix("공연 시간 : ", eventItem.getPlayTime());
-            tel = TextManipulatorUtil.extractTel(eventItem.getSponsor1Tel());
-            reservationUrl = eventItem.getBookingPlace();
-            eventDate = TextManipulatorUtil.convertDateRangeFormat(eventItem.getEventStartDate(), eventItem.getEventEndDate());
-
-        } else if (introApiResponse instanceof LeportsIntroResponse) {
-            LeportsItemResponse leportsItem = ((LeportsIntroResponse) introApiResponse).getLeportsItemResponse().get(0);
-
-            useTime = TextManipulatorUtil.replaceBrWithNewLine(leportsItem.getUseTime());
-            tel = TextManipulatorUtil.extractTel(leportsItem.getInfoCenter());
-            restDate = TextManipulatorUtil.replaceBrWithNewLine(leportsItem.getRestDate());
-
-            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(leportsItem.getCheckBabyCarriage())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(leportsItem.getCheckCreditCard())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(leportsItem.getCheckParking())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(leportsItem.getCheckPet())));
-
-        } else if (introApiResponse instanceof AccommodationIntroResponse) {
-            AccommodationItemResponse accommodationItem = ((AccommodationIntroResponse) introApiResponse).getAccommodationItemResponse().get(0);
-
-            useTime = TextManipulatorUtil.concatenateStrings(
-                    accommodationItem.getCheckInTime(),
-                    accommodationItem.getCheckOutTime(), "체크인 : ", ", 체크아웃 : ");
-            tel = accommodationItem.getInfoCenter();
-            reservationUrl = accommodationItem.getReservationUrl();
-
-            facilityInfo.add(FacilityInfo.of(FacilityType.BARBECUE, ValidatorUtil.checkAvailability(accommodationItem.getCheckBarbecue())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.BEVERAGE, ValidatorUtil.checkAvailability(accommodationItem.getCheckBeverage())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.COOKING, ValidatorUtil.checkAvailability(accommodationItem.getCheckCooking())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(accommodationItem.getCheckParking())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PICK_UP_SERVICE, ValidatorUtil.checkAvailability(accommodationItem.getCheckPickup())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.SAUNA, ValidatorUtil.checkAvailability(accommodationItem.getCheckSauna())));
-
-        } else if (introApiResponse instanceof ShoppingIntroResponse) {
-            ShoppingItemResponse shoppingItem = ((ShoppingIntroResponse) introApiResponse).getShoppingItemResponse().get(0);
-
-            useTime = TextManipulatorUtil.replaceBrWithNewLine(shoppingItem.getOpenTime());
-            tel = TextManipulatorUtil.extractTel(shoppingItem.getInfoCenter());
-            restDate = TextManipulatorUtil.replaceBrWithNewLine(shoppingItem.getRestDate());
-
-            facilityInfo.add(FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(shoppingItem.getCheckBabyCarriage())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(shoppingItem.getCheckCreditCard())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(shoppingItem.getCheckParking())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(shoppingItem.getCheckPet())));
-
-        } else if (introApiResponse instanceof RestaurantIntroResponse) {
-            RestaurantItemResponse restaurantItem = ((RestaurantIntroResponse) introApiResponse).getRestaurantItemResponse().get(0);
-
-            useTime = TextManipulatorUtil.replaceBrWithNewLine(restaurantItem.getOpenTime());
-            tel = TextManipulatorUtil.extractTel(restaurantItem.getInfoCenter());
-            restDate = TextManipulatorUtil.replaceBrWithNewLine(restaurantItem.getRestDate());
-
-            facilityInfo.add(FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(restaurantItem.getCheckCreditCard())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(restaurantItem.getCheckParking())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.KIDS_FACILITY, ValidatorUtil.checkAvailability(restaurantItem.getCheckKidsFacility())));
-            facilityInfo.add(FacilityInfo.of(FacilityType.SMOKING, ValidatorUtil.checkAvailability(restaurantItem.getCheckSmoking())));
+            facilityInfoList.add(FacilityInfo.of(FacilityType.RESTROOM, flagOfRestroom));
+            facilityInfoList.add(FacilityInfo.of(FacilityType.DISABLED_PERSON_FACILITY, flagOfDisable));
         }
-
-        response.updateItem(useTime, tel, restDate, reservationUrl, eventDate, facilityInfo);
-
-        return response;
+        return facilityInfoList;
     }
 
     /**
@@ -403,13 +346,9 @@ public class PlaceService {
         if(findDib.isPresent()) { return; }
 
         // 공통 정보
-        DetailCommonItemResponse commonItem = getCommonItem(contentId);
+        DetailCommonItemResponse commonItem = getCommonApi(contentId, "").getDetailCommonItemResponse();
 
         dibRepository.save(Dib.of(contentId, commonItem.getContentTypeId(), commonItem.getTitle(), commonItem.getAddress(), commonItem.getTel(), commonItem.getThumbnail(), user));
-    }
-
-    private DetailCommonItemResponse getCommonItem(Long contentId) {
-        return tourAPIService.getCommonApi(contentId, "").getDetailCommonItemResponse().get(0);
     }
 
     @Transactional

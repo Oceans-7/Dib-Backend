@@ -246,7 +246,7 @@ public class PlaceServiceTest {
         assertThat(detailRes.getUseTime()).isEqualTo("10:00~19:00(뷰티 체험은 18:00까지)");
         assertThat(detailRes.getTel()).isEqualTo("070-4070-9675");
         assertThat(detailRes.getRestDate()).isEqualTo("일요일");
-        assertThat(detailRes.getReservationUrl()).isNull();
+        assertThat(detailRes.getReservationUrl()).isEqualTo("");
 
         for(String image : detailRes.getImages()) {
             String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif|bmp)$";

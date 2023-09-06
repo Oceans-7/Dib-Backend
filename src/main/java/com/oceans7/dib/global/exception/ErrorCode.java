@@ -21,6 +21,7 @@ public enum ErrorCode {
 
     // Place
     NOT_FOUNT_AREA_NAME(HttpStatus.BAD_REQUEST, "P0000", "지역명을 찾을 수 없습니다."),
+    INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "P0001", "올바르지 않은 콘텐츠 타입입니다."),
 
     // Auth
     TOKEN_VERIFICATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "A0000", "토큰 검증에 실패했습니다."),

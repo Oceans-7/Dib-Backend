@@ -5,6 +5,7 @@ import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListResponse;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemFactoryImpl;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse;
 import com.oceans7.dib.global.api.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
@@ -98,16 +99,13 @@ public class DataGoKrAPIService extends OpenAPIService {
         String result = dataGoKrApi.getTourIntroInfo(serviceKey, mobileOS, mobileApp, dataType,
                 contentId, contentTypeId);
 
-        switch(ContentType.getContentTypeByCode(Integer.parseInt(contentTypeId))) {
-            case TOURIST_SPOT -> { return parsingJsonObject(result, DetailIntroResponse.SpotIntroResponse.class); }
-            case CULTURAL_SITE -> { return parsingJsonObject(result, DetailIntroResponse.CultureIntroResponse.class); }
-            case EVENT -> { return parsingJsonObject(result, DetailIntroResponse.EventIntroResponse.class); }
-            case LEPORTS -> { return parsingJsonObject(result, DetailIntroResponse.LeportsIntroResponse.class); }
-            case ACCOMMODATION -> { return parsingJsonObject(result, DetailIntroResponse.AccommodationIntroResponse.class); }
-            case SHOPPING -> { return parsingJsonObject(result, DetailIntroResponse.ShoppingIntroResponse.class); }
-            case RESTAURANT -> { return parsingJsonObject(result, DetailIntroResponse.RestaurantIntroResponse.class); }
-            default -> { return null; }
-        }
+        return parsingIntroResponseByContentType(result, ContentType.getContentTypeByCode(Integer.parseInt(contentTypeId)));
+    }
+
+    private DetailIntroResponse parsingIntroResponseByContentType(String result, ContentType contentType) {
+        DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
+        return parsingJsonObject(result, detailIntroItemFactory.getClassType(contentType));
+
     }
 
     /**

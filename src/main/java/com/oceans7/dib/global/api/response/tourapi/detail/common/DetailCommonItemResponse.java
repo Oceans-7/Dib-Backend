@@ -2,6 +2,7 @@ package com.oceans7.dib.global.api.response.tourapi.detail.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
+import com.oceans7.dib.global.util.TextManipulatorUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,5 +26,13 @@ public class DetailCommonItemResponse extends TourAPICommonItemResponse {
                 item.getAddr1(), item.getAddr2(), item.getAddress(), item.getMapX(), item.getMapY(), item.getDistance(),  item.getAreaCode(), item.getSigunguCode());
         this.homepageUrl = homepageUrl;
         this.overview = overview;
+    }
+
+    public String extractHomepageUrl() {
+        return TextManipulatorUtil.extractUrl(this.homepageUrl);
+    }
+
+    public String extractOverview() {
+        return TextManipulatorUtil.replaceBrWithNewLine(this.overview);
     }
 }
