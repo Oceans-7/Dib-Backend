@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,6 +41,6 @@ public class TourAPICommonListResponse {
         this.totalCount = totalCountNode.asInt();
         this.pageSize = pageSizeNode.asInt();
         this.page = pageNode.asInt();
-        this.tourAPICommonItemResponseList = Arrays.stream(objectMapper.treeToValue(itemNode, TourAPICommonItemResponse[].class)).toList();
+        this.tourAPICommonItemResponseList = new ArrayList<>(Arrays.asList(objectMapper.treeToValue(itemNode, TourAPICommonItemResponse[].class)));
     }
 }
