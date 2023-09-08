@@ -244,33 +244,18 @@ public class PlaceService {
      */
     public DetailPlaceInformationResponseDto getPlaceDetail(GetPlaceDetailRequestDto request) {
         Long contentId = request.getContentId();
-        String contentType = String.valueOf(request.getContentType().getCode());
+        ContentType contentType = request.getContentType();
 
-        // 공통 정보
-        DetailCommonItemResponse commonAPIResponseItem = getCommonApi(contentId, contentType).getDetailCommonItemResponse();
+        DetailCommonItemResponse commonItem = getCommonItem(contentId, contentType);
+        DetailIntroItemResponse introItem = getIntroItem(contentId, contentType);
+        List<String> imageUrlList = transformImageUrlToString(getImageItemList(contentId));
+        List<DetailInfoItemResponse> infoApiResponseList = getInfoItemList(contentId, contentType);
 
-        // 소개 정보
-        DetailIntroResponse introApiResponse = getIntroApi(contentId, contentType);
+        List<FacilityInfo> facilityInfoList = getFacilityInfo(introItem, infoApiResponseList);
 
-        DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
-        DetailIntroItemResponse introApiResponseItem = detailIntroItemFactory.getIntroItem(request.getContentType(), introApiResponse);
-
-        // 이미지 정보
-        List<DetailImageItemResponse> imageApiResponseItemList = getImageApi(contentId).getDetailImageItemResponses();
-        List<String> imageUrlList = (ValidatorUtil.isNotEmpty(imageApiResponseItemList)) ?
-                transformImageUrlToString(imageApiResponseItemList) : null;
-
-        // 반복 정보
-        List<DetailInfoItemResponse> infoApiResponseList = (request.getContentType() == ContentType.TOURIST_SPOT) ?
-                getInfoApi(contentId, contentType).getDetailInfoItemResponses() : null;
-
-        // 편의 시설 정보
-        List<FacilityInfo> facilityInfoList = introApiResponseItem.getFacilityAvailabilityInfo();
-        facilityInfoList.addAll(getFacilityInfoByInfoApiResponse(infoApiResponseList));
-
-        return DetailPlaceInformationResponseDto.of(request.getContentId(), request.getContentType(), commonAPIResponseItem.getTitle(), commonAPIResponseItem.getAddress(),
-                commonAPIResponseItem.getMapX(), commonAPIResponseItem.getMapY(), commonAPIResponseItem.extractOverview(), commonAPIResponseItem.extractHomepageUrl(),
-                introApiResponseItem.extractUseTime(), introApiResponseItem.extractTel(), introApiResponseItem.extractRestDate(), introApiResponseItem.extractReservationUrl(), introApiResponseItem.extractEventDate(),
+        return DetailPlaceInformationResponseDto.of(request.getContentId(), request.getContentType(), commonItem.getTitle(), commonItem.getAddress(),
+                commonItem.getMapX(), commonItem.getMapY(), commonItem.extractOverview(), commonItem.extractHomepageUrl(),
+                introItem.extractUseTime(), introItem.extractTel(), introItem.extractRestDate(), introItem.extractReservationUrl(), introItem.extractEventDate(),
                 facilityInfoList, imageUrlList);
     }
 
@@ -283,11 +268,29 @@ public class PlaceService {
     }
 
     /**
+     * 공통 정보 Item 가져오기
+     * @return DetailCommonItemResponse
+     */
+    private DetailCommonItemResponse getCommonItem(Long contentId, ContentType contentType) {
+        return getCommonApi(contentId, String.valueOf(contentType.getCode())).getDetailCommonItemResponse();
+    }
+
+    /**
      * 소개 정보 조회 TOUR API 통신
      * @return DetailIntroResponse 타입의 TOUR API Response
      */
     private DetailIntroResponse getIntroApi(Long contentId, String contentType) {
         return tourAPIService.getIntroApi(contentId, contentType);
+    }
+
+    /**
+     * 소개 정보 Item 가져오기
+     * @return DetailIntroItemResponse 타입
+     */
+    private DetailIntroItemResponse getIntroItem(Long contentId, ContentType contentType) {
+        DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
+        DetailIntroResponse introApiResponse = getIntroApi(contentId, String.valueOf(contentType.getCode()));
+        return detailIntroItemFactory.getIntroItem(contentType, introApiResponse);
     }
 
     /**
@@ -299,6 +302,15 @@ public class PlaceService {
     }
 
     /**
+     * 반복 정보 Item 가져오기 (TOURIST_SPOT 타입 한정)
+     * @return DetailInfoItemResponse 타입의 List
+     */
+    private List<DetailInfoItemResponse> getInfoItemList(Long contentId, ContentType contentType) {
+        return (contentType != ContentType.TOURIST_SPOT) ?
+                null : getInfoApi(contentId, String.valueOf(contentType.getCode())).getDetailInfoItemResponses();
+    }
+
+    /**
      * 이미지 정보 조회 TOUR API 통신
      * @return DetailImageListResponse 타입의 TOUR API Response
      */
@@ -307,23 +319,49 @@ public class PlaceService {
     }
 
     /**
-     * TOUR API 이미지 응답 리스트에서 URL만 추출하여 String 리스트로 변환
-     * @return
+     * 이미지 정보 Item 가져오기
+     * @return DetailImageItemResponse 타입의 List
      */
-    private List<String> transformImageUrlToString(List<DetailImageItemResponse> imageApiResponseItemList) {
-        return imageApiResponseItemList.stream().map(image -> image.getOriginImageUrl()).collect(Collectors.toList());
+    private List<DetailImageItemResponse> getImageItemList(Long contentId) {
+        return getImageApi(contentId).getDetailImageItemResponses();
     }
 
-    private List<FacilityInfo> getFacilityInfoByInfoApiResponse(List<DetailInfoItemResponse> infoApiResponseList) {
+    /**
+     * TOUR API 이미지 응답 리스트에서 URL만 추출하여 String 리스트로 변환
+     * @return 이미지 URL String 타입의 List
+     */
+    private List<String> transformImageUrlToString(List<DetailImageItemResponse> imageApiResponseItemList) {
+        return (ValidatorUtil.isEmpty(imageApiResponseItemList)) ?
+                null : imageApiResponseItemList.stream().map(image -> image.getOriginImageUrl()).collect(Collectors.toList());
+    }
+
+    /**
+     * 편의 시설 정보 조회
+     * @return FacilityInfo 타입의 List
+     */
+    private List<FacilityInfo> getFacilityInfo(DetailIntroItemResponse introItem, List<DetailInfoItemResponse> infoItemList) {
+        List<FacilityInfo> facilityInfoList = introItem.getFacilityAvailabilityInfo();
+
+        facilityInfoList.addAll(
+                getFacilityInfoByInfoApiResponse(infoItemList));
+
+        return facilityInfoList;
+    }
+
+    /**
+     * Intro API 응답에서 편의 시설 정보 유무 조회
+     * @return FacilityInfo 타입의 List
+     */
+    private List<FacilityInfo> getFacilityInfoByInfoApiResponse(List<DetailInfoItemResponse> infoItemList) {
         List<FacilityInfo> facilityInfoList = new ArrayList<>();
         String restroomName = "화장실";
         String disableName = "장애인 편의시설";
 
-        if(ValidatorUtil.isNotEmpty(infoApiResponseList)) {
+        if(ValidatorUtil.isNotEmpty(infoItemList)) {
             boolean flagOfRestroom = false;
             boolean flagOfDisable = false;
 
-            for(DetailInfoItemResponse infoItem : infoApiResponseList) {
+            for(DetailInfoItemResponse infoItem : infoItemList) {
                 if(infoItem.getInfoName().contains(restroomName)) { flagOfRestroom = true; }
                 if(infoItem.getInfoName().contains(disableName)) { flagOfDisable = true; }
             }
@@ -335,7 +373,7 @@ public class PlaceService {
     }
 
     /**
-     * 관광 정보 찜하기
+     * 관광 정보 찜 등록
      */
     @Transactional
     public void addPlaceDib(Long userId, Long contentId) {
@@ -351,6 +389,9 @@ public class PlaceService {
         dibRepository.save(Dib.of(contentId, commonItem.getContentTypeId(), commonItem.getTitle(), commonItem.getAddress(), commonItem.getTel(), commonItem.getThumbnail(), user));
     }
 
+    /**
+     * 관광 정보 찜 삭제
+     */
     @Transactional
     public void removePlaceDib(Long userId, Long contentId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
