@@ -50,6 +50,7 @@ public class TourAPICommonItemResponse {
     private double mapY;
 
     // 좌표로부터 거리 (m)
+    @JsonProperty("dist")
     private double distance;
 
     // 지역 코드
