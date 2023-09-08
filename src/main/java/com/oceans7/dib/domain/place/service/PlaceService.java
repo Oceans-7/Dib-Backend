@@ -18,6 +18,7 @@ import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListR
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemFactoryImpl;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse;
+import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
@@ -34,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,12 +69,15 @@ public class PlaceService {
     private PlaceResponseDto getLocationBasedPlace(GetPlaceRequestDto request, String contentType, String arrangeType) {
         TourAPICommonListResponse tourAPIResponseList = getLocationBasedTourApi(request, contentType, arrangeType);
 
-        tourAPIResponseList.getTourAPICommonItemResponseList().stream()
-                .forEach(item ->  item.convertDistanceMetersToKilometers());
-
         List<SimplePlaceInformationDto> simplePlaceResponse = transformApiResponseToSimplePlace(tourAPIResponseList);
 
-        return PlaceResponseDto.of(simplePlaceResponse, tourAPIResponseList.getTotalCount(), tourAPIResponseList.getPage(), tourAPIResponseList.getPageSize(), request.getArrangeType());
+        return PlaceResponseDto.of(
+                simplePlaceResponse,
+                tourAPIResponseList.getTotalCount(),
+                tourAPIResponseList.getPage(),
+                simplePlaceResponse.size(),
+                request.getArrangeType()
+        );
     }
 
     /**
@@ -82,12 +85,32 @@ public class PlaceService {
      * @return 위치 기반 TourAPICommonListResponse 타입의 TOUR API Response
      */
     private TourAPICommonListResponse getLocationBasedTourApi(GetPlaceRequestDto request, String contentType, String arrangeType) {
-        TourAPICommonListResponse tourAPIResponseList = tourAPIService.getLocationBasedTourApi(
-                request.getMapX(), request.getMapY(), request.getPage(), request.getPageSize(), contentType, arrangeType);
+        TourAPICommonListResponse tourAPIResponseList = tourAPIService.getLocationBasedTourApi(request.getMapX(), request.getMapY(), request.getPage(), request.getPageSize(), contentType, arrangeType);
 
         notFoundApiItemException(tourAPIResponseList.getTotalCount());
 
+        return filterAndConvertDistance(tourAPIResponseList);
+    }
+
+    /**
+     * 거리 단위 변환 및 필터링 수행
+     */
+    private TourAPICommonListResponse filterAndConvertDistance(TourAPICommonListResponse tourAPIResponseList) {
+        List<TourAPICommonItemResponse> tourApiItemList = tourAPIResponseList.getTourAPICommonItemResponseList();
+        removeTourCourseTypeData(tourApiItemList);
+
+        // TODO : DISTANCE 초근접 거리는 0.0으로 표시되는 이슈 해결하기
+        tourApiItemList.forEach(item -> item.convertDistanceMetersToKilometers());
+
         return tourAPIResponseList;
+    }
+
+    /**
+     * TOUR API 통신 데이터에서 Tour Course 콘텐츠 타입의 데이터를 삭제
+     */
+    private void removeTourCourseTypeData(List<TourAPICommonItemResponse> tourApiItemList) {
+        int tourCourseContentTypeId = 25;
+        tourApiItemList.removeIf(item -> item.getContentTypeId() == tourCourseContentTypeId);
     }
 
     /**
@@ -105,12 +128,20 @@ public class PlaceService {
     private PlaceResponseDto getAreaBasedPlace(GetPlaceRequestDto request, String contentType, String arrangeType) {
         TourAPICommonListResponse tourAPIResponseList = getAreaBasedTourApi(request, contentType, arrangeType);
 
-        tourAPIResponseList.getTourAPICommonItemResponseList().stream()
-                .forEach(item -> item.calculateDistance(request.getMapX(), request.getMapY()));
+        List<TourAPICommonItemResponse> tourApiItemList = tourAPIResponseList.getTourAPICommonItemResponseList();
+        removeTourCourseTypeData(tourApiItemList);
+
+        tourApiItemList.forEach(item -> item.calculateDistance(request.getMapX(), request.getMapY()));
 
         List<SimplePlaceInformationDto> simplePlaceResponse = transformApiResponseToSimplePlace(tourAPIResponseList);
 
-        return PlaceResponseDto.of(simplePlaceResponse, tourAPIResponseList.getTotalCount(), tourAPIResponseList.getPage(), tourAPIResponseList.getPageSize(), request.getArrangeType());
+        return PlaceResponseDto.of(
+                simplePlaceResponse,
+                tourAPIResponseList.getTotalCount(),
+                tourAPIResponseList.getPage(),
+                simplePlaceResponse.size(),
+                request.getArrangeType()
+        );
     }
 
     /**
@@ -125,8 +156,11 @@ public class PlaceService {
             sigunguCode = getAreaCodeApi(areaCode, request.getSigungu());
         }
 
-        return tourAPIService.getAreaBasedTourApi(
-                areaCode, sigunguCode, request.getPage(), request.getPageSize(), contentType, arrangeType);
+        TourAPICommonListResponse tourAPIResponseList =  tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode, request.getPage(), request.getPageSize(), contentType, arrangeType);
+
+        notFoundApiItemException(tourAPIResponseList.getTotalCount());
+
+        return filterAndCalculateDistance(tourAPIResponseList, request.getMapX(), request.getMapY());
     }
 
     /**
@@ -147,6 +181,17 @@ public class PlaceService {
      */
     private void notFoundAreaItemException(String findCode) {
         if (ValidatorUtil.isEmpty(findCode)) { throw new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME); }
+    }
+
+    /**
+     * 거리 계산 및 필터링 수행
+     */
+    private TourAPICommonListResponse filterAndCalculateDistance(TourAPICommonListResponse tourAPIResponseList, double reqX, double reqY) {
+        List<TourAPICommonItemResponse> tourApiItemList = tourAPIResponseList.getTourAPICommonItemResponseList();
+        removeTourCourseTypeData(tourApiItemList);
+
+        tourApiItemList.forEach(item -> item.calculateDistance(reqX, reqY));
+        return tourAPIResponseList;
     }
 
     /**
@@ -185,7 +230,11 @@ public class PlaceService {
 
         List<SimpleAreaResponseDto> simpleDto = transformApiResponseToSimpleArea(localResponse, request.getMapX(), request.getMapY());
 
-        return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, isLocationSearch);
+        return SearchPlaceResponseDto.of(
+                request.getKeyword(),
+                simpleDto,
+                isLocationSearch
+        );
     }
 
     /**
@@ -219,12 +268,16 @@ public class PlaceService {
         boolean isLocationSearch = false;
         TourAPICommonListResponse apiResponseList = getSearchKeywordTourApi(request);
 
-        apiResponseList.getTourAPICommonItemResponseList().stream()
-                .forEach(item -> item.calculateDistance(request.getMapX(), request.getMapY()));
-
         List<SimplePlaceInformationDto> simpleDto = transformApiResponseToSimplePlace(apiResponseList);
 
-        return SearchPlaceResponseDto.of(request.getKeyword(), simpleDto, isLocationSearch, apiResponseList.getTotalCount(), apiResponseList.getPage(), apiResponseList.getPageSize());
+        return SearchPlaceResponseDto.of(
+                request.getKeyword(),
+                simpleDto,
+                isLocationSearch,
+                apiResponseList.getTotalCount(),
+                apiResponseList.getPage(),
+                apiResponseList.getPageSize()
+        );
     }
 
     /**
@@ -236,7 +289,7 @@ public class PlaceService {
 
         notFoundApiItemException(apiResponseList.getTotalCount());
 
-        return apiResponseList;
+        return filterAndCalculateDistance(apiResponseList, request.getMapX(), request.getMapY());
     }
 
     /**
@@ -253,10 +306,22 @@ public class PlaceService {
 
         List<FacilityInfo> facilityInfoList = getFacilityInfo(introItem, infoApiResponseList);
 
-        return DetailPlaceInformationResponseDto.of(request.getContentId(), request.getContentType(), commonItem.getTitle(), commonItem.getAddress(),
-                commonItem.getMapX(), commonItem.getMapY(), commonItem.extractOverview(), commonItem.extractHomepageUrl(),
-                introItem.extractUseTime(), introItem.extractTel(), introItem.extractRestDate(), introItem.extractReservationUrl(), introItem.extractEventDate(),
-                facilityInfoList, imageUrlList);
+        return DetailPlaceInformationResponseDto.of(
+                request.getContentId(),
+                request.getContentType(),
+                commonItem.getTitle(),
+                commonItem.getAddress(),
+                commonItem.getMapX(),
+                commonItem.getMapY(),
+                commonItem.extractOverview(),
+                commonItem.extractHomepageUrl(),
+                introItem.extractUseTime(),
+                introItem.extractTel(),
+                introItem.extractRestDate(),
+                introItem.extractReservationUrl(),
+                introItem.extractEventDate(),
+                facilityInfoList,
+                imageUrlList);
     }
 
     /**
@@ -342,8 +407,7 @@ public class PlaceService {
     private List<FacilityInfo> getFacilityInfo(DetailIntroItemResponse introItem, List<DetailInfoItemResponse> infoItemList) {
         List<FacilityInfo> facilityInfoList = introItem.getFacilityAvailabilityInfo();
 
-        facilityInfoList.addAll(
-                getFacilityInfoByInfoApiResponse(infoItemList));
+        addFacilityInfoByInfoItem(facilityInfoList, infoItemList);
 
         return facilityInfoList;
     }
@@ -352,8 +416,7 @@ public class PlaceService {
      * Intro API 응답에서 편의 시설 정보 유무 조회
      * @return FacilityInfo 타입의 List
      */
-    private List<FacilityInfo> getFacilityInfoByInfoApiResponse(List<DetailInfoItemResponse> infoItemList) {
-        List<FacilityInfo> facilityInfoList = new ArrayList<>();
+    private void addFacilityInfoByInfoItem(List<FacilityInfo> facilityInfoList, List<DetailInfoItemResponse> infoItemList) {
         String restroomName = "화장실";
         String disableName = "장애인 편의시설";
 
@@ -369,7 +432,6 @@ public class PlaceService {
             facilityInfoList.add(FacilityInfo.of(FacilityType.RESTROOM, flagOfRestroom));
             facilityInfoList.add(FacilityInfo.of(FacilityType.DISABLED_PERSON_FACILITY, flagOfDisable));
         }
-        return facilityInfoList;
     }
 
     /**
