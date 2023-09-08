@@ -325,14 +325,6 @@ public class PlaceService {
     }
 
     /**
-     * 공통 정보 조회 TOUR API 통신
-     * @return DetailCommonListResponse 타입의 TOUR API Response
-     */
-    private DetailCommonListResponse getCommonApi(Long contentId, String contentType) {
-        return tourAPIService.getCommonApi(contentId, contentType);
-    }
-
-    /**
      * 공통 정보 Item 가져오기
      * @return DetailCommonItemResponse
      */
@@ -341,11 +333,15 @@ public class PlaceService {
     }
 
     /**
-     * 소개 정보 조회 TOUR API 통신
-     * @return DetailIntroResponse 타입의 TOUR API Response
+     * 공통 정보 조회 TOUR API 통신
+     * @return DetailCommonListResponse 타입의 TOUR API Response
      */
-    private DetailIntroResponse getIntroApi(Long contentId, String contentType) {
-        return tourAPIService.getIntroApi(contentId, contentType);
+    private DetailCommonListResponse getCommonApi(Long contentId, String contentType) {
+        DetailCommonListResponse commonApiResponse = tourAPIService.getCommonApi(contentId, contentType);
+
+        notFoundApiItemException(commonApiResponse.getTotalCount());
+
+        return commonApiResponse;
     }
 
     /**
@@ -356,6 +352,14 @@ public class PlaceService {
         DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
         DetailIntroResponse introApiResponse = getIntroApi(contentId, String.valueOf(contentType.getCode()));
         return detailIntroItemFactory.getIntroItem(contentType, introApiResponse);
+    }
+
+    /**
+     * 소개 정보 조회 TOUR API 통신
+     * @return DetailIntroResponse 타입의 TOUR API Response
+     */
+    private DetailIntroResponse getIntroApi(Long contentId, String contentType) {
+        return tourAPIService.getIntroApi(contentId, contentType);
     }
 
     /**
