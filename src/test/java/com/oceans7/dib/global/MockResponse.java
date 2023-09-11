@@ -149,7 +149,7 @@ public class MockResponse {
 
     public static ResponseWrapper testDetailCommonRes() {
         return new ResponseWrapper(
-                new Response(new DetailCommonListResponse(setDetailCommonItem()))
+                new Response(new DetailCommonListResponse(setDetailCommonItem(), 1))
         );
     }
 
@@ -300,7 +300,7 @@ public class MockResponse {
     }
 
     public static DetailCommonListResponse testPlaceCommonRes() {
-        return new DetailCommonListResponse(setDetailCommonItem());
+        return new DetailCommonListResponse(setDetailCommonItem(), 1);
     }
 
     public static SpotIntroResponse testPlaceIntroRes() {
