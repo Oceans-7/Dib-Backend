@@ -237,7 +237,7 @@ public class PlaceControllerTest {
 
 
         when(placeService.getPlace(placeAreaExceptionReq, options))
-                .thenThrow(new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME));
+                .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_AREA_NAME));
 
         // when
         ResultActions result = mvc.perform(get("/place")
@@ -249,8 +249,8 @@ public class PlaceControllerTest {
 
         //then
         result.andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_FOUNT_AREA_NAME.getCode()))
-                .andExpect(jsonPath("$.message").value(ErrorCode.NOT_FOUNT_AREA_NAME.getMessage()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_FOUND_AREA_NAME.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.NOT_FOUND_AREA_NAME.getMessage()))
                 .andDo(print());
     }
 

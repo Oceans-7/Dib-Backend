@@ -485,9 +485,18 @@ public class PlaceService {
     private DetailCommonListResponse fetchCommonAPI(Long contentId, String contentType) {
         DetailCommonListResponse commonAPIResponse = tourAPIService.getCommonApi(contentId, contentType);
 
-        validateTourAPIResponse(commonAPIResponse.getTotalCount());
+        validateDetailTourAPIResponse(commonAPIResponse.getTotalCount());
 
         return commonAPIResponse;
+    }
+
+    /**
+     * 예외 처리 : 존재 하지 없는 contentId
+     */
+    private void validateDetailTourAPIResponse(int totalCount) {
+        if(totalCount == 0) {
+            throw new ApplicationException(ErrorCode.NOT_FOUND_TOUR_PLACE);
+        }
     }
 
     /**
@@ -497,6 +506,7 @@ public class PlaceService {
     private DetailIntroItemResponse getIntroItem(Long contentId, ContentType contentType) {
         DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
         DetailIntroResponse introAPIResponse = fetchIntroAPI(contentId, String.valueOf(contentType.getCode()));
+
         return detailIntroItemFactory.getIntroItem(contentType, introAPIResponse);
     }
 
