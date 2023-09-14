@@ -62,6 +62,7 @@ public class PlaceController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "C0002", description = "올바르지 않은 요청 값", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "P0003", description = "존재하지 않는/삭제된 관광 정보입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/detail")
     public ApplicationResponse<DetailPlaceInformationResponseDto> getPlaceDetail(@ModelAttribute @Validated GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
