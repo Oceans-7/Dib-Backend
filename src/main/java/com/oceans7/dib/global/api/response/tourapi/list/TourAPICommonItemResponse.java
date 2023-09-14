@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oceans7.dib.global.util.CoordinateUtil;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
+@Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TourAPICommonItemResponse {
     // 콘텐츠 ID
@@ -61,13 +64,27 @@ public class TourAPICommonItemResponse {
     @JsonProperty("sigungucode")
     private String sigunguCode;
 
+    // 수정 시각
+    @JsonProperty("modifiedtime")
+    private String modifiedTime;
+
+    public TourAPICommonItemResponse() {
+
+    }
+
     public String getAddress() {
         return String.format("%s %s", this.addr1, this.addr2);
+    }
+
+    public LocalDateTime parseModifiedTimeToDateTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        return LocalDateTime.parse(modifiedTime, formatter);
     }
 
     public void convertDistanceMetersToKilometers() {
         this.distance = CoordinateUtil.convertMetersToKilometers(this.distance);
     }
+
     public void calculateDistance(double requestX, double requestY) {
         this.distance = CoordinateUtil.calculateDistance(requestX, requestY, this.mapX, this.mapY);
     }

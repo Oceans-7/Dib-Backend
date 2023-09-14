@@ -38,11 +38,8 @@ public class DataGoKrAPIService extends OpenAPIService {
     /**
      * 위치 기반 관광 정보 조회 API
      */
-    public TourAPICommonListResponse getLocationBasedTourApi(double mapX, double mapY, int page, int pageSize,
-                                                             String contentTypeId, String arrangeType) {
-        String result = dataGoKrApi.getLocationBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                mapX, mapY, RADIUS, page, pageSize,
-                contentTypeId, arrangeType);
+    public TourAPICommonListResponse getLocationBasedTourApi(double mapX, double mapY, int page, int pageSize, String contentTypeId, String arrangeType) {
+        String result = dataGoKrApi.getLocationBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType, mapX, mapY, RADIUS, page, pageSize, contentTypeId, arrangeType);
 
         return parsingJsonObject(result, TourAPICommonListResponse.class);
     }
@@ -51,9 +48,7 @@ public class DataGoKrAPIService extends OpenAPIService {
      * 키워드 검색 관광 정보 조회 API
      */
     public TourAPICommonListResponse getSearchKeywordTourApi(String keyword, int page, int pageSize) {
-
-        String result = dataGoKrApi.getSearchKeywordTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                keyword, page, pageSize);
+        String result = dataGoKrApi.getSearchKeywordTourInfo(serviceKey, mobileOS, mobileApp, dataType, keyword, page, pageSize);
 
         return parsingJsonObject(result, TourAPICommonListResponse.class);
     }
@@ -62,20 +57,16 @@ public class DataGoKrAPIService extends OpenAPIService {
      *  지역 코드 조회 API
      */
     public AreaCodeList getAreaCodeApi(String areaCode) {
-        String result = dataGoKrApi.getAreaCode(serviceKey, mobileOS, mobileApp, dataType,
-                MAX_AREA_CODE_SIZE, areaCode);
+        String result = dataGoKrApi.getAreaCode(serviceKey, mobileOS, mobileApp, dataType, MAX_AREA_CODE_SIZE, areaCode);
+
         return parsingJsonObject(result, AreaCodeList.class);
     }
 
     /**
      * 지역 기반 관광정보 조회 API
      */
-    public TourAPICommonListResponse getAreaBasedTourApi(String areaCode, String sigunguCode, int page, int pageSize,
-                                                               String contentTypeId, String arrangeType) {
-
-        String result = dataGoKrApi.getAreaBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                areaCode, sigunguCode, page, pageSize,
-                contentTypeId, arrangeType);
+    public TourAPICommonListResponse getAreaBasedTourApi(String areaCode, String sigunguCode, int page, int pageSize, String contentTypeId, String arrangeType) {
+        String result = dataGoKrApi.getAreaBasedTourInfo(serviceKey, mobileOS, mobileApp, dataType, areaCode, sigunguCode, page, pageSize, contentTypeId, arrangeType);
 
         return parsingJsonObject(result, TourAPICommonListResponse.class);
     }
@@ -84,9 +75,7 @@ public class DataGoKrAPIService extends OpenAPIService {
      * 공통 정보 조회 API (상세 조회)
      */
     public DetailCommonListResponse getCommonApi(Long contentId, String contentTypeId) {
-        String result = dataGoKrApi.getTourCommonInfo(serviceKey, mobileOS, mobileApp, dataType,
-                contentId, contentTypeId,
-                YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION);
+        String result = dataGoKrApi.getTourCommonInfo(serviceKey, mobileOS, mobileApp, dataType, contentId, contentTypeId, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION, YES_OPTION);
 
         return parsingJsonObject(result, DetailCommonListResponse.class);
     }
@@ -95,15 +84,14 @@ public class DataGoKrAPIService extends OpenAPIService {
      * 소개 정보 조회 API (상세 조회)
      */
     public DetailIntroResponse getIntroApi(Long contentId, String contentTypeId) {
-
-        String result = dataGoKrApi.getTourIntroInfo(serviceKey, mobileOS, mobileApp, dataType,
-                contentId, contentTypeId);
+        String result = dataGoKrApi.getTourIntroInfo(serviceKey, mobileOS, mobileApp, dataType, contentId, contentTypeId);
 
         return parsingIntroResponseByContentType(result, ContentType.getContentTypeByCode(Integer.parseInt(contentTypeId)));
     }
 
     private DetailIntroResponse parsingIntroResponseByContentType(String result, ContentType contentType) {
         DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
+
         return parsingJsonObject(result, detailIntroItemFactory.getClassType(contentType));
 
     }
@@ -112,18 +100,16 @@ public class DataGoKrAPIService extends OpenAPIService {
      * 반복 정보 조회 API (상세 조회)
      */
     public DetailInfoListResponse getInfoApi(Long contentId, String contentTypeId) {
-        String result = dataGoKrApi.getTourInfo(serviceKey, mobileOS, mobileApp, dataType,
-                contentId, contentTypeId);
+        String result = dataGoKrApi.getTourInfo(serviceKey, mobileOS, mobileApp, dataType, contentId, contentTypeId);
 
         return parsingJsonObject(result, DetailInfoListResponse.class);
     }
 
     /**
-     * 이미지 조회 (상세 조회용4)
+     * 이미지 조회 (상세 조회용)
      */
     public DetailImageListResponse getImageApi(Long contentId) {
-        String result = dataGoKrApi.getTourImageInfo(serviceKey, mobileOS, mobileApp, dataType,
-                contentId, YES_OPTION);
+        String result = dataGoKrApi.getTourImageInfo(serviceKey, mobileOS, mobileApp, dataType, contentId, YES_OPTION);
 
         return parsingJsonObject(result, DetailImageListResponse.class);
     }

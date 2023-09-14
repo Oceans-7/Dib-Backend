@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.place.controller;
 
+import com.oceans7.dib.domain.place.dto.PlaceFilterOptions;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
@@ -46,10 +47,9 @@ public class PlaceControllerTest {
     public void getPlaceBasedLocationTest() throws Exception {
         //given
         GetPlaceRequestDto placeReq = MockRequest.testPlaceReq();
-        String contentType = String.valueOf(placeReq.getContentType().getCode());
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeReq);
 
-        when(placeService.getPlace(placeReq, contentType, arrangeType))
+        when(placeService.getPlace(placeReq, options))
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
@@ -82,10 +82,9 @@ public class PlaceControllerTest {
     public void getPlaceBasedAreaTest() throws Exception {
         //given
         GetPlaceRequestDto placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
-        String contentType = String.valueOf(placeWithAreaReq.getContentType().getCode());
-        String arrangeType = "";
+        PlaceFilterOptions filterOption = MockRequest.testPlaceFilterOptionReq(placeWithAreaReq);
 
-        when(placeService.getPlace(placeWithAreaReq, contentType, arrangeType))
+        when(placeService.getPlace(placeWithAreaReq, filterOption))
                 .thenReturn(MockResponse.testGetPlaceBasedAreaRes());
 
         // when
@@ -120,10 +119,9 @@ public class PlaceControllerTest {
     public void getPlaceBasedLocationWithContentTypeAndSortingTest() throws Exception {
         //given
         GetPlaceRequestDto placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
-        String contentType = String.valueOf(placeWithSortingReq.getContentType().getCode());
-        String arrangeType = placeWithSortingReq.getArrangeType().name();
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeWithSortingReq);
 
-        when(placeService.getPlace(placeWithSortingReq, contentType, arrangeType))
+        when(placeService.getPlace(placeWithSortingReq, options))
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
@@ -166,10 +164,9 @@ public class PlaceControllerTest {
     public void getPlaceInvalidXYThrowsExceptionTest() throws Exception {
         //given
         GetPlaceRequestDto placeXYExceptionReq = MockRequest.testPlaceXYExceptionReq();
-        String contentType = "";
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeXYExceptionReq);
 
-        when(placeService.getPlace(placeXYExceptionReq, contentType, arrangeType))
+        when(placeService.getPlace(placeXYExceptionReq, options))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when
@@ -236,10 +233,10 @@ public class PlaceControllerTest {
     public void getPlaceInvalidAreaThrowsExceptionTest() throws Exception {
         //given
         GetPlaceRequestDto placeAreaExceptionReq = MockRequest.testPlaceAreaExceptionReq();
-        String contentType = "";
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeAreaExceptionReq);
 
-        when(placeService.getPlace(placeAreaExceptionReq, contentType, arrangeType))
+
+        when(placeService.getPlace(placeAreaExceptionReq, options))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME));
 
         // when

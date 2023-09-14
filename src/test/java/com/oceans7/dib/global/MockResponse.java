@@ -7,9 +7,9 @@ import com.oceans7.dib.domain.place.dto.response.*;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
+import com.oceans7.dib.global.api.response.kakao.Address;
+import com.oceans7.dib.global.api.response.kakao.AddressItem;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
-import com.oceans7.dib.global.api.response.kakao.LocalResponse.*;
-import com.oceans7.dib.global.api.response.kakao.LocalResponse.AddressItem.*;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageItemResponse;
@@ -37,57 +37,100 @@ public class MockResponse {
 
     // --- KakaoLocalAPIService Test Mock Response
     private static Address setAddress() {
-        return new Address("서울 중구", "서울", "중구");
+        return Address.builder()
+                .addressName("서울 중구")
+                .region1depthName("서울")
+                .region2depthName("중구")
+                .build();
     }
 
     private static Address setRoadAddress() {
-        return new Address("서울특별시 중구 창경궁로 17", "서울", "중구");
+        return Address.builder()
+                .addressName("서울특별시 중구 창경궁로 17")
+                .region1depthName("서울")
+                .region2depthName("중구")
+                .build();
     }
 
     private static AddressItem setAddressItem(Address address, Address roadAddress) {
-        return new AddressItem(address, roadAddress, "서울 중구", "REGION", X, Y);
+        return AddressItem.builder()
+                .address(address)
+                .roadAddress(roadAddress)
+                .addressName("서울 중구")
+                .addressType("REGION")
+                .x(X)
+                .y(Y)
+                .build();
+    }
+
+    private static LocalResponse setALocalResponse(List<AddressItem> localAPIItemList) {
+        return LocalResponse.builder()
+                .addressItems(localAPIItemList)
+                .build();
     }
 
     public static LocalResponse testSearchAddressRes() {
-        List<AddressItem> item = new ArrayList<>();
-        item.add(setAddressItem(setAddress(), null));
-        return new LocalResponse(item);
+        List<AddressItem> localAPIItemList = new ArrayList<>();
+        localAPIItemList.add(setAddressItem(setAddress(), null));
+        return setALocalResponse(localAPIItemList);
     }
 
     public static LocalResponse testGeoAddressRes() {
-        List<AddressItem> item = new ArrayList<>();
-        item.add(setAddressItem(null, setRoadAddress()));
-        return new LocalResponse(item);
+        List<AddressItem> localAPIItemList = new ArrayList<>();
+        localAPIItemList.add(setAddressItem(null, setRoadAddress()));
+        return setALocalResponse(localAPIItemList);
     }
 
     // --- DataGoKrAPIService Test Mock Response
     private static TourAPICommonItemResponse setCommonTourItem(double dist) {
-        return new TourAPICommonItemResponse(
-                CONTENT_ID, CONTENT_TYPE.getCode(),
-                "뷰티플레이", "",
-                "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg",
-                "서울특별시 중구 명동1가 1-3 YWCA연합회", "", "", X, Y, dist, "1", "24");
+        return TourAPICommonItemResponse.builder()
+                .contentId(CONTENT_ID)
+                .contentTypeId(CONTENT_TYPE.getCode())
+                .title("뷰티플레이")
+                .tel("")
+                .thumbnail("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg")
+                .addr1("서울특별시 중구 명동1가 1-3 YWCA연합회")
+                .addr2("")
+                .mapX(X)
+                .mapY(Y)
+                .distance(dist)
+                .areaCode("1")
+                .sigunguCode("24")
+                .modifiedTime("20230214113655")
+                .build();
     }
 
     private static TourAPICommonItemResponse setCommonTourItem2(double dist) {
-        return new TourAPICommonItemResponse(
-                CONTENT_ID, CONTENT_TYPE.getCode(),
-                "서울 남현동 요지", "",
-                "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg",
-                "서울특별시 관악구 남현3길 60", "(남현동)", "", X, Y, dist, "1", "24");
+        return TourAPICommonItemResponse.builder()
+                .contentId(CONTENT_ID)
+                .contentTypeId(CONTENT_TYPE.getCode())
+                .title("서울 남현동 요지")
+                .tel("")
+                .thumbnail("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg")
+                .addr1("서울특별시 관악구 남현3길 60")
+                .addr2("")
+                .mapX(X)
+                .mapY(Y)
+                .distance(dist)
+                .areaCode("1")
+                .sigunguCode("24")
+                .modifiedTime("20230214113655")
+                .build();
     }
 
+    private static TourAPICommonListResponse setTourAPIResponse(List<TourAPICommonItemResponse> tourAPIItemList, int totalCount, int page, int pageSize) {
+        return TourAPICommonListResponse.builder()
+                .tourAPICommonItemResponseList(tourAPIItemList)
+                .totalCount(totalCount)
+                .page(page)
+                .pageSize(pageSize)
+                .build();
+    }
     public static ResponseWrapper testLocationBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
         item.add(setCommonTourItem(1000.1711716167842));
         return new ResponseWrapper(
-                new Response(
-                        TourAPICommonListResponse.builder()
-                                .tourAPICommonItemResponseList(item)
-                                .page(1)
-                                .pageSize(1)
-                                .totalCount(1)
-                                .build())
+                new Response(setTourAPIResponse(item, 1, 1, 1))
         );
     }
 
@@ -95,13 +138,7 @@ public class MockResponse {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
         item.add(setCommonTourItem(0));
         return new ResponseWrapper(
-                new Response(
-                        TourAPICommonListResponse.builder()
-                            .tourAPICommonItemResponseList(item)
-                            .page(1)
-                            .pageSize(1)
-                            .totalCount(1)
-                            .build())
+                new Response(setTourAPIResponse(item, 1, 1, 1))
         );
     }
 
@@ -109,13 +146,7 @@ public class MockResponse {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
         item.add(setCommonTourItem(0));
         return new ResponseWrapper(
-                new Response(
-                        TourAPICommonListResponse.builder()
-                                .tourAPICommonItemResponseList(item)
-                                .page(1)
-                                .pageSize(1)
-                                .totalCount(1)
-                                .build())
+                new Response(setTourAPIResponse(item, 1, 1, 1))
         );
     }
 
@@ -236,15 +267,10 @@ public class MockResponse {
 
     // --- PlaceService Test Mock Response
     public static TourAPICommonListResponse testPlaceRes() {
-        List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(1000.1711716167842));
-        item.add(setCommonTourItem2(10001.983304508862));
-        return TourAPICommonListResponse.builder()
-                                .tourAPICommonItemResponseList(item)
-                                .page(1)
-                                .pageSize(2)
-                                .totalCount(1)
-                                .build();
+        List<TourAPICommonItemResponse> tourAPIItemList = new ArrayList<>();
+        tourAPIItemList.add(setCommonTourItem(1000.1711716167842));
+        tourAPIItemList.add(setCommonTourItem2(10001.983304508862));
+        return setTourAPIResponse(tourAPIItemList, 1, 1, 2);
     }
 
     public static AreaCodeList testPlaceAreaCodeRes() {
@@ -264,14 +290,9 @@ public class MockResponse {
     }
 
     public static TourAPICommonListResponse testAreaPlaceRes() {
-        List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(1000.1711716167842));
-        return TourAPICommonListResponse.builder()
-                .tourAPICommonItemResponseList(item)
-                .page(1)
-                .pageSize(1)
-                .totalCount(1)
-                .build();
+        List<TourAPICommonItemResponse> tourAPIItemList = new ArrayList<>();
+        tourAPIItemList.add(setCommonTourItem(1000.1711716167842));
+        return setTourAPIResponse(tourAPIItemList, 1, 1, 1);
     }
 
     public static LocalResponse testSearchNoAddressRes() {
@@ -279,24 +300,14 @@ public class MockResponse {
     }
 
     public static TourAPICommonListResponse testSearchRes() {
-        List<TourAPICommonItemResponse> item = new ArrayList<>();
-        item.add(setCommonTourItem(1000.1711716167842));
-        return TourAPICommonListResponse.builder()
-                .tourAPICommonItemResponseList(item)
-                .page(1)
-                .pageSize(1)
-                .totalCount(1)
-                .build();
+        List<TourAPICommonItemResponse> tourAPIItemList = new ArrayList<>();
+        tourAPIItemList.add(setCommonTourItem(1000.1711716167842));
+        return setTourAPIResponse(tourAPIItemList, 1, 1, 1);
     }
 
     public static TourAPICommonListResponse testNoResultRes() {
-        List<TourAPICommonItemResponse> item = new ArrayList<>();
-        return TourAPICommonListResponse.builder()
-                .tourAPICommonItemResponseList(item)
-                .page(0)
-                .pageSize(0)
-                .totalCount(0)
-                .build();
+        List<TourAPICommonItemResponse> tourAPIItemList = new ArrayList<>();
+        return setTourAPIResponse(tourAPIItemList, 0, 0, 0);
     }
 
     public static DetailCommonListResponse testPlaceCommonRes() {

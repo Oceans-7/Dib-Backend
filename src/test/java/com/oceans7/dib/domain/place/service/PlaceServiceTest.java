@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.place.service;
 
+import com.oceans7.dib.domain.place.dto.PlaceFilterOptions;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
@@ -39,16 +40,15 @@ public class PlaceServiceTest {
     public void getPlaceTest() {
         // given
         GetPlaceRequestDto placeReq = MockRequest.testPlaceReq();
-        String contentType = String.valueOf(placeReq.getContentType());
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeReq);
 
         // mocking
         when(tourAPIService.getLocationBasedTourApi(
-                placeReq.getMapX(), placeReq.getMapY(), placeReq.getPage(), placeReq.getPageSize(), contentType, arrangeType))
+                placeReq.getMapX(), placeReq.getMapY(), placeReq.getPage(), placeReq.getPageSize(), options.getContentType(), options.getArrangeType()))
                 .thenReturn(MockResponse.testPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeReq, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeReq, options);
         SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
@@ -71,16 +71,15 @@ public class PlaceServiceTest {
     public void getPlaceWithSortingTest() {
         // given
         GetPlaceRequestDto placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
-        String contentType = String.valueOf(placeWithSortingReq.getContentType());
-        String arrangeType = String.valueOf(placeWithSortingReq.getArrangeType());
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeWithSortingReq);
 
         when(tourAPIService.getLocationBasedTourApi(
                 placeWithSortingReq.getMapX(), placeWithSortingReq.getMapY(),
-                placeWithSortingReq.getPage(), placeWithSortingReq.getPageSize(), contentType, arrangeType))
+                placeWithSortingReq.getPage(), placeWithSortingReq.getPageSize(), options.getContentType(), options.getArrangeType()))
                 .thenReturn(MockResponse.testPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeWithSortingReq, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeWithSortingReq, options);
 
         // then
         assertThat(placeRes.getPage()).isEqualTo(placeWithSortingReq.getPage());
@@ -102,19 +101,17 @@ public class PlaceServiceTest {
     public void getAreaPlaceTest() {
         // given
         GetPlaceRequestDto placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
-        String contentType = String.valueOf(placeWithAreaReq.getContentType());
-        String arrangeType = "";
+        PlaceFilterOptions filterOption = MockRequest.testPlaceFilterOptionReq(placeWithAreaReq);
         String areaCode = "1";
         String sigunguCode = "24";
 
         when(tourAPIService.getAreaCodeApi("")).thenReturn(MockResponse.testPlaceAreaCodeRes());
         when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
-        when(tourAPIService.getAreaBasedTourApi(
-                areaCode, sigunguCode, placeWithAreaReq.getPage(), placeWithAreaReq.getPageSize(), contentType, arrangeType))
+        when(tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode, placeWithAreaReq.getPage(), placeWithAreaReq.getPageSize(), filterOption.getContentType(), filterOption.getArrangeType()))
                 .thenReturn(MockResponse.testAreaPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeWithAreaReq, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeWithAreaReq, filterOption);
         SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
@@ -138,15 +135,14 @@ public class PlaceServiceTest {
     public void getAreaPlaceNotFoundAreaItemExceptionTest() {
         // given
         GetPlaceRequestDto placeWithAreaExceptionReq = MockRequest.testPlaceAreaExceptionReq();
-        String contentType = "";
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeWithAreaExceptionReq);
         String areaCode = placeWithAreaExceptionReq.getArea();
 
         when(tourAPIService.getAreaCodeApi("")).thenReturn(MockResponse.testPlaceAreaCodeRes());
         when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
 
         // when & then
-        assertThrows(ApplicationException.class, () -> placeService.getPlace(placeWithAreaExceptionReq, contentType, arrangeType));
+        assertThrows(ApplicationException.class, () -> placeService.getPlace(placeWithAreaExceptionReq, options));
     }
 
     @Test

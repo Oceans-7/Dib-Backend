@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.place.controller;
 
+import com.oceans7.dib.domain.place.dto.PlaceFilterOptions;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
@@ -37,17 +38,11 @@ public class PlaceController {
     })
     @GetMapping()
     public ApplicationResponse<PlaceResponseDto> getPlace(@ModelAttribute @Validated GetPlaceRequestDto placeRequestDto) {
-        String contentType = "", arrangeType = "";
+        PlaceFilterOptions filterOption = PlaceFilterOptions.initialBuilder()
+                .request(placeRequestDto)
+                .build();
 
-        // 필터링 확인
-        if(ValidatorUtil.isNotEmpty(placeRequestDto.getContentType())) {
-            contentType = String.valueOf(placeRequestDto.getContentType().getCode());
-        }
-        if(ValidatorUtil.isNotEmpty(placeRequestDto.getArrangeType())) {
-            arrangeType = placeRequestDto.getArrangeType().name();
-        }
-
-        return ApplicationResponse.ok(placeService.getPlace(placeRequestDto, contentType, arrangeType));
+        return ApplicationResponse.ok(placeService.getPlace(placeRequestDto, filterOption));
     }
 
     @Operation(summary = "키워드로 관광 정보 검색", description = "키워드를 입력받아 관련 정보를 조회한다.")
