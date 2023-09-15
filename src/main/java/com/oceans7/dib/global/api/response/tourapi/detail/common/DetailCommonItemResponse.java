@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
  * 공통 정보
  */
 @Getter
+@NoArgsConstructor
 public class DetailCommonItemResponse extends TourAPICommonItemResponse {
 
     // 홈페이지 URL
