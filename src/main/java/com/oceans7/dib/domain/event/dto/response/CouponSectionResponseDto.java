@@ -1,4 +1,4 @@
-package com.oceans7.dib.domain.home.dto.response.event;
+package com.oceans7.dib.domain.event.dto.response;
 
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import io.swagger.v3.oas.annotations.media.Schema;

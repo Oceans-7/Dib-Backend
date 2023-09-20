@@ -1,12 +1,12 @@
-package com.oceans7.dib.domain.home.service;
+package com.oceans7.dib.domain.event.service;
 
-import com.oceans7.dib.domain.home.dto.response.event.CouponSectionResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.EventResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.PartnerResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.PartnerSectionResponseDto;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.EventRepository;
+import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
+import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
+import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
+import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class HomeService {
+public class EventService {
     private final EventRepository eventRepository;
 
     private final static int FIRST_SECTION_INDEX = 0;

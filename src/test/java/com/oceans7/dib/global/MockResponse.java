@@ -2,10 +2,10 @@ package com.oceans7.dib.global;
 
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
-import com.oceans7.dib.domain.home.dto.response.event.CouponSectionResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.EventResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.PartnerResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.PartnerSectionResponseDto;
+import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
+import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
+import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
+import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.FacilityType;

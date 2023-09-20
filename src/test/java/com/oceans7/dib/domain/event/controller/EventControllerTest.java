@@ -1,11 +1,12 @@
-package com.oceans7.dib.domain.home.controller;
+package com.oceans7.dib.domain.event.controller;
 
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.EventRepository;
-import com.oceans7.dib.domain.home.dto.response.event.EventResponseDto;
-import com.oceans7.dib.domain.home.service.HomeService;
+import com.oceans7.dib.domain.event.service.CouponService;
+import com.oceans7.dib.domain.event.service.EventService;
+import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
 import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.MockResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +25,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(HomeController.class)
-public class HomeControllerTest {
+@WebMvcTest(EventController.class)
+public class EventControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @MockBean
-    private HomeService homeService;
+    private EventService eventService;
+
+    @MockBean
+    private CouponService couponService;
 
     @MockBean
     private EventRepository eventRepository;
@@ -84,7 +88,7 @@ public class HomeControllerTest {
         CouponGroup secondCouponGroup = makeSecondCouponGroup(event);
 
         EventResponseDto mockResponse = MockResponse.testEventRes(event, firstCouponGroup, secondCouponGroup);
-        when(homeService.getEventDetail(event.getEventId()))
+        when(eventService.getEventDetail(event.getEventId()))
                 .thenReturn(mockResponse);
 
         // when

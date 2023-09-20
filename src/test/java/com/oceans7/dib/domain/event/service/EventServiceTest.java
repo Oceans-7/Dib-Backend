@@ -1,14 +1,13 @@
-package com.oceans7.dib.domain.home.service;
+package com.oceans7.dib.domain.event.service;
 
-import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.EventRepository;
-import com.oceans7.dib.domain.home.dto.response.event.CouponSectionResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.EventResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.PartnerResponseDto;
-import com.oceans7.dib.domain.home.dto.response.event.PartnerSectionResponseDto;
+import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
+import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
+import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
+import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.global.MockRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class HomeServiceTest {
+public class EventServiceTest {
     @Autowired
-    private HomeService homeService;
+    private EventService eventService;
 
     @Autowired
     private EventRepository eventRepository;
@@ -57,7 +56,7 @@ public class HomeServiceTest {
         CouponGroup secondCouponGroup = makeSecondCouponGroup(event);
 
         // when
-        EventResponseDto response = homeService.getEventDetail(event.getEventId());
+        EventResponseDto response = eventService.getEventDetail(event.getEventId());
 
         // then
         // 이벤트 검증

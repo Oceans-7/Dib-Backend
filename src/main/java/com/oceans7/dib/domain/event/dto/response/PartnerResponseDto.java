@@ -1,4 +1,4 @@
-package com.oceans7.dib.domain.home.dto.response.event;
+package com.oceans7.dib.domain.event.dto.response;
 
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Getter
