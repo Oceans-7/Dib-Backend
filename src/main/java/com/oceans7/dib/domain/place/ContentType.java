@@ -8,6 +8,7 @@ public enum ContentType {
     ACCOMMODATION(32),
     SHOPPING(38),
     RESTAURANT(39),
+    DIVING(0),
     ;
 
     private int code;

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.api.http.KakaoApi;
+import com.oceans7.dib.global.api.response.kakao.Address;
+import com.oceans7.dib.global.api.response.kakao.AddressItem;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +46,8 @@ public class KakaoLocalAPIServiceTest {
 
         // when
         LocalResponse localResponse = kakaoLocalAPIService.getSearchAddressLocalApi(MockRequest.AREA_QUERY);
-        LocalResponse.AddressItem addressItem = localResponse.getAddressItems().get(0);
-        LocalResponse.AddressItem.Address address = addressItem.getAddress();
+        AddressItem addressItem = localResponse.getAddressItems().get(0);
+        Address address = addressItem.getAddress();
 
         // then
         assertThat(addressItem.getAddressName()).isEqualTo("서울 중구");
@@ -68,7 +70,7 @@ public class KakaoLocalAPIServiceTest {
 
         // when
         LocalResponse result = kakaoLocalAPIService.getGeoAddressLocalApi(MockRequest.X, MockRequest.Y);
-        LocalResponse.AddressItem.Address address = result.getAddressItems().get(0).getRoadAddress();
+        Address address = result.getAddressItems().get(0).getRoadAddress();
 
         // then
         assertThat(address.getAddressName()).isEqualTo("서울특별시 중구 창경궁로 17");

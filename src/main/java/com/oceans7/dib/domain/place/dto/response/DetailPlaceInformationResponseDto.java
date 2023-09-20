@@ -2,16 +2,12 @@ package com.oceans7.dib.domain.place.dto.response;
 
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
-import com.oceans7.dib.global.util.TextManipulatorUtil;
-import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonItemResponse;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
-
-import static com.oceans7.dib.domain.place.ContentType.getContentTypeByCode;
 
 
 @Getter
@@ -79,31 +75,28 @@ public class DetailPlaceInformationResponseDto {
             return facilityInfo;
         }
     }
-    public static DetailPlaceInformationResponseDto of(DetailCommonItemResponse commonItem, List<String> images) {
+    public static DetailPlaceInformationResponseDto of(Long contentId, ContentType contentType, String title, String address,
+                                                       double mapX, double mapY, String introduce, String homepageUrl,
+                                                       String useTime, String tel, String restDate, String reservationUrl, String eventDate,
+                                                       List<FacilityInfo> facilityInfoList, List<String> imageUrlList) {
         DetailPlaceInformationResponseDto response = new DetailPlaceInformationResponseDto();
-        response.contentId = commonItem.getContentId();
-        response.contentType = getContentTypeByCode(commonItem.getContentTypeId());
-        response.title = commonItem.getTitle();
-        response.address = TextManipulatorUtil.concatenateStrings(commonItem.getAddress1(), commonItem.getAddress2(), " ");
-        response.mapX = commonItem.getMapX();
-        response.mapY = commonItem.getMapY();
-        response.introduce = TextManipulatorUtil.replaceBrWithNewLine(commonItem.getOverview());
-        response.homepageUrl = TextManipulatorUtil.extractUrl(commonItem.getHomepageUrl());
 
-        response.images = images;
+        response.contentId = contentId;
+        response.contentType = contentType;
+        response.title = title;
+        response.address = address;
+        response.mapX = mapX;
+        response.mapY = mapY;
+        response.introduce = introduce;
+        response.homepageUrl = homepageUrl;
+        response.useTime = useTime;
+        response.tel = tel;
+        response.restDate = restDate;
+        response.reservationUrl = reservationUrl;
+        response.eventDate = eventDate;
+        response.facilityInfo = facilityInfoList;
+        response.images = imageUrlList;
 
         return response;
     }
-
-    public void updateItem(String useTime, String tel, String restDate,
-                           String reservationUrl, String eventDate,
-                           List<FacilityInfo> facilityInfo) {
-        this.useTime = useTime;
-        this.tel = tel;
-        this.restDate = restDate;
-        this.reservationUrl = reservationUrl;
-        this.eventDate = eventDate;
-        this.facilityInfo = facilityInfo;
-    }
-
 }

@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.place.service;
 
+import com.oceans7.dib.domain.place.dto.PlaceFilterOptions;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
@@ -39,16 +40,15 @@ public class PlaceServiceTest {
     public void getPlaceTest() {
         // given
         GetPlaceRequestDto placeReq = MockRequest.testPlaceReq();
-        String contentType = String.valueOf(placeReq.getContentType());
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeReq);
 
         // mocking
         when(tourAPIService.getLocationBasedTourApi(
-                placeReq.getMapX(), placeReq.getMapY(), placeReq.getPage(), placeReq.getPageSize(), contentType, arrangeType))
+                placeReq.getMapX(), placeReq.getMapY(), placeReq.getPage(), placeReq.getPageSize(), options.getContentType(), options.getArrangeType()))
                 .thenReturn(MockResponse.testPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeReq, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeReq, options);
         SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
@@ -58,10 +58,10 @@ public class PlaceServiceTest {
 
         assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.getDistance()).isBetween(MockResponse.MIN_DISTANCE, MockResponse.MAX_DISTANCE);
         assertThat(info.getDistance()).isEqualTo(1.0);
     }
@@ -71,16 +71,15 @@ public class PlaceServiceTest {
     public void getPlaceWithSortingTest() {
         // given
         GetPlaceRequestDto placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
-        String contentType = String.valueOf(placeWithSortingReq.getContentType());
-        String arrangeType = String.valueOf(placeWithSortingReq.getArrangeType());
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeWithSortingReq);
 
         when(tourAPIService.getLocationBasedTourApi(
                 placeWithSortingReq.getMapX(), placeWithSortingReq.getMapY(),
-                placeWithSortingReq.getPage(), placeWithSortingReq.getPageSize(), contentType, arrangeType))
+                placeWithSortingReq.getPage(), placeWithSortingReq.getPageSize(), options.getContentType(), options.getArrangeType()))
                 .thenReturn(MockResponse.testPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeWithSortingReq, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeWithSortingReq, options);
 
         // then
         assertThat(placeRes.getPage()).isEqualTo(placeWithSortingReq.getPage());
@@ -102,19 +101,17 @@ public class PlaceServiceTest {
     public void getAreaPlaceTest() {
         // given
         GetPlaceRequestDto placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
-        String contentType = String.valueOf(placeWithAreaReq.getContentType());
-        String arrangeType = "";
+        PlaceFilterOptions filterOption = MockRequest.testPlaceFilterOptionReq(placeWithAreaReq);
         String areaCode = "1";
         String sigunguCode = "24";
 
         when(tourAPIService.getAreaCodeApi("")).thenReturn(MockResponse.testPlaceAreaCodeRes());
         when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
-        when(tourAPIService.getAreaBasedTourApi(
-                areaCode, sigunguCode, placeWithAreaReq.getPage(), placeWithAreaReq.getPageSize(), contentType, arrangeType))
+        when(tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode, placeWithAreaReq.getPage(), placeWithAreaReq.getPageSize(), filterOption.getContentType(), filterOption.getArrangeType()))
                 .thenReturn(MockResponse.testAreaPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeWithAreaReq, contentType, arrangeType);
+        PlaceResponseDto placeRes = placeService.getPlace(placeWithAreaReq, filterOption);
         SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
@@ -124,10 +121,10 @@ public class PlaceServiceTest {
 
         assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.getAddress().contains(placeWithAreaReq.getArea()) &&
                 info.getAddress().contains(placeWithAreaReq.getSigungu())
         ).isTrue();
@@ -138,15 +135,14 @@ public class PlaceServiceTest {
     public void getAreaPlaceNotFoundAreaItemExceptionTest() {
         // given
         GetPlaceRequestDto placeWithAreaExceptionReq = MockRequest.testPlaceAreaExceptionReq();
-        String contentType = "";
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeWithAreaExceptionReq);
         String areaCode = placeWithAreaExceptionReq.getArea();
 
         when(tourAPIService.getAreaCodeApi("")).thenReturn(MockResponse.testPlaceAreaCodeRes());
         when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
 
         // when & then
-        assertThrows(ApplicationException.class, () -> placeService.getPlace(placeWithAreaExceptionReq, contentType, arrangeType));
+        assertThrows(ApplicationException.class, () -> placeService.getPlace(placeWithAreaExceptionReq, options));
     }
 
     @Test
@@ -160,7 +156,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testSearchRes());
 
         // when
-        SearchPlaceResponseDto searchRes = placeService.searchPlace(searchReq);
+        SearchPlaceResponseDto searchRes = placeService.searchKeyword(searchReq);
         SimplePlaceInformationDto info = searchRes.getPlaces().get(0);
 
         // then
@@ -173,10 +169,10 @@ public class PlaceServiceTest {
 
         assertThat(info.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(info.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
     }
 
     @Test
@@ -190,7 +186,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testNoResultRes());
 
         // then
-        assertThrows(ApplicationException.class, () -> placeService.searchPlace(searchNotFoundExceptionReq));
+        assertThrows(ApplicationException.class, () -> placeService.searchKeyword(searchNotFoundExceptionReq));
     }
 
     @Test
@@ -202,7 +198,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testSearchAddressRes());
 
         // when
-        SearchPlaceResponseDto searchRes = placeService.searchPlace(searchAreaReq);
+        SearchPlaceResponseDto searchRes = placeService.searchKeyword(searchAreaReq);
         SimpleAreaResponseDto info = searchRes.getAreas().get(0);
 
         // then
@@ -237,7 +233,7 @@ public class PlaceServiceTest {
         // then
         assertThat(detailRes.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
         assertThat(detailRes.getContentType()).isEqualTo(MockRequest.CONTENT_TYPE);
-        assertThat(detailRes.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
+        assertThat(detailRes.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(detailRes.getTitle()).isEqualTo("뷰티플레이");
         assertThat(detailRes.getMapX()).isEqualTo(126.997555182293);
         assertThat(detailRes.getMapY()).isEqualTo(37.5638077703601);
@@ -246,7 +242,7 @@ public class PlaceServiceTest {
         assertThat(detailRes.getUseTime()).isEqualTo("10:00~19:00(뷰티 체험은 18:00까지)");
         assertThat(detailRes.getTel()).isEqualTo("070-4070-9675");
         assertThat(detailRes.getRestDate()).isEqualTo("일요일");
-        assertThat(detailRes.getReservationUrl()).isNull();
+        assertThat(detailRes.getReservationUrl()).isEqualTo("");
 
         for(String image : detailRes.getImages()) {
             String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif|bmp)$";

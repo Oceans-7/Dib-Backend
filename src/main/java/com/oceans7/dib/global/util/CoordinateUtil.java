@@ -2,6 +2,8 @@ package com.oceans7.dib.global.util;
 
 public class CoordinateUtil {
     private static final double EARTH_RADIUS_KM = 6371.0;
+    private static final double METERS_IN_KILOMETER = 1000.0;
+    private static final double ROUNDING_PRECISION = 10.0;
 
     // 좌표 간 거리 계산
     public static double calculateDistance(double lon1, double lat1, double lon2, double lat2) {
@@ -19,12 +21,12 @@ public class CoordinateUtil {
 
     // m -> km 변환
     public static double convertMetersToKilometers(double meters) {
-        return round(meters / 1000.0);
+        return (ValidatorUtil.isNotEmpty(meters)) ? round(meters / METERS_IN_KILOMETER) : 0.0;
     }
 
     // 반올림
     private static double round(double distance) {
-        return Math.round(distance * 10.0) / 10.0;
+        return Math.round(distance * ROUNDING_PRECISION) / ROUNDING_PRECISION;
     }
 
     // LCC DFS 좌표변환 ( 위경도->좌표, mapX:경도, mapY:위도 )

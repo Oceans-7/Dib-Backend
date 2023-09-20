@@ -40,18 +40,19 @@ public class SimplePlaceInformationDto {
     @Schema(description = "전화번호", example = "061-532-1000")
     private String tel;
 
-    public static SimplePlaceInformationDto of(TourAPICommonItemResponse item) {
+    public static SimplePlaceInformationDto of(String title, String address, Long contentId, ContentType contentType, double distance,
+                                               double mapX, double mapY, String firstImage, String tel) {
         SimplePlaceInformationDto simplePlaceInformation = new SimplePlaceInformationDto();
 
-        simplePlaceInformation.title = item.getTitle();
-        simplePlaceInformation.address = item.getAddress1() + item.getAddress2();
-        simplePlaceInformation.contentId = item.getContentId();
-        simplePlaceInformation.contentType = getContentTypeByCode(item.getContentTypeId());
-        simplePlaceInformation.distance = item.getDist();
-        simplePlaceInformation.mapX = item.getMapX();
-        simplePlaceInformation.mapY = item.getMapY();
-        simplePlaceInformation.firstImage = item.getFirstImage();
-        simplePlaceInformation.tel = item.getTel();
+        simplePlaceInformation.title = title;
+        simplePlaceInformation.address = address;
+        simplePlaceInformation.contentId = contentId;
+        simplePlaceInformation.contentType = contentType;
+        simplePlaceInformation.distance = distance;
+        simplePlaceInformation.mapX = mapX;
+        simplePlaceInformation.mapY = mapY;
+        simplePlaceInformation.firstImage = firstImage;
+        simplePlaceInformation.tel = tel;
 
         return simplePlaceInformation;
     }

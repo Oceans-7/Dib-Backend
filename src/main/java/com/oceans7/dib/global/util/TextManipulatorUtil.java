@@ -28,7 +28,7 @@ public class TextManipulatorUtil {
             return input;
         }
 
-        return null;
+        return "";
     }
 
     public static String extractTel(String input) {
@@ -37,32 +37,7 @@ public class TextManipulatorUtil {
         if (matcher.find()) {
             return matcher.group();
         }
-        return null;
-    }
-
-    public static String prefix(String str, String prefix) {
-        if(ValidatorUtil.isNotEmpty(str) && ValidatorUtil.isNotEmpty(prefix)) {
-            return prefix + str;
-        }
-        return null;
-    }
-
-    public static String concatenateStrings(String str1, String str2, String prefix) {
-        if(ValidatorUtil.isNotEmpty(str1)) {
-            if(ValidatorUtil.isNotEmpty(str2)) {
-                return str1 + prefix + str2;
-            }
-            return str1;
-        }
-
-        return null;
-    }
-
-    public static String concatenateStrings(String str1, String str2, String prefix1, String prefix2) {
-        if(ValidatorUtil.isNotEmpty(str1) && ValidatorUtil.isNotEmpty(str2)) {
-            return prefix1 + str1 + prefix2 + str2;
-        }
-        return null;
+        return "";
     }
 
     public static String convertDateRangeFormat(String startDate, String endDate) {
@@ -73,14 +48,20 @@ public class TextManipulatorUtil {
             String formattedStartDate = parsedStartDate.format(OUTPUT_DATE_FORMATTER);
             String formattedEndDate = parsedEndDate.format(OUTPUT_DATE_FORMATTER);
 
-            return concatenateStrings(formattedStartDate, formattedEndDate, "기간 : ", "~");
+            String dateFormat = "%s : %s~%s";
+            String prefix = "기간";
+
+            return String.format(dateFormat, prefix, formattedStartDate, formattedEndDate);
         }
-        return null;
+        return "";
     }
 
     public static String replaceBrWithNewLine(String input) {
+        String brTag = "<br>";
+        String newLine = "\n";
+
         if(ValidatorUtil.isNotEmpty(input)) {
-            return input.replace("<br>", "\n");
+            return input.replace(brTag, newLine);
         }
         return input;
     }
