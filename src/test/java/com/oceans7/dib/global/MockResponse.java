@@ -1,5 +1,11 @@
 package com.oceans7.dib.global;
 
+import com.oceans7.dib.domain.event.entity.CouponGroup;
+import com.oceans7.dib.domain.event.entity.Event;
+import com.oceans7.dib.domain.home.dto.response.event.CouponSectionResponseDto;
+import com.oceans7.dib.domain.home.dto.response.event.EventResponseDto;
+import com.oceans7.dib.domain.home.dto.response.event.PartnerResponseDto;
+import com.oceans7.dib.domain.home.dto.response.event.PartnerSectionResponseDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
@@ -393,7 +399,7 @@ public class MockResponse {
         return SearchPlaceResponseDto.of(KEYWORD_QUERY, simpleDto, testSearchRes(), false);
     }
 
-    public static  SearchPlaceResponseDto testSearchPlaceBasedAreaRes() {
+    public static SearchPlaceResponseDto testSearchPlaceBasedAreaRes() {
         List<SimpleAreaResponseDto> simpleDto = new ArrayList<>();
         simpleDto.add(SimpleAreaResponseDto.of("서울 중구", 1000.1711716167842, "서울", "중구", X, Y));
         return SearchPlaceResponseDto.of(AREA_QUERY, simpleDto, true);
@@ -419,5 +425,37 @@ public class MockResponse {
 
         mock.updateItem(spotItem.getUseTime(), spotItem.getInfoCenter(), spotItem.getRestDate(), null, null, facilityInfo);
         return mock;
+    }
+
+    public static PartnerResponseDto testPartnerRes(CouponGroup couponGroup) {
+        return PartnerResponseDto.from(couponGroup);
+    }
+
+    public static PartnerSectionResponseDto testPartnerSectionRes(CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
+        String partnerSectionKeyword = String.format("%s, %s", firstCouponGroup.getCouponType().getKeyword(), secondCouponGroup.getCouponType().getKeyword());
+        String partnerSectionTitle = String.format("%s %s \n할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
+
+        return PartnerSectionResponseDto.of(
+                partnerSectionTitle,
+                partnerSectionKeyword,
+                testPartnerRes(firstCouponGroup),
+                testPartnerRes(secondCouponGroup)
+        );
+    }
+
+    public static CouponSectionResponseDto testCouponSectionRes(CouponGroup couponGroup) {
+        return CouponSectionResponseDto.from(couponGroup);
+    }
+
+    public static EventResponseDto testEventRes(Event event, CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
+        return EventResponseDto.of(
+                event.getEventId(),
+                event.getBannerUrl(),
+                event.getMainColor(),
+                event.getSubColor(),
+                testCouponSectionRes(firstCouponGroup),
+                testCouponSectionRes(secondCouponGroup),
+                testPartnerSectionRes(firstCouponGroup, secondCouponGroup)
+        );
     }
 }

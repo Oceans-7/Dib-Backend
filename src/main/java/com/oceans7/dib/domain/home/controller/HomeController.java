@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "home", description = "메인홈 콘텐츠 API")
 @RestController
-@RequestMapping("/home")
 @RequiredArgsConstructor
 public class HomeController {
     private final HomeService homeService;
@@ -23,7 +22,7 @@ public class HomeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    @GetMapping("/{eventId}")
+    @GetMapping("/event/{eventId}")
     public ApplicationResponse<EventResponseDto> getEventDetail(@PathVariable("eventId") Long eventId) {
         return ApplicationResponse.ok(homeService.getEventDetail(eventId));
     }

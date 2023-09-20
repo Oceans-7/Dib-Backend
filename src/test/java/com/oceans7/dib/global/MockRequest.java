@@ -12,6 +12,7 @@ import com.oceans7.dib.domain.place.entity.Dib;
 import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
+import com.oceans7.dib.domain.user_refresh_token.entity.UserRefreshToken;
 import com.oceans7.dib.global.util.CoordinateUtil;
 
 import java.time.LocalDate;
@@ -121,5 +122,9 @@ public class MockRequest {
 
     public static UpdateProfileRequestDto testUpdateProfileReq() {
         return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+    }
+
+    public static UserRefreshToken testUserRefreshToken(User user, String refreshToken) {
+        return UserRefreshToken.of(refreshToken, user);
     }
 }
