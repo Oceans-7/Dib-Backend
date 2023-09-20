@@ -1,6 +1,7 @@
 package com.oceans7.dib.global;
 
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.domain.place.dto.response.*;
@@ -119,12 +120,12 @@ public class MockResponse {
     }
 
     private static TourAPICommonListResponse setTourAPIResponse(List<TourAPICommonItemResponse> tourAPIItemList, int totalCount, int page, int pageSize) {
-        return TourAPICommonListResponse.builder()
-                .tourAPICommonItemResponseList(tourAPIItemList)
-                .totalCount(totalCount)
-                .page(page)
-                .pageSize(pageSize)
-                .build();
+        return TourAPICommonListResponse.of(
+                tourAPIItemList,
+                totalCount,
+                page,
+                pageSize
+        );
     }
     public static ResponseWrapper testLocationBasedRes() {
         List<TourAPICommonItemResponse> item = new ArrayList<>();
@@ -351,11 +352,25 @@ public class MockResponse {
         return LocationResponseDto.of(addressName, weatherType, temperatures);
     }
 
+    public static SimplePlaceInformationDto testSimplePlaceInformationRes(TourAPICommonItemResponse item) {
+        return SimplePlaceInformationDto.of(
+                item.getTitle(),
+                item.getAddress(),
+                item.getContentId(),
+                ContentType.getContentTypeByCode(item.getContentTypeId()),
+                item.convertDistanceByFilter(X, Y),
+                item.getMapX(),
+                item.getMapY(),
+                item.getThumbnail(),
+                item.getTel()
+        );
+    }
+
     // PlaceController Test Mock Response
     public static PlaceResponseDto testGetPlaceRes() {
         ArrangeType arrangeType = null;
         List<SimplePlaceInformationDto> simpleDto = testPlaceRes().getTourAPICommonItemResponseList().stream()
-                .map(SimplePlaceInformationDto :: of)
+                .map(item -> testSimplePlaceInformationRes(item))
                 .collect(Collectors.toList());
 
         return PlaceResponseDto.of(simpleDto, testPlaceRes().getTotalCount(), testPlaceRes().getPage(), testPlaceRes().getPageSize(), arrangeType);
@@ -364,7 +379,7 @@ public class MockResponse {
     public static PlaceResponseDto testGetPlaceBasedAreaRes() {
         ArrangeType arrangeType = null;
         List<SimplePlaceInformationDto> simpleDto = testAreaPlaceRes().getTourAPICommonItemResponseList().stream()
-                .map(SimplePlaceInformationDto :: of)
+                .map(item -> testSimplePlaceInformationRes(item))
                 .collect(Collectors.toList());
 
         return PlaceResponseDto.of(simpleDto, testAreaPlaceRes().getTotalCount(), testAreaPlaceRes().getPage(), testAreaPlaceRes().getPageSize(), arrangeType);
@@ -372,7 +387,7 @@ public class MockResponse {
 
     public static SearchPlaceResponseDto testSearchPlaceBasedKeywordRes() {
         List<SimplePlaceInformationDto> simpleDto = testSearchRes().getTourAPICommonItemResponseList().stream()
-                .map(SimplePlaceInformationDto :: of)
+                .map(item -> testSimplePlaceInformationRes(item))
                 .collect(Collectors.toList());
 
         return SearchPlaceResponseDto.of(KEYWORD_QUERY, simpleDto, false, testSearchRes().getTotalCount(), testSearchRes().getPage(), testSearchRes().getPageSize());
@@ -381,7 +396,7 @@ public class MockResponse {
     public static  SearchPlaceResponseDto testSearchPlaceBasedAreaRes() {
         List<SimpleAreaResponseDto> simpleDto = new ArrayList<>();
         simpleDto.add(SimpleAreaResponseDto.of("서울 중구", "서울", "중구", X, Y, 1000.1711716167842));
-        return SearchPlaceResponseDto.of(AREA_QUERY, simpleDto, true);
+        return SearchPlaceResponseDto.of(AREA_QUERY, simpleDto, true, simpleDto.size());
     }
 
     public static DetailPlaceInformationResponseDto testGetDetailPlaceRes() {

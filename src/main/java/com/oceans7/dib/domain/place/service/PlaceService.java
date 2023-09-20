@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -77,7 +78,7 @@ public class PlaceService {
     public PlaceResponseDto getDivingFilteredPlace(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
         TourAPICommonListResponse tourAPIResponse = fetchDivingFilteredTourAPI(request, filterOption);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList());
+        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
 
         return PlaceResponseDto.of(
                 simplePlaceResponse,
@@ -104,64 +105,76 @@ public class PlaceService {
         }
 
         validateTourAPIResponse(tourAPIItemList.size());
-        applyFilterOption(tourAPIItemList, request, filterOption);
 
-        List<TourAPICommonItemResponse> paginateTourAPIItemList = paginateItems(tourAPIItemList, request);
+        List<TourAPICommonItemResponse> applyFilteredTourAPIItemList = applyFilterOption(tourAPIItemList, request, filterOption);
+        List<TourAPICommonItemResponse> paginateTourAPIItemList = paginateItems(applyFilteredTourAPIItemList, request);
 
-        return TourAPICommonListResponse.builder()
-                .tourAPICommonItemResponseList(paginateTourAPIItemList)
-                .totalCount(tourAPIItemList.size())
-                .page(request.getPageSize())
-                .pageSize(request.getPage())
-                .build();
+        return TourAPICommonListResponse.of(
+                        paginateTourAPIItemList,
+                        tourAPIItemList.size(),
+                        request.getPage(),
+                        request.getPageSize()
+                );
     }
 
     /**
      * filterOption에 따라 필터를 적용
      */
-    private void applyFilterOption(List<TourAPICommonItemResponse> tourAPIItemList, GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
+    private  List<TourAPICommonItemResponse> applyFilterOption(List<TourAPICommonItemResponse> tourAPIItemList, GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
         if(filterOption.isEmptyArea()) {
-            filterItemsByLocation(tourAPIItemList, request);
+            return filterItemsByLocation(tourAPIItemList, request);
         }
 
         if(!filterOption.isEmptyArea()) {
-            filterItemsByArea(tourAPIItemList, request);
+            return filterItemsByArea(tourAPIItemList, request);
         }
 
         if(!filterOption.isEmptyArrangeType()) {
-            filterItemsByArrangeType(tourAPIItemList, filterOption);
+            return filterItemsByArrangeType(tourAPIItemList, filterOption);
         }
+        return null;
     }
 
     /**
      * 지역 기반 조회의 다이빙 필터 데이터에서 지역명을 제외한 데이터를 삭제
      */
-    private void filterItemsByArea(List<TourAPICommonItemResponse> tourApiItemList, GetPlaceRequestDto request) {
-        tourApiItemList.removeIf(item -> !(item.getAddress().contains(request.getArea())));
+    private List<TourAPICommonItemResponse> filterItemsByArea(List<TourAPICommonItemResponse> tourAPIItemList, GetPlaceRequestDto request) {
+        List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
 
-        if(ValidatorUtil.isNotEmpty(request.getSigungu())) {
-            tourApiItemList.removeIf(item -> !(item.getAddress().contains(request.getSigungu())));
+        filteredItemList.removeIf(item -> !(item.getAddress().contains(request.getArea())));
+
+        if (ValidatorUtil.isNotEmpty(request.getSigungu())) {
+            filteredItemList.removeIf(item -> !(item.getAddress().contains(request.getSigungu())));
         }
+
+        return filteredItemList;
     }
 
     /**
      * 위치 기반 조회의 다이빙 필터 데이터에서 거리 계산 후 정렬
      */
-    private void filterItemsByLocation(List<TourAPICommonItemResponse> tourApiItemList, GetPlaceRequestDto request) {
-        tourApiItemList.forEach(item -> item.calculateDistance(request.getMapX(), request.getMapY()));
-        tourApiItemList.removeIf(item -> item.getDistance() > RADIUS_KM);
-        tourApiItemList.sort(Comparator.comparingDouble(TourAPICommonItemResponse::getDistance));
+    private List<TourAPICommonItemResponse> filterItemsByLocation(List<TourAPICommonItemResponse> tourAPIItemList, GetPlaceRequestDto request) {
+        List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
+
+        filteredItemList.removeIf(item -> item.convertDistanceByFilter(request.getMapX(), request.getMapY()) > RADIUS_KM);
+        filteredItemList.sort(Comparator.comparingDouble((TourAPICommonItemResponse item) -> item.convertDistanceByFilter(request.getMapX(), request.getMapY())));
+
+        return filteredItemList;
     }
 
     /**
      * 다이빙 필터 콘텐츠를 사용자 요구사항에 맞추어 정렬
      */
-    private void filterItemsByArrangeType(List<TourAPICommonItemResponse> tourApiItemList, PlaceFilterOptions filterOption) {
+    private List<TourAPICommonItemResponse> filterItemsByArrangeType(List<TourAPICommonItemResponse> tourAPIItemList, PlaceFilterOptions filterOption) {
+        List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
         ArrangeType arrangeType = ArrangeType.valueOf(filterOption.getArrangeType());
+
         switch(arrangeType) {
-            case A -> tourApiItemList.sort(Comparator.comparing(TourAPICommonItemResponse::getTitle));
-            case C -> tourApiItemList.sort(Comparator.comparing(TourAPICommonItemResponse::parseModifiedTimeToDateTime).reversed());
+            case A -> filteredItemList.sort(Comparator.comparing(TourAPICommonItemResponse::getTitle));
+            case C -> filteredItemList.sort(Comparator.comparing(TourAPICommonItemResponse::parseModifiedTimeToDateTime).reversed());
         }
+
+        return filteredItemList;
     }
 
     /**
@@ -185,7 +198,7 @@ public class PlaceService {
     private PlaceResponseDto getLocationBasedPlace(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
         TourAPICommonListResponse tourAPIResponse = fetchLocationBasedTourAPI(request, filterOption);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList());
+        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
 
         return PlaceResponseDto.of(
                 simplePlaceResponse,
@@ -209,15 +222,19 @@ public class PlaceService {
                 filterOption.getContentType(),
                 filterOption.getArrangeType()
         );
-
         validateTourAPIResponse(tourAPIResponse.getTotalCount());
+
+        List<TourAPICommonItemResponse> removedTourCourseTourAPIItemList = new ArrayList<>(tourAPIResponse.getTourAPICommonItemResponseList());
         if(filterOption.isEmptyContentType()) {
-            removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
+            removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
         }
 
-        convertDistanceForTourItem(tourAPIResponse.getTourAPICommonItemResponseList());
-
-        return tourAPIResponse;
+        return TourAPICommonListResponse.of(
+                removedTourCourseTourAPIItemList,
+                tourAPIResponse.getTotalCount(),
+                tourAPIResponse.getPage(),
+                tourAPIResponse.getPageSize()
+        );
     }
 
     /**
@@ -230,17 +247,14 @@ public class PlaceService {
     }
 
     /**
-     * 거리 단위 변환
-     */
-    private void convertDistanceForTourItem(List<TourAPICommonItemResponse> tourAPIItemList) {
-        tourAPIItemList.forEach(item -> item.convertDistanceMetersToKilometers());
-    }
-
-    /**
      * TOUR API 통신 데이터에서 Tour Course 콘텐츠 타입의 데이터를 삭제
      */
-    private void removeTourCourse(List<TourAPICommonItemResponse> tourAPIItemList) {
-        tourAPIItemList.removeIf(item -> item.getContentTypeId() == REMOVE_TARGET_CONTENT_TYPE_ID);
+    private List<TourAPICommonItemResponse> removeTourCourse(List<TourAPICommonItemResponse> tourAPIItemList) {
+        List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
+
+        filteredItemList.removeIf(item -> item.getContentTypeId() == REMOVE_TARGET_CONTENT_TYPE_ID);
+
+        return filteredItemList;
     }
 
     /**
@@ -256,7 +270,7 @@ public class PlaceService {
 
         TourAPICommonListResponse tourAPIResponse = fetchAreaBasedTourAPI(request, areaFilterOption);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList());
+        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
 
         return PlaceResponseDto.of(
                 simplePlaceResponse,
@@ -304,27 +318,37 @@ public class PlaceService {
         );
 
         validateTourAPIResponse(tourAPIResponse.getTotalCount());
+
+        List<TourAPICommonItemResponse> removedTourCourseTourAPIItemList = new ArrayList<>(tourAPIResponse.getTourAPICommonItemResponseList());
         if(filterOption.isEmptyContentType()) {
-            removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
+            removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
         }
 
-        calculateDistanceForTourItem(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
-
-        return tourAPIResponse;
+        return TourAPICommonListResponse.of(
+                removedTourCourseTourAPIItemList,
+                tourAPIResponse.getTotalCount(),
+                tourAPIResponse.getPage(),
+                tourAPIResponse.getPageSize()
+        );
     }
 
-    /**
-     * 거리 계산 및 필터링 수행
-     */
-    private void calculateDistanceForTourItem(List<TourAPICommonItemResponse> tourAPIItemList, double reqX, double reqY) {
-        tourAPIItemList.forEach(item -> item.calculateDistance(reqX, reqY));
-    }
 
     /**
      * TOUR API 응답 리스트를 SimplePlaceInformationDto 리스트로 변환
      */
-    private List<SimplePlaceInformationDto> convertTourAPIItemsToSimpleInfo (List<TourAPICommonItemResponse> tourAPIItemList) {
-        return tourAPIItemList.stream().map(SimplePlaceInformationDto :: of).collect(Collectors.toList());
+    private List<SimplePlaceInformationDto> convertTourAPIItemsToSimpleInfo (List<TourAPICommonItemResponse> tourAPIItemList, double reqX, double reqY) {
+        return tourAPIItemList.stream()
+                .map(item -> SimplePlaceInformationDto.of(
+                        item.getTitle(),
+                        item.getAddress(),
+                        item.getContentId(),
+                        ContentType.getContentTypeByCode(item.getContentTypeId()),
+                        item.convertDistanceByFilter(reqX, reqY),
+                        item.getMapX(),
+                        item.getMapY(),
+                        item.getThumbnail(),
+                        item.getTel()
+                )).collect(Collectors.toList());
     }
 
     /**
@@ -355,12 +379,13 @@ public class PlaceService {
         boolean isAreaSearch = true;
         LocalResponse localAPIResponse = fetchSearchAddressLocalAPI(request);
 
-        List<SimpleAreaResponseDto> simplePlaceResponse = convertLocalAPIItemsToSimpleInfo(localAPIResponse.getAddressItems());
+        List<SimpleAreaResponseDto> simplePlaceResponse = convertLocalAPIItemsToSimpleInfo(localAPIResponse.getAddressItems(), request.getMapX(), request.getMapY());
 
         return SearchPlaceResponseDto.of(
                 request.getKeyword(),
                 simplePlaceResponse,
-                isAreaSearch
+                isAreaSearch,
+                simplePlaceResponse.size()
         );
     }
 
@@ -371,15 +396,13 @@ public class PlaceService {
     private LocalResponse fetchSearchAddressLocalAPI(SearchPlaceRequestDto request) {
         LocalResponse localAPIResponse = kakaoLocalAPIService.getSearchAddressLocalApi(request.getKeyword());
 
-        calculateDistanceForLocalAPIItem(localAPIResponse.getAddressItems(), request.getMapX(), request.getMapY());
-
         return localAPIResponse;
     }
 
     /**
      * KAKAO LOCAL API 응답을 SimpleAreaResponseDto 리스트로 변환
      */
-    private List<SimpleAreaResponseDto> convertLocalAPIItemsToSimpleInfo(List<AddressItem> localAPIItemList) {
+    private List<SimpleAreaResponseDto> convertLocalAPIItemsToSimpleInfo(List<AddressItem> localAPIItemList, double reqX, double reqY) {
         String regionAddressType = "REGION";
 
         return localAPIItemList.stream().map(item -> {
@@ -391,16 +414,9 @@ public class PlaceService {
                             addressInfo.getRegion2depthName(),
                             item.getX(),
                             item.getY(),
-                            item.getDistance());
+                            item.convertDistance(reqX, reqY));
                 })
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * 거리 계산
-     */
-    private void calculateDistanceForLocalAPIItem(List<AddressItem> localAPIItemList, double reqX, double reqY) {
-        localAPIItemList.forEach(item -> item.calculateDistance(reqX, reqY));
     }
 
     /**
@@ -411,7 +427,7 @@ public class PlaceService {
         boolean isAreaSearch = false;
         TourAPICommonListResponse tourAPIResponse = fetchSearchKeywordTourAPI(request);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList());
+        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
 
         return SearchPlaceResponseDto.of(
                 request.getKeyword(),
@@ -431,11 +447,14 @@ public class PlaceService {
         TourAPICommonListResponse tourAPIResponse = tourAPIService.getSearchKeywordTourApi(request.getKeyword(), request.getPage(), request.getPageSize());
 
         validateTourAPIResponse(tourAPIResponse.getTotalCount());
-        removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
+        List<TourAPICommonItemResponse> removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
 
-        calculateDistanceForTourItem(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
-
-        return tourAPIResponse;
+        return TourAPICommonListResponse.of(
+                removedTourCourseTourAPIItemList,
+                tourAPIResponse.getTotalCount(),
+                tourAPIResponse.getPage(),
+                tourAPIResponse.getPageSize()
+        );
     }
 
     /**
@@ -450,7 +469,11 @@ public class PlaceService {
         List<String> imageUrlList = transformImageUrlToString(getImageItemList(contentId));
         List<DetailInfoItemResponse> infoAPIResponse = getInfoItemList(contentId, contentType);
 
-        List<FacilityInfo> facilityInfoList = getFacilityInfo(introAPIItem, infoAPIResponse);
+        List<FacilityInfo> facilityInfoByIntro = getFacilityInfo(introAPIItem);
+        List<FacilityInfo> facilityInfoByInfo = getFacilityInfo(infoAPIResponse);
+
+        List<FacilityInfo> facilityInfoList = Stream.concat(facilityInfoByIntro.stream(), facilityInfoByInfo.stream())
+                .collect(Collectors.toList());
 
         return DetailPlaceInformationResponseDto.of(
                 request.getContentId(),
@@ -527,12 +550,11 @@ public class PlaceService {
     }
 
     /**
-     * 반복 정보 Item 가져오기 (TOURIST_SPOT 타입 한정)
+     * 반복 정보 Item 가져오기
      * @return DetailInfoItemResponse 타입의 List
      */
     private List<DetailInfoItemResponse> getInfoItemList(Long contentId, ContentType contentType) {
-        return (contentType != ContentType.TOURIST_SPOT) ?
-                null : fetchInfoAPI(contentId, String.valueOf(contentType.getCode())).getDetailInfoItemResponses();
+        return fetchInfoAPI(contentId, String.valueOf(contentType.getCode())).getDetailInfoItemResponses();
     }
 
     /**
@@ -561,37 +583,34 @@ public class PlaceService {
     }
 
     /**
-     * 편의 시설 정보 조회
+     * 편의 시설 정보 조회 (intro item)
      * @return FacilityInfo 타입의 List
      */
-    private List<FacilityInfo> getFacilityInfo(DetailIntroItemResponse introAPIItem, List<DetailInfoItemResponse> infoAPIItemList) {
-        List<FacilityInfo> facilityInfoList = introAPIItem.getFacilityAvailabilityInfo();
-
-        addFacilityInfoByInfoItem(facilityInfoList, infoAPIItemList);
-
-        return facilityInfoList;
+    private List<FacilityInfo> getFacilityInfo(DetailIntroItemResponse introAPIItem) {
+        return introAPIItem.getFacilityAvailabilityInfo();
     }
 
     /**
-     * Intro API 응답에서 편의 시설 정보 유무 조회
+     * 편의 시설 정보 조회 (info item)
      * @return FacilityInfo 타입의 List
      */
-    private void addFacilityInfoByInfoItem(List<FacilityInfo> facilityInfoList, List<DetailInfoItemResponse> infoAPIItemList) {
+    private List<FacilityInfo> getFacilityInfo(List<DetailInfoItemResponse> infoAPIItemList) {
+        List<FacilityInfo> updatedFacilityInfoList = new ArrayList<>();
         String restroomName = "화장실";
         String disableName = "장애인 편의시설";
 
-        if(ValidatorUtil.isNotEmpty(infoAPIItemList)) {
-            boolean flagOfRestroom = false;
-            boolean flagOfDisable = false;
+        boolean flagOfRestroom = false;
+        boolean flagOfDisable = false;
 
-            for(DetailInfoItemResponse infoItem : infoAPIItemList) {
-                if(infoItem.getInfoName().contains(restroomName)) { flagOfRestroom = true; }
-                if(infoItem.getInfoName().contains(disableName)) { flagOfDisable = true; }
-            }
-
-            facilityInfoList.add(FacilityInfo.of(FacilityType.RESTROOM, flagOfRestroom));
-            facilityInfoList.add(FacilityInfo.of(FacilityType.DISABLED_PERSON_FACILITY, flagOfDisable));
+        for(DetailInfoItemResponse infoItem : infoAPIItemList) {
+            if(infoItem.getInfoName().contains(restroomName)) { flagOfRestroom = true; }
+            if(infoItem.getInfoName().contains(disableName)) { flagOfDisable = true; }
         }
+
+        updatedFacilityInfoList.add(FacilityInfo.of(FacilityType.RESTROOM, flagOfRestroom));
+        updatedFacilityInfoList.add(FacilityInfo.of(FacilityType.DISABLED_PERSON_FACILITY, flagOfDisable));
+
+        return updatedFacilityInfoList;
     }
 
     /**

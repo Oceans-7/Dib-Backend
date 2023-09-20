@@ -5,14 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TourAPICommonListResponse {
     @JsonProperty("item")
     private List<TourAPICommonItemResponse> tourAPICommonItemResponseList;
@@ -41,11 +44,14 @@ public class TourAPICommonListResponse {
         this.tourAPICommonItemResponseList = new ArrayList<>(Arrays.asList(objectMapper.treeToValue(itemNode, TourAPICommonItemResponse[].class)));
     }
 
-    @Builder
-    public TourAPICommonListResponse(List<TourAPICommonItemResponse> tourAPICommonItemResponseList, int totalCount, int page, int pageSize)  {
-        this.tourAPICommonItemResponseList = tourAPICommonItemResponseList;
-        this.totalCount = totalCount;
-        this.page = page;
-        this.pageSize = pageSize;
+    public static TourAPICommonListResponse of(List<TourAPICommonItemResponse> tourAPICommonItemResponseList, int totalCount, int page, int pageSize)  {
+        TourAPICommonListResponse tourAPIResponse = new TourAPICommonListResponse();
+
+        tourAPIResponse.tourAPICommonItemResponseList = tourAPICommonItemResponseList;
+        tourAPIResponse.totalCount = totalCount;
+        tourAPIResponse.page = page;
+        tourAPIResponse.pageSize = pageSize;
+
+        return tourAPIResponse;
     }
 }

@@ -34,8 +34,8 @@ public class AddressItem {
 
     private double distance;
 
-    public void calculateDistance(double requestX, double requestY) {
-        this.distance = CoordinateUtil.calculateDistance(requestX, requestY, this.x, this.y);
+    public double convertDistance(double requestX, double requestY) {
+        return CoordinateUtil.calculateDistance(requestX, requestY, this.x, this.y);
     }
 
 }

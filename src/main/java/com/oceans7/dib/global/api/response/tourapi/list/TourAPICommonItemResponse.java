@@ -3,9 +3,7 @@ package com.oceans7.dib.global.api.response.tourapi.list;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oceans7.dib.global.util.CoordinateUtil;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TourAPICommonItemResponse {
     // 콘텐츠 ID
@@ -68,8 +67,21 @@ public class TourAPICommonItemResponse {
     @JsonProperty("modifiedtime")
     private String modifiedTime;
 
-    public TourAPICommonItemResponse() {
-
+    public TourAPICommonItemResponse(TourAPICommonItemResponse item) {
+        this.contentId = item.getContentId();
+        this.contentTypeId = item.getContentTypeId();
+        this.title = item.getTitle();
+        this.tel = item.getTel();
+        this.thumbnail = item.getThumbnail();
+        this.addr1 = item.getAddr1();
+        this.addr2 = item.getAddr2();
+        this.address = item.getAddress();
+        this.mapX = item.getMapX();
+        this.mapY = item.getMapY();
+        this.distance = item.getDistance();
+        this.areaCode = item.getAreaCode();
+        this.sigunguCode = item.getSigunguCode();
+        this.modifiedTime = item.getModifiedTime();
     }
 
     public String getAddress() {
@@ -81,11 +93,9 @@ public class TourAPICommonItemResponse {
         return LocalDateTime.parse(modifiedTime, formatter);
     }
 
-    public void convertDistanceMetersToKilometers() {
-        this.distance = CoordinateUtil.convertMetersToKilometers(this.distance);
-    }
-
-    public void calculateDistance(double requestX, double requestY) {
-        this.distance = CoordinateUtil.calculateDistance(requestX, requestY, this.mapX, this.mapY);
+    public double convertDistanceByFilter(double requestX, double requestY) {
+        return distance == 0.0 ?
+                CoordinateUtil.calculateDistance(requestX, requestY, mapX, mapY) :
+                CoordinateUtil.convertMetersToKilometers(distance);
     }
 }

@@ -34,8 +34,7 @@ public class SearchPlaceResponseDto {
     @Schema(description = "지역명 검색 시 true: 지역명 검색 시 areas 변수로 결과 전달", example = "true")
     private boolean isAreaSearch;
 
-    public static SearchPlaceResponseDto of(String keyword, List<SimplePlaceInformationDto> simpleDto, boolean isAreaSearch,
-                                            int count, int page, int pageSize) {
+    public static SearchPlaceResponseDto of(String keyword, List<SimplePlaceInformationDto> simpleDto, boolean isAreaSearch, int count, int page, int pageSize) {
         SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
 
         searchPlaceResponse.keyword = keyword;
@@ -48,12 +47,13 @@ public class SearchPlaceResponseDto {
         return searchPlaceResponse;
     }
 
-    public static SearchPlaceResponseDto of(String keyword, List<SimpleAreaResponseDto> simpleDto, boolean isAreaSearch) {
+    public static SearchPlaceResponseDto of(String keyword, List<SimpleAreaResponseDto> simpleDto, boolean isAreaSearch, int count) {
         SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
 
         searchPlaceResponse.keyword = keyword;
         searchPlaceResponse.areas = simpleDto;
         searchPlaceResponse.isAreaSearch = isAreaSearch;
+        searchPlaceResponse.count = count;
 
         return searchPlaceResponse;
     }
