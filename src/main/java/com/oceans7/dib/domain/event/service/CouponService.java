@@ -39,7 +39,9 @@ public class CouponService {
     }
 
     private void getIssuedCoupon(User user, CouponGroup couponGroup) {
-        couponRepository.save(Coupon.of(LocalDate.now(), couponGroup, user, UseStatus.UNUSED));
+        Coupon coupon = couponRepository.save(Coupon.of(LocalDate.now(), UseStatus.UNUSED));
+        coupon.setUser(user);
+        coupon.setCouponGroup(couponGroup);
     }
 
     private ApplicationException handleNotFoundException() {

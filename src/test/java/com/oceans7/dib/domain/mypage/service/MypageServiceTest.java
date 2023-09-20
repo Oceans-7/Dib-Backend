@@ -2,8 +2,11 @@ package com.oceans7.dib.domain.mypage.service;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
+import com.oceans7.dib.domain.event.entity.Event;
+import com.oceans7.dib.domain.event.entity.UseStatus;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.CouponRepository;
+import com.oceans7.dib.domain.event.repository.EventRepository;
 import com.oceans7.dib.domain.mypage.dto.request.UpdateProfileRequestDto;
 import com.oceans7.dib.domain.mypage.dto.response.*;
 import com.oceans7.dib.domain.place.ContentType;
@@ -20,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,19 +31,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 public class MypageServiceTest {
     @Autowired
-    MypageService mypageService;
+    private MypageService mypageService;
 
     @Autowired
-    CouponGroupRepository couponGroupRepository;
+    private EventRepository eventRepository;
 
     @Autowired
-    CouponRepository couponRepository;
+    private CouponGroupRepository couponGroupRepository;
 
     @Autowired
-    DibRepository dibRepository;
+    private CouponRepository couponRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private DibRepository dibRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private User testUser;
 
@@ -48,12 +55,21 @@ public class MypageServiceTest {
         testUser = userRepository.save(MockRequest.testUser());
     }
 
-    private CouponGroup makeCouponGroup() {
-        return couponGroupRepository.save(MockRequest.testCouponGroup());
+    private Event makeEvent() {
+        return eventRepository.save(MockRequest.testEvent());
     }
 
-    private Coupon issueCoupon(CouponGroup testCouponGroup) {
-        return couponRepository.save(MockRequest.testCoupon(testUser, testCouponGroup));
+    private CouponGroup makeCouponGroup(Event event) {
+        CouponGroup couponGroup = MockRequest.testCouponGroup();
+        couponGroup.setEvent(event);
+        return couponGroupRepository.save(couponGroup);
+    }
+
+    private Coupon issueCoupon(CouponGroup couponGroup) {
+        Coupon coupon = MockRequest.testCoupon();
+        coupon.setUser(testUser);
+        coupon.setCouponGroup(couponGroup);
+        return couponRepository.save(coupon);
     }
 
     private Dib makeDib() {
@@ -64,7 +80,7 @@ public class MypageServiceTest {
     @DisplayName("프로필 조회")
     public void getMyProfile() {
         // given
-        issueCoupon(makeCouponGroup());
+        issueCoupon(makeCouponGroup(makeEvent()));
         makeDib();
 
         // when
@@ -102,7 +118,7 @@ public class MypageServiceTest {
     @DisplayName("쿠폰 목록 조회")
     public void getMyCoupons() {
         // given
-        CouponGroup couponGroup = makeCouponGroup();
+        CouponGroup couponGroup = makeCouponGroup(makeEvent());
         Coupon coupon = issueCoupon(couponGroup);
 
         // when
@@ -112,14 +128,14 @@ public class MypageServiceTest {
 
         // then
         for(DetailCouponResponseDto couponResponseDto : response.getCouponList()) {
-            assertThat(couponResponseDto.getName()).isEqualTo(couponGroup.getName());
             assertThat(couponResponseDto.getRegion()).isEqualTo(couponGroup.getRegion());
-            assertThat(couponResponseDto.getCategory()).isEqualTo(couponGroup.getCategory());
+            assertThat(couponResponseDto.getCouponType()).isEqualTo(couponGroup.getCouponType().getKeyword());
             assertThat(couponResponseDto.getDiscountPercentage()).isEqualTo(couponGroup.getDiscountPercentage());
-            assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate());
-            assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+            assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate().format(formatter));
+            assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate().format(formatter));
 
-            assertThat(couponResponseDto.getUseStatus()).isEqualTo(coupon.getUseStatus());
+            assertThat(couponResponseDto.isUse()).isEqualTo(coupon.getUseStatus() == UseStatus.USED ? true : false);
             assertThat(couponResponseDto.getCouponId()).isEqualTo(coupon.getCouponId());
 
             Long remainingDays = Duration.between(

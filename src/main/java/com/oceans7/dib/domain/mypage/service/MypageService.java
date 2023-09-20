@@ -59,7 +59,7 @@ public class MypageService {
         List<Coupon> couponList = couponRepository.findPossibleCouponsOrderByClosingDateAsc(userId);
 
         List<DetailCouponResponseDto> detailCouponResponseDtoList = couponList.stream()
-                .map(DetailCouponResponseDto :: of)
+                .map(DetailCouponResponseDto :: from)
                 .collect(Collectors.toList());
 
         return CouponResponseDto.of(detailCouponResponseDtoList);

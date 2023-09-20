@@ -1,8 +1,6 @@
 package com.oceans7.dib.global;
 
-import com.oceans7.dib.domain.event.entity.Coupon;
-import com.oceans7.dib.domain.event.entity.CouponGroup;
-import com.oceans7.dib.domain.event.entity.UseStatus;
+import com.oceans7.dib.domain.event.entity.*;
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.mypage.dto.request.UpdateProfileRequestDto;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
@@ -101,12 +99,20 @@ public class MockRequest {
         return CoordinateUtil.convertGRID_GPS(X, Y);
     }
 
-    public static CouponGroup testCouponGroup() {
-        return CouponGroup.of("제주 서귀포시 10% 할인 쿠폰", "제주 서귀포시", "식당", "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1));
+    public static Event testEvent() {
+        return Event.of("FF0770EF", "FFEBF4FE", "https://picsum.photos/150/190");
     }
 
-    public static Coupon testCoupon(User user, CouponGroup couponGroup) {
-        return Coupon.of(LocalDate.now(), couponGroup, user, UseStatus.UNUSED);
+    public static CouponGroup testCouponGroup() {
+        return CouponGroup.of("제주 서귀포 숙박 할인권", "제주 서귀포", CouponType.ACCOMMODATION, "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1), "https://picsum.photos/150/190", "https://picsum.photos/150/190");
+    }
+
+    public static CouponGroup testCouponGroup2() {
+        return CouponGroup.of("제주 서귀포 다이빙 체험 할인권", "제주 서귀포", CouponType.SCUBA_DIVING, "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1), "https://picsum.photos/150/190", "https://picsum.photos/150/190");
+    }
+
+    public static Coupon testCoupon() {
+        return Coupon.of(LocalDate.now(), UseStatus.UNUSED);
     }
 
     public static Dib testDib(User user) {

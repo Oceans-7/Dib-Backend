@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,8 +24,9 @@ public class CouponGroup {
     @Column(name = "region")
     private String region;
 
-    @Column(name = "category")
-    private String category;
+    @Column(name = "coupon_type")
+    @Enumerated(EnumType.STRING)
+    private CouponType couponType;
 
     @Column(name = "check_code", length = 4)
     private String checkCode;
@@ -38,17 +40,33 @@ public class CouponGroup {
     @Column(name = "closing_date")
     private LocalDate closingDate;
 
-    public static CouponGroup of(String name, String region, String category, String checkCode,
-                                 int discountPercentage, LocalDate startDate, LocalDate closingDate) {
+    @Column(name = "coupon_image_url")
+    private String couponImageUrl;
+
+    @Column(name = "partner_image_url")
+    private String partnerImageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
+
+    public static CouponGroup of(String name, String region, CouponType couponType, String checkCode,
+                                 int discountPercentage, LocalDate startDate, LocalDate closingDate, String couponImageUrl, String partnerImageUrl) {
         CouponGroup couponGroup = new CouponGroup();
         couponGroup.name = name;
         couponGroup.region = region;
-        couponGroup.category = category;
+        couponGroup.couponType = couponType;
         couponGroup.checkCode = checkCode;
         couponGroup.discountPercentage = discountPercentage;
         couponGroup.startDate = startDate;
         couponGroup.closingDate = closingDate;
+        couponGroup.couponImageUrl = couponImageUrl;
+        couponGroup.partnerImageUrl = partnerImageUrl;
 
         return couponGroup;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 }
