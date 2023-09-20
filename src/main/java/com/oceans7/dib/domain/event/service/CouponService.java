@@ -2,7 +2,7 @@ package com.oceans7.dib.domain.event.service;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
-import com.oceans7.dib.domain.event.entity.UseStatus;
+import com.oceans7.dib.domain.event.entity.CouponStatus;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.CouponRepository;
 import com.oceans7.dib.domain.user.entity.User;
@@ -38,8 +38,12 @@ public class CouponService {
         getIssuedCoupon(user, couponGroup);
     }
 
+    private void updateExpiredCoupon() {
+
+    }
+
     private void getIssuedCoupon(User user, CouponGroup couponGroup) {
-        Coupon coupon = couponRepository.save(Coupon.of(LocalDate.now(), UseStatus.UNUSED));
+        Coupon coupon = couponRepository.save(Coupon.of(LocalDate.now(), CouponStatus.UNUSED));
         coupon.setUser(user);
         coupon.setCouponGroup(couponGroup);
     }

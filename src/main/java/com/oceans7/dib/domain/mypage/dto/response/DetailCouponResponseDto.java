@@ -2,7 +2,7 @@ package com.oceans7.dib.domain.mypage.dto.response;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
-import com.oceans7.dib.domain.event.entity.UseStatus;
+import com.oceans7.dib.domain.event.entity.CouponStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-
-import static com.oceans7.dib.domain.event.entity.UseStatus.USED;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -46,7 +44,7 @@ public class DetailCouponResponseDto {
         DetailCouponResponseDto couponResponseDto = new DetailCouponResponseDto();
 
         couponResponseDto.couponId = coupon.getCouponId();
-        couponResponseDto.isUse = coupon.getUseStatus() == UseStatus.USED ? true : false;
+        couponResponseDto.isUse = coupon.getStatus() == CouponStatus.USED ? true : false;
         couponResponseDto.region = couponGroup.getRegion();
         couponResponseDto.couponType = couponGroup.getCouponType().getKeyword();
         couponResponseDto.discountPercentage = couponGroup.getDiscountPercentage();

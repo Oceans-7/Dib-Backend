@@ -2,8 +2,8 @@ package com.oceans7.dib.domain.mypage.service;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
+import com.oceans7.dib.domain.event.entity.CouponStatus;
 import com.oceans7.dib.domain.event.entity.Event;
-import com.oceans7.dib.domain.event.entity.UseStatus;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.CouponRepository;
 import com.oceans7.dib.domain.event.repository.EventRepository;
@@ -135,7 +135,7 @@ public class MypageServiceTest {
             assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate().format(formatter));
             assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate().format(formatter));
 
-            assertThat(couponResponseDto.isUse()).isEqualTo(coupon.getUseStatus() == UseStatus.USED ? true : false);
+            assertThat(couponResponseDto.isUse()).isEqualTo(coupon.getStatus() == CouponStatus.USED ? true : false);
             assertThat(couponResponseDto.getCouponId()).isEqualTo(coupon.getCouponId());
 
             Long remainingDays = Duration.between(

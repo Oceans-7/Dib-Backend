@@ -21,9 +21,9 @@ public class Coupon {
     @Column(name = "issued_date", nullable = false)
     private LocalDate issuedDate;
 
-    @Column(name = "use_status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private UseStatus useStatus;
+    private CouponStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_group_id", nullable = false)
@@ -33,11 +33,11 @@ public class Coupon {
     @JoinColumn(name = "id", nullable = false)
     private User user;
 
-    public static Coupon of(LocalDate issuedDate, UseStatus useStatus) {
+    public static Coupon of(LocalDate issuedDate, CouponStatus status) {
         Coupon coupon = new Coupon();
 
         coupon.issuedDate = issuedDate;
-        coupon.useStatus = useStatus;
+        coupon.status = status;
 
         return coupon;
     }

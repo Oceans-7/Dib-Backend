@@ -113,7 +113,7 @@ public class MockRequest {
     }
 
     public static Coupon testCoupon() {
-        return Coupon.of(LocalDate.now(), UseStatus.UNUSED);
+        return Coupon.of(LocalDate.now(), CouponStatus.UNUSED);
     }
 
     public static Dib testDib(User user) {
@@ -122,9 +122,5 @@ public class MockRequest {
 
     public static UpdateProfileRequestDto testUpdateProfileReq() {
         return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
-    }
-
-    public static UserRefreshToken testUserRefreshToken(User user, String refreshToken) {
-        return UserRefreshToken.of(refreshToken, user);
     }
 }

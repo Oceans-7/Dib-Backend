@@ -1,7 +1,7 @@
 package com.oceans7.dib.domain.event.repository;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
-import com.oceans7.dib.domain.event.entity.UseStatus;
+import com.oceans7.dib.domain.event.entity.CouponStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,7 @@ public class CouponRepositoryImpl implements CouponRepositoryCustom {
                 .selectFrom(coupon)
                 .join(coupon.couponGroup, couponGroup)
                 .where(coupon.user.id.eq(userId),
-                        coupon.useStatus.eq(UseStatus.UNUSED),
+                        coupon.status.eq(CouponStatus.UNUSED),
                         couponGroup.closingDate.after(LocalDate.now()))
                 .orderBy(couponGroup.closingDate.asc())
                 .fetch();
@@ -34,7 +34,7 @@ public class CouponRepositoryImpl implements CouponRepositoryCustom {
                 .from(coupon)
                 .innerJoin(coupon.couponGroup, couponGroup)
                 .where(coupon.user.id.eq(userId),
-                        coupon.useStatus.eq(UseStatus.UNUSED),
+                        coupon.status.eq(CouponStatus.UNUSED),
                         couponGroup.closingDate.after(LocalDate.now()))
                 .fetchFirst();
     }
