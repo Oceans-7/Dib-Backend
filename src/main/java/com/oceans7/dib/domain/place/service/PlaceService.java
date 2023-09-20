@@ -19,7 +19,7 @@ import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListResponse;
-import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemFactoryImpl;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemFactory;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonItemResponse;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 public class PlaceService {
     private final DataGoKrAPIService tourAPIService;
     private final KakaoLocalAPIService kakaoLocalAPIService;
+    private final DetailIntroItemFactory detailIntroItemFactory;
 
     private final UserRepository userRepository;
     private final DibRepository dibRepository;
@@ -504,7 +505,6 @@ public class PlaceService {
      * @return DetailIntroItemResponse 타입
      */
     private DetailIntroItemResponse getIntroItem(Long contentId, ContentType contentType) {
-        DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
         DetailIntroResponse introAPIResponse = fetchIntroAPI(contentId, String.valueOf(contentType.getCode()));
 
         return detailIntroItemFactory.getIntroItem(contentType, introAPIResponse);

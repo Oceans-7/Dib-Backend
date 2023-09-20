@@ -3,7 +3,9 @@ package com.oceans7.dib.global.api.response.tourapi.detail.intro;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DetailIntroItemFactoryImpl implements DetailIntroItemFactory {
 
     @Override

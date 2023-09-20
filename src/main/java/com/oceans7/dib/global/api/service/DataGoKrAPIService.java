@@ -5,7 +5,7 @@ import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.tourapi.detail.common.DetailCommonListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.image.DetailImageListResponse;
 import com.oceans7.dib.global.api.response.tourapi.detail.info.DetailInfoListResponse;
-import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemFactoryImpl;
+import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemFactory;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse;
 import com.oceans7.dib.global.api.response.tourapi.list.AreaCodeList;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class DataGoKrAPIService extends OpenAPIService {
 
     private final DataGoKrApi dataGoKrApi;
+    private final DetailIntroItemFactory detailIntroItemFactory;
 
     @Value("${open-api.data-go-kr.service-decode-key}")
     private String serviceKey;
@@ -90,10 +91,7 @@ public class DataGoKrAPIService extends OpenAPIService {
     }
 
     private DetailIntroResponse parsingIntroResponseByContentType(String result, ContentType contentType) {
-        DetailIntroItemFactoryImpl detailIntroItemFactory = new DetailIntroItemFactoryImpl();
-
         return parsingJsonObject(result, detailIntroItemFactory.getClassType(contentType));
-
     }
 
     /**
