@@ -1,5 +1,6 @@
 package com.oceans7.dib.global;
 
+import com.oceans7.dib.domain.custom_content.entity.CustomContent;
 import com.oceans7.dib.domain.event.entity.*;
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.mypage.dto.request.UpdateProfileRequestDto;
@@ -14,7 +15,12 @@ import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user_refresh_token.entity.UserRefreshToken;
 import com.oceans7.dib.global.util.CoordinateUtil;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 public class MockRequest {
@@ -122,5 +128,23 @@ public class MockRequest {
 
     public static UpdateProfileRequestDto testUpdateProfileReq() {
         return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+    }
+
+    public static CustomContent testCustomContent() {
+        try{
+            ClassPathResource resource = new ClassPathResource("custom-content-test-data.json");
+            InputStream inputStream = resource.getInputStream();
+
+            String jsonContent = new String(FileCopyUtils.copyToByteArray(inputStream), StandardCharsets.UTF_8);
+            return CustomContent.of(
+                    jsonContent,
+                    "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg",
+                    "제주 서귀포",
+                    "다이빙 명소 및 관광지 파헤치기"
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

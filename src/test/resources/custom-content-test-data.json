@@ -1,0 +1,78 @@
+{
+  "titleSection": {
+    "thumbnailUrl": "제목 대표 사진 URL",
+    "title": "섹션의 제목",
+    "subTitle": "소제목",
+    "region": "지역명",
+    "keyword": "하이라이트가 들어가는 키워드"
+  },
+  "regionSection": {
+    "title": "섹션의 제목",
+    "imageTopContent": "이미지 상단 내용",
+    "imageUrl": "이미지 URL",
+    "imageBottomContent": "이미지 하단 내용",
+    "keyword": "하이라이트가 들어가는 키워드"
+  },
+  "divingPointSection": {
+    "title": "섹션의 제목",
+    "imageUrl": "이미지 URL",
+    "subTitle": "소제목",
+    "content": "설명",
+    "keyword": "하이라이트가 들어가는 키워드"
+  },
+  "divingShopSection": {
+    "title": "섹션의 제목",
+    "keyword": "하이라이트가 들어가는 키워드",
+    "firstShopInfo": {
+      "title": "제목1",
+      "imageUrl": "이미지 URL",
+      "contentId": "콘텐츠1 ID"
+    },
+    "secondShopInfo": {
+      "title": "제목2",
+      "imageUrl": "이미지 URL",
+      "contentId": "콘텐츠2 ID"
+    }
+  },
+  "restaurantSection": {
+    "title": "restaurant 섹션의 제목",
+    "keyword": "하이라이트가 들어가는 키워드",
+    "restaurantList": [
+      {
+        "title": "맛집 제목",
+        "imageUrl": "이미지 URL",
+        "content": "내용",
+        "contentId": "콘텐츠 ID"
+      },
+      {
+        "title": "맛집 제목",
+        "imageUrl": "이미지 URL",
+        "content": "내용",
+        "contentId": "콘텐츠 ID"
+      },
+      {
+        "title": "맛집 제목",
+        "imageUrl": "이미지 URL",
+        "content": "내용",
+        "contentId": "콘텐츠 ID"
+      },
+      {
+        "title": "맛집 제목",
+        "imageUrl": "이미지 URL",
+        "content": "내용",
+        "contentId": "콘텐츠 ID"
+      },
+      {
+        "title": "맛집 제목",
+        "imageUrl": "이미지 URL",
+        "content": "내용",
+        "contentId": "콘텐츠 ID"
+      }
+    ],
+    "couponSection": {
+      "title": "섹션의 제목 ex.할인 쿠폰",
+      "content": "제주 스쿠버 다이빙 업체,\n 할인 받고 이용하고 싶다면?",
+      "eventId": "이벤트 프로모션 ID"
+    }
+  }
+}
