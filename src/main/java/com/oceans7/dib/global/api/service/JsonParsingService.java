@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 
-public abstract class OpenAPIService {
+public abstract class JsonParsingService {
 
-    <T> T parsingJsonObject(String json, Class<T> valueType) {
+    protected <T> T parsingJsonObject(String json, Class<T> valueType) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             T result = mapper.readValue(json, valueType);
