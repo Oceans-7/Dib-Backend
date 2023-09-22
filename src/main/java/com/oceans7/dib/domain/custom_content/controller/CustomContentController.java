@@ -28,7 +28,7 @@ public class CustomContentController {
     private final CustomContentService customContentService;
 
     @Operation(
-            summary = "짗[ 콘텐츠 리스트 조회",
+            summary = "자체 콘텐츠 리스트 조회",
             description = "메인 홈 상단 자체 콘텐츠 리스트를 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
