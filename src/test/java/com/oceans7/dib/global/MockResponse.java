@@ -7,6 +7,8 @@ import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
 import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
 import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
+import com.oceans7.dib.domain.notice.entity.MarineNotice;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.domain.place.dto.response.*;
@@ -457,5 +459,11 @@ public class MockResponse {
                 testCouponSectionRes(secondCouponGroup),
                 testPartnerSectionRes(firstCouponGroup, secondCouponGroup)
         );
+    }
+
+    public static List<NoticeResponseDto> testMarineNoticeRes(MarineNotice marineNotice) {
+        List<NoticeResponseDto> noticeResponse = new ArrayList<>();
+        noticeResponse.add(NoticeResponseDto.from(marineNotice));
+        return noticeResponse;
     }
 }
