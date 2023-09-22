@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class MarineServiceTest {
+public class MarineNoticeServiceTest {
     @Autowired
     private MarineNoticeService marineNoticeService;
 
