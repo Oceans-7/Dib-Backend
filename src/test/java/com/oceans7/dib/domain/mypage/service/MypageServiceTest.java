@@ -14,6 +14,7 @@ import com.oceans7.dib.domain.place.entity.Dib;
 import com.oceans7.dib.domain.place.repository.DibRepository;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
+import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,28 +53,28 @@ public class MypageServiceTest {
 
     @BeforeEach
     public void before() {
-        testUser = userRepository.save(MockRequest.testUser());
+        testUser = userRepository.save(MockEntity.testUser());
     }
 
     private Event makeEvent() {
-        return eventRepository.save(MockRequest.testEvent());
+        return eventRepository.save(MockEntity.testEvent());
     }
 
     private CouponGroup makeCouponGroup(Event event) {
-        CouponGroup couponGroup = MockRequest.testCouponGroup();
+        CouponGroup couponGroup = MockEntity.testCouponGroup();
         couponGroup.setEvent(event);
         return couponGroupRepository.save(couponGroup);
     }
 
     private Coupon issueCoupon(CouponGroup couponGroup) {
-        Coupon coupon = MockRequest.testCoupon();
+        Coupon coupon = MockEntity.testCoupon();
         coupon.setUser(testUser);
         coupon.setCouponGroup(couponGroup);
         return couponRepository.save(coupon);
     }
 
     private Dib makeDib() {
-        return dibRepository.save(MockRequest.testDib(testUser));
+        return dibRepository.save(MockEntity.testDib(testUser));
     }
 
     @Test

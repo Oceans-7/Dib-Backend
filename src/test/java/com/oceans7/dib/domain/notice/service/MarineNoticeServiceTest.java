@@ -3,7 +3,7 @@ package com.oceans7.dib.domain.notice.service;
 import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
 import com.oceans7.dib.domain.notice.entity.MarineNotice;
 import com.oceans7.dib.domain.notice.repository.MarineNoticeRepository;
-import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class MarineNoticeServiceTest {
     private MarineNoticeRepository marineNoticeRepository;
 
     private MarineNotice makeMarineNotice() {
-        return marineNoticeRepository.save(MockRequest.testMarineNotice());
+        return marineNoticeRepository.save(MockEntity.testMarineNotice());
     }
 
     @Test

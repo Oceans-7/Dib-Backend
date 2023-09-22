@@ -8,7 +8,7 @@ import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
 import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
 import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
 import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
-import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +32,17 @@ public class EventServiceTest {
     private CouponGroupRepository couponGroupRepository;
 
     private Event makeEvent() {
-        return eventRepository.save(MockRequest.testEvent());
+        return eventRepository.save(MockEntity.testEvent());
     }
 
     private CouponGroup makeFirstCouponGroup(Event event) {
-        CouponGroup couponGroup = MockRequest.testCouponGroup();
+        CouponGroup couponGroup = MockEntity.testCouponGroup();
         couponGroup.setEvent(event);
         return couponGroupRepository.save(couponGroup);
     }
 
     private CouponGroup makeSecondCouponGroup(Event event) {
-        CouponGroup couponGroup = MockRequest.testCouponGroup2();
+        CouponGroup couponGroup = MockEntity.testCouponGroup2();
         couponGroup.setEvent(event);
         return couponGroupRepository.save(couponGroup);
     }

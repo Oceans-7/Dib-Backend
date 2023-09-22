@@ -466,4 +466,5 @@ public class MockResponse {
         noticeResponse.add(NoticeResponseDto.from(marineNotice));
         return noticeResponse;
     }
+
 }

@@ -7,7 +7,7 @@ import com.oceans7.dib.domain.event.repository.EventRepository;
 import com.oceans7.dib.domain.event.service.CouponService;
 import com.oceans7.dib.domain.event.service.EventService;
 import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
-import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ public class EventControllerTest {
     }
 
     private Event makeEvent() {
-        Event event = MockRequest.testEvent();
+        Event event = MockEntity.testEvent();
 
         ReflectionTestUtils.setField(event, "eventId", 1L);
 
@@ -58,7 +58,7 @@ public class EventControllerTest {
     }
 
     private CouponGroup makeFirstCouponGroup(Event event) {
-        CouponGroup couponGroup = MockRequest.testCouponGroup();
+        CouponGroup couponGroup = MockEntity.testCouponGroup();
         couponGroup.setEvent(event);
 
         ReflectionTestUtils.setField(couponGroup, "couponGroupId", 1L);
@@ -68,7 +68,7 @@ public class EventControllerTest {
     }
 
     private CouponGroup makeSecondCouponGroup(Event event) {
-        CouponGroup couponGroup = MockRequest.testCouponGroup2();
+        CouponGroup couponGroup = MockEntity.testCouponGroup2();
         couponGroup.setEvent(event);
 
         ReflectionTestUtils.setField(couponGroup, "couponGroupId", 2L);

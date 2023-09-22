@@ -1,9 +1,10 @@
 package com.oceans7.dib.domain.custom_content.service;
 
 import com.oceans7.dib.domain.custom_content.dto.response.ContentResponseDto;
+import com.oceans7.dib.domain.custom_content.dto.response.detail.DetailContentResponseDto;
 import com.oceans7.dib.domain.custom_content.entity.CustomContent;
 import com.oceans7.dib.domain.custom_content.repository.CustomContentRepository;
-import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class CustomContentServiceTest {
     private CustomContentRepository customContentRepository;
 
     private CustomContent makeCustomContent() {
-        return customContentRepository.save(MockRequest.testCustomContent());
+        return customContentRepository.save(MockEntity.testCustomContent());
     }
 
     @Test
@@ -42,4 +43,19 @@ public class CustomContentServiceTest {
         assertThat(response.get(0).getSubTitle()).isEqualTo(customContent.getSubTitle());
         assertThat(response.get(0).getFirstImage()).isEqualTo(customContent.getCoverImageUrl());
     }
+
+    @Test
+    @DisplayName("자체 콘텐츠 상세 조회")
+    public void getDetailCustomContent() {
+        // given
+        CustomContent customContent = makeCustomContent();
+
+        // when
+        DetailContentResponseDto response = customContentService.getDetailCustomContent(customContent.getCustomContentId());
+
+        // then
+        assertThat(response.getCustomContentId()).isEqualTo(customContent.getCustomContentId());
+        assertThat(response.getCustomContentId()).isEqualTo(customContent.getCustomContentId());
+    }
+
 }
