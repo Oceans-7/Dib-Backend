@@ -4,6 +4,7 @@ import com.oceans7.dib.domain.custom_content.entity.CustomContent;
 import com.oceans7.dib.domain.event.entity.*;
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.mypage.dto.request.UpdateProfileRequestDto;
+import com.oceans7.dib.domain.notice.entity.MarineNotice;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
@@ -146,5 +147,9 @@ public class MockRequest {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static MarineNotice testMarineNotice() {
+        return MarineNotice.of("보름달물해파리 경남 주의단계", "특보", "안녕하세요, DIB 입니다.\n\n6월 22일부터 28일 간 총 16건의 해파리 웹 신고가 들어왔으며, 그 중 8건이 보름달물해파리였습니다. 해파리 발견 지역은 강원 2건, 경남 7건, 경북 1건, 전남 5건, 전북 1건, 제주 2건이었습니다.");
     }
 }
