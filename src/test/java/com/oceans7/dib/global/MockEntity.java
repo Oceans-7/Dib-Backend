@@ -44,23 +44,11 @@ public class MockEntity {
 
     public static CustomContent testCustomContent() {
         return CustomContent.of(
-                getCustomContentTestJsonFile(),
+                MockResponse.getCustomContentTestJsonFile(),
                 "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg",
                 "제주 서귀포",
                 "다이빙 명소 및 관광지 파헤치기"
         );
-    }
-
-    private static String getCustomContentTestJsonFile() {
-        try{
-            ClassPathResource resource = new ClassPathResource("custom-content-test-data.json");
-            InputStream inputStream = resource.getInputStream();
-
-            return new String(FileCopyUtils.copyToByteArray(inputStream), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public static MarineNotice testMarineNotice() {

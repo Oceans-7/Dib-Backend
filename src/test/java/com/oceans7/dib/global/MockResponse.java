@@ -1,5 +1,7 @@
 package com.oceans7.dib.global;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.domain.custom_content.dto.response.detail.Content;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
@@ -31,8 +33,15 @@ import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListRespons
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse.*;
 import com.oceans7.dib.global.ResponseWrapper.Response;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.ValidatorUtil;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -467,4 +476,26 @@ public class MockResponse {
         return noticeResponse;
     }
 
+    public static Content testContentRes() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Content result = mapper.readValue(getCustomContentTestJsonFile(), Content.class);
+
+            return result;
+        } catch(Exception e) {
+            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION);
+        }
+    }
+
+    public static String getCustomContentTestJsonFile() {
+        try{
+            ClassPathResource resource = new ClassPathResource("custom-content-test-data.json");
+            InputStream inputStream = resource.getInputStream();
+
+            return new String(FileCopyUtils.copyToByteArray(inputStream), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

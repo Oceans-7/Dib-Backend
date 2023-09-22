@@ -2,7 +2,6 @@ package com.oceans7.dib.domain.custom_content.dto.response.detail;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oceans7.dib.domain.place.dto.response.SimplePlaceInformationDto;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
