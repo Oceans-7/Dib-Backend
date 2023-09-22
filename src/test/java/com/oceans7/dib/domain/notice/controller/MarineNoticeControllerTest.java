@@ -4,7 +4,7 @@ import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
 import com.oceans7.dib.domain.notice.entity.MarineNotice;
 import com.oceans7.dib.domain.notice.repository.MarineNoticeRepository;
 import com.oceans7.dib.domain.notice.service.MarineNoticeService;
-import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class MarineNoticeControllerTest {
     private MarineNoticeRepository marineNoticeRepository;
 
     private MarineNotice makeMarineNotice() {
-        MarineNotice marineNotice = MockRequest.testMarineNotice();
+        MarineNotice marineNotice = MockEntity.testMarineNotice();
 
         ReflectionTestUtils.setField(marineNotice, "noticeId", 1L);
         ReflectionTestUtils.setField(marineNotice, "createdAt", LocalDateTime.now());
