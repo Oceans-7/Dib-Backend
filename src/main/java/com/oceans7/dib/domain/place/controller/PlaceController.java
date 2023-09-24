@@ -10,6 +10,7 @@ import com.oceans7.dib.domain.place.dto.response.SearchPlaceResponseDto;
 import com.oceans7.dib.domain.place.service.PlaceService;
 import com.oceans7.dib.global.exception.ErrorResponse;
 import com.oceans7.dib.global.response.ApplicationResponse;
+import com.oceans7.dib.global.util.SecurityUtil;
 import com.oceans7.dib.global.util.ValidatorUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -76,7 +77,7 @@ public class PlaceController {
     })
     @PostMapping("/dib/{contentId}")
     public ApplicationResponse addPlaceDib(@PathVariable("contentId") Long contentId) {
-        placeService.addPlaceDib((long)1, contentId);
+        placeService.addPlaceDib(SecurityUtil.getCurrentUsername().get(), contentId);
         return ApplicationResponse.ok();
     }
 
@@ -87,7 +88,7 @@ public class PlaceController {
     })
     @DeleteMapping("/dib/{contentId}")
     public ApplicationResponse removePlaceDib(@PathVariable("contentId") Long contentId) {
-        placeService.removePlaceDib((long)1, contentId);
+        placeService.removePlaceDib(SecurityUtil.getCurrentUsername().get(), contentId);
         return ApplicationResponse.ok();
     }
 }

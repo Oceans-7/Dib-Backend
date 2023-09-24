@@ -1,6 +1,7 @@
 package com.oceans7.dib.domain.user.entity;
 
 import com.oceans7.dib.global.base_entity.BaseEntity;
+import com.oceans7.dib.global.util.ValidatorUtil;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class User extends BaseEntity {
     }
 
     public void updateProfile(String nickname, String profileUrl) {
-        this.nickname = nickname;
-        this.profileUrl = profileUrl;
+        this.nickname = ValidatorUtil.isNotEmpty(nickname) ? nickname : this.nickname;
+        this.profileUrl = ValidatorUtil.isNotEmpty(profileUrl) ? profileUrl : this.profileUrl;
     }
 }
