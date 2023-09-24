@@ -69,15 +69,6 @@ public class MypageService {
     public void updateMyProfile(Long userId, UpdateProfileRequestDto request) {
         User user = findUser(userId);
 
-        checkDuplicatedNickname(user, request);
-
         user.updateProfile(request.getNickname(), request.getImageUrl());
-    }
-
-    private void checkDuplicatedNickname(User user, UpdateProfileRequestDto request) {
-        Optional<User> findUser = userRepository.findByNickname(request.getNickname());
-        if(findUser.isPresent() && user != findUser.get()) {
-            throw new ApplicationException(ErrorCode.ALREADY_USED_NICKNAME_EXCEPTION);
-        }
     }
 }

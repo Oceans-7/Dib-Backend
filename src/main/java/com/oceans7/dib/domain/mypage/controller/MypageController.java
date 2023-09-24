@@ -65,7 +65,6 @@ public class MypageController {
             description = "사용자의 프로필 정보를 수정한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
-            @ApiResponse(responseCode = "M0000", description = "이미 사용중인 닉네임입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @PutMapping
     public ApplicationResponse updateMyProfile(@ModelAttribute UpdateProfileRequestDto updateProfileRequestDto) {
