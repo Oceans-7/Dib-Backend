@@ -10,8 +10,9 @@ import com.oceans7.dib.domain.place.dto.response.SearchPlaceResponseDto;
 import com.oceans7.dib.domain.place.service.PlaceService;
 import com.oceans7.dib.global.exception.ErrorResponse;
 import com.oceans7.dib.global.response.ApplicationResponse;
+import com.oceans7.dib.global.util.CommonUtil;
+import com.oceans7.dib.global.util.JwtTokenUtil;
 import com.oceans7.dib.global.util.SecurityUtil;
-import com.oceans7.dib.global.util.ValidatorUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+
 @Tag(name = "place", description = "관광 정보 API")
 @RestController
 @RequestMapping("/place")
@@ -29,6 +31,16 @@ import org.springframework.web.bind.annotation.*;
 public class PlaceController {
 
     private final PlaceService placeService;
+    private final JwtTokenUtil jwtTokenUtil;
+
+    private Long getUserIdFromToken(String authorizationHeader) {
+        if (authorizationHeader != null) {
+            String token = CommonUtil.parseTokenFromBearer(authorizationHeader);
+            return jwtTokenUtil.extractUserIdFromToken(token);
+        }
+        return null;
+    }
+
 
     @Operation(summary = "관광 정보 조회", description = "사용자 위치(위도, 경도) 기반 관련 정보를 조회한다. (옵션 : 필터링 적용) \n지역 필터링 적용시 사용자 위치는 무시됩니다.")
     @ApiResponses(value = {
@@ -38,12 +50,17 @@ public class PlaceController {
             @ApiResponse(responseCode = "C0002", description = "올바르지 않은 요청 값", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping()
-    public ApplicationResponse<PlaceResponseDto> getPlace(@ModelAttribute @Validated GetPlaceRequestDto placeRequestDto) {
+    public ApplicationResponse<PlaceResponseDto> getPlace(
+            @ModelAttribute @Validated GetPlaceRequestDto placeRequestDto,
+            @Schema(hidden = true) @RequestHeader(name = "Authorization", required = false) String authorizationHeader
+    ) {
+        Long userId = getUserIdFromToken(authorizationHeader);
+
         PlaceFilterOptions filterOption = PlaceFilterOptions.initialBuilder()
                 .request(placeRequestDto)
                 .build();
 
-        return ApplicationResponse.ok(placeService.getPlace(placeRequestDto, filterOption));
+        return ApplicationResponse.ok(placeService.getPlace(userId, placeRequestDto, filterOption));
     }
 
     @Operation(summary = "키워드로 관광 정보 검색", description = "키워드를 입력받아 관련 정보를 조회한다.")
@@ -54,8 +71,13 @@ public class PlaceController {
             @ApiResponse(responseCode = "C0002", description = "올바르지 않은 요청 값", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/search")
-    public ApplicationResponse<SearchPlaceResponseDto> searchPlace(@ModelAttribute @Validated SearchPlaceRequestDto searchPlaceRequestDto) {
-        return ApplicationResponse.ok(placeService.searchKeyword(searchPlaceRequestDto));
+    public ApplicationResponse<SearchPlaceResponseDto> searchPlace(
+            @ModelAttribute @Validated SearchPlaceRequestDto searchPlaceRequestDto,
+            @Schema(hidden = true) @RequestHeader(name = "Authorization", required = false) String authorizationHeader
+    ) {
+        Long userId = getUserIdFromToken(authorizationHeader);
+
+        return ApplicationResponse.ok(placeService.searchKeyword(userId, searchPlaceRequestDto));
     }
 
     @Operation(summary = "관광 정보 상세 조회", description = "콘텐츠 ID와 콘텐츠 타입을 입력 받아 관광 상세 정보를 조회한다.")
@@ -66,8 +88,13 @@ public class PlaceController {
             @ApiResponse(responseCode = "P0003", description = "존재하지 않는/삭제된 관광 정보입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/detail")
-    public ApplicationResponse<DetailPlaceInformationResponseDto> getPlaceDetail(@ModelAttribute @Validated GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
-            return ApplicationResponse.ok(placeService.getPlaceDetail(getPlaceDetailRequestDto));
+    public ApplicationResponse<DetailPlaceInformationResponseDto> getPlaceDetail(
+            @ModelAttribute @Validated GetPlaceDetailRequestDto getPlaceDetailRequestDto,
+            @Schema(hidden = true) @RequestHeader(name = "Authorization", required = false) String authorizationHeader
+    ) {
+        Long userId = getUserIdFromToken(authorizationHeader);
+
+        return ApplicationResponse.ok(placeService.getPlaceDetail(userId, getPlaceDetailRequestDto));
     }
 
     @Operation(summary = "관광 정보 찜하기", description = "콘텐츠 ID를 입력받아 찜하기.")

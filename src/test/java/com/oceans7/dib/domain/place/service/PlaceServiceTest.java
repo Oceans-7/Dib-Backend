@@ -6,17 +6,22 @@ import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.response.*;
 import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto.FacilityInfo;
+import com.oceans7.dib.domain.user.entity.User;
+import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.api.service.DataGoKrAPIService;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,7 +53,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeReq, options);
+        PlaceResponseDto placeRes = placeService.getPlace(null, placeReq, options);
         SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
@@ -64,6 +69,7 @@ public class PlaceServiceTest {
         assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.getDistance()).isBetween(MockResponse.MIN_DISTANCE, MockResponse.MAX_DISTANCE);
         assertThat(info.getDistance()).isEqualTo(1.0);
+        assertThat(info.isDib()).isFalse();
     }
 
     @Test
@@ -79,7 +85,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeWithSortingReq, options);
+        PlaceResponseDto placeRes = placeService.getPlace(null, placeWithSortingReq, options);
 
         // then
         assertThat(placeRes.getPage()).isEqualTo(placeWithSortingReq.getPage());
@@ -111,7 +117,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testAreaPlaceRes());
 
         // when
-        PlaceResponseDto placeRes = placeService.getPlace(placeWithAreaReq, filterOption);
+        PlaceResponseDto placeRes = placeService.getPlace(null, placeWithAreaReq, filterOption);
         SimplePlaceInformationDto info = placeRes.getPlaces().get(0);
 
         // then
@@ -128,6 +134,7 @@ public class PlaceServiceTest {
         assertThat(info.getAddress().contains(placeWithAreaReq.getArea()) &&
                 info.getAddress().contains(placeWithAreaReq.getSigungu())
         ).isTrue();
+        assertThat(info.isDib()).isFalse();
     }
 
     @Test
@@ -142,7 +149,7 @@ public class PlaceServiceTest {
         when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
 
         // when & then
-        assertThrows(ApplicationException.class, () -> placeService.getPlace(placeWithAreaExceptionReq, options));
+        assertThrows(ApplicationException.class, () -> placeService.getPlace(null, placeWithAreaExceptionReq, options));
     }
 
     @Test
@@ -156,7 +163,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testSearchRes());
 
         // when
-        SearchPlaceResponseDto searchRes = placeService.searchKeyword(searchReq);
+        SearchPlaceResponseDto searchRes = placeService.searchKeyword(null, searchReq);
         SimplePlaceInformationDto info = searchRes.getPlaces().get(0);
 
         // then
@@ -173,6 +180,7 @@ public class PlaceServiceTest {
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
         assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
+        assertThat(info.isDib()).isFalse();
     }
 
     @Test
@@ -186,7 +194,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testNoResultRes());
 
         // then
-        assertThrows(ApplicationException.class, () -> placeService.searchKeyword(searchNotFoundExceptionReq));
+        assertThrows(ApplicationException.class, () -> placeService.searchKeyword(null, searchNotFoundExceptionReq));
     }
 
     @Test
@@ -198,7 +206,7 @@ public class PlaceServiceTest {
                 .thenReturn(MockResponse.testSearchAddressRes());
 
         // when
-        SearchPlaceResponseDto searchRes = placeService.searchKeyword(searchAreaReq);
+        SearchPlaceResponseDto searchRes = placeService.searchKeyword(null, searchAreaReq);
         SimpleAreaResponseDto info = searchRes.getAreas().get(0);
 
         // then
@@ -228,7 +236,7 @@ public class PlaceServiceTest {
         when(tourAPIService.getImageApi(placeDetailReq.getContentId())).thenReturn(MockResponse.testPlaceImageRes());
 
         // when
-        DetailPlaceInformationResponseDto detailRes = placeService.getPlaceDetail(placeDetailReq);
+        DetailPlaceInformationResponseDto detailRes = placeService.getPlaceDetail(null, placeDetailReq);
 
         // then
         assertThat(detailRes.getContentId()).isEqualTo(MockRequest.CONTENT_ID);
@@ -243,6 +251,7 @@ public class PlaceServiceTest {
         assertThat(detailRes.getTel()).isEqualTo("070-4070-9675");
         assertThat(detailRes.getRestDate()).isEqualTo("일요일");
         assertThat(detailRes.getReservationUrl()).isEqualTo("");
+        assertThat(detailRes.isDib()).isFalse();
 
         for(String image : detailRes.getImages()) {
             String urlPattern = "^(https?|ftp)://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(/[a-zA-Z0-9-_.]*)+\\.(jpg|jpeg|png|gif|bmp)$";

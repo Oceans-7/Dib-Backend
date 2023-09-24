@@ -29,16 +29,16 @@ public class SimpleAreaResponseDto {
 
     public static SimpleAreaResponseDto of(String address, String areaName, String sigunguName,
                                            double mapX, double mapY, double distance) {
-        SimpleAreaResponseDto simpleAreaResponseDto = new SimpleAreaResponseDto();
+        SimpleAreaResponseDto simpleArea = new SimpleAreaResponseDto();
 
-        simpleAreaResponseDto.address = address;
-        simpleAreaResponseDto.areaName = areaName;
-        simpleAreaResponseDto.sigunguName = sigunguName;
-        simpleAreaResponseDto.mapX = mapX;
-        simpleAreaResponseDto.mapY = mapY;
-        simpleAreaResponseDto.distance = distance;
+        simpleArea.address = address;
+        simpleArea.areaName = areaName;
+        simpleArea.sigunguName = sigunguName;
+        simpleArea.mapX = mapX;
+        simpleArea.mapY = mapY;
+        simpleArea.distance = distance;
 
-        return simpleAreaResponseDto;
+        return simpleArea;
     }
 
 }

@@ -12,8 +12,10 @@ import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import com.oceans7.dib.global.util.JwtTokenUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,15 @@ public class PlaceControllerTest {
     @MockBean
     private PlaceService placeService;
 
+    @MockBean
+    private JwtTokenUtil jwtTokenUtil;
+
+    @BeforeEach
+    public void before() {
+        when(jwtTokenUtil.extractUserIdFromToken(null))
+                .thenReturn(null);
+    }
+
     @Test
     @DisplayName("위치 기반 관광 정보 조회 테스트")
     @WithMockUser("user1")
@@ -49,7 +60,7 @@ public class PlaceControllerTest {
         GetPlaceRequestDto placeReq = MockRequest.testPlaceReq();
         PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeReq);
 
-        when(placeService.getPlace(placeReq, options))
+        when(placeService.getPlace(null, placeReq, options))
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
@@ -84,7 +95,7 @@ public class PlaceControllerTest {
         GetPlaceRequestDto placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
         PlaceFilterOptions filterOption = MockRequest.testPlaceFilterOptionReq(placeWithAreaReq);
 
-        when(placeService.getPlace(placeWithAreaReq, filterOption))
+        when(placeService.getPlace(null, placeWithAreaReq, filterOption))
                 .thenReturn(MockResponse.testGetPlaceBasedAreaRes());
 
         // when
@@ -121,7 +132,7 @@ public class PlaceControllerTest {
         GetPlaceRequestDto placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
         PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeWithSortingReq);
 
-        when(placeService.getPlace(placeWithSortingReq, options))
+        when(placeService.getPlace(null, placeWithSortingReq, options))
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
@@ -166,7 +177,7 @@ public class PlaceControllerTest {
         GetPlaceRequestDto placeXYExceptionReq = MockRequest.testPlaceXYExceptionReq();
         PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeXYExceptionReq);
 
-        when(placeService.getPlace(placeXYExceptionReq, options))
+        when(placeService.getPlace(null, placeXYExceptionReq, options))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when
@@ -236,7 +247,7 @@ public class PlaceControllerTest {
         PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeAreaExceptionReq);
 
 
-        when(placeService.getPlace(placeAreaExceptionReq, options))
+        when(placeService.getPlace(null, placeAreaExceptionReq, options))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_AREA_NAME));
 
         // when
@@ -260,7 +271,7 @@ public class PlaceControllerTest {
     public void searchPlaceTest() throws Exception {
         //given
         SearchPlaceRequestDto searchReq = MockRequest.testSearchReq();
-        when(placeService.searchKeyword(searchReq))
+        when(placeService.searchKeyword(null, searchReq))
                 .thenReturn(MockResponse.testSearchPlaceBasedKeywordRes());
 
         // when
@@ -294,7 +305,7 @@ public class PlaceControllerTest {
     public void searchAreaTest() throws Exception {
         //given
         SearchPlaceRequestDto searchAreaReq = MockRequest.testSearchAreaReq();
-        when(placeService.searchKeyword(searchAreaReq))
+        when(placeService.searchKeyword(null, searchAreaReq))
                 .thenReturn(MockResponse.testSearchPlaceBasedAreaRes());
 
         // when
@@ -327,7 +338,7 @@ public class PlaceControllerTest {
     public void searchPlaceNotFoundItemExceptionTest() throws Exception {
         //given
         SearchPlaceRequestDto searchNotFoundExceptionReq = MockRequest.testSearchNotFoundExceptionReq();
-        when(placeService.searchKeyword(searchNotFoundExceptionReq))
+        when(placeService.searchKeyword(null, searchNotFoundExceptionReq))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when
@@ -351,7 +362,7 @@ public class PlaceControllerTest {
     public void getPlaceDetail() throws Exception {
         //given
         GetPlaceDetailRequestDto placeDetailReq = MockRequest.testPlaceDetailReq();
-        when(placeService.getPlaceDetail(placeDetailReq))
+        when(placeService.getPlaceDetail(null, placeDetailReq))
                 .thenReturn(MockResponse.testGetDetailPlaceRes());
 
         // when

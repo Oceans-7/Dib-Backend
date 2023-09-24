@@ -62,11 +62,11 @@ public class PlaceService {
      * 관광 정보 리스트 조회 (위치 기반/지역 필터링)
      * @return PlaceResponseDto 타입의 Response
      */
-    public PlaceResponseDto getPlace(GetPlaceRequestDto request, PlaceFilterOptions placeFilterOptions) {
+    public PlaceResponseDto getPlace(Long userId, GetPlaceRequestDto request, PlaceFilterOptions placeFilterOptions) {
         switch(placeFilterOptions.getFilterType()) {
-            case DIVING -> { return getDivingFilteredPlace(request, placeFilterOptions); }
-            case LOCATION_BASED -> { return getLocationBasedPlace(request, placeFilterOptions); }
-            case AREA_BASED -> { return getAreaBasedPlace(request, placeFilterOptions); }
+            case DIVING -> { return getDivingFilteredPlace(userId, request, placeFilterOptions); }
+            case LOCATION_BASED -> { return getLocationBasedPlace(userId, request, placeFilterOptions); }
+            case AREA_BASED -> { return getAreaBasedPlace(userId, request, placeFilterOptions); }
             default -> { return null; }
         }
     }
@@ -75,10 +75,10 @@ public class PlaceService {
      * 다이빙 필터 기반 관광 정보 리스트 조회
      * @return 다이빙 필터 기반의 PlaceResponseDto 타입의 Response
      */
-    public PlaceResponseDto getDivingFilteredPlace(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
+    public PlaceResponseDto getDivingFilteredPlace(Long userId, GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
         TourAPICommonListResponse tourAPIResponse = fetchDivingFilteredTourAPI(request, filterOption);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
+        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), userId, request.getMapX(), request.getMapY());
 
         return PlaceResponseDto.of(
                 simplePlaceResponse,
@@ -195,13 +195,11 @@ public class PlaceService {
      * 위치 기반 관광 정보 리스트 조회
      * @return 위치 기반 PlaceResponseDto 타입의 Response
      */
-    private PlaceResponseDto getLocationBasedPlace(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
+    private PlaceResponseDto getLocationBasedPlace(Long userId, GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
         TourAPICommonListResponse tourAPIResponse = fetchLocationBasedTourAPI(request, filterOption);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
-
         return PlaceResponseDto.of(
-                simplePlaceResponse,
+                convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), userId, request.getMapX(), request.getMapY()),
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize(),
@@ -261,7 +259,7 @@ public class PlaceService {
      * 지역 기반 관광 정보 리스트 조회
      * @return 지역 기반 PlaceResponseDto 타입의 Response
      */
-    private PlaceResponseDto getAreaBasedPlace(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
+    private PlaceResponseDto getAreaBasedPlace(Long userId, GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
         String areaCode = fetchAreaCodeAPI("", filterOption.getArea());
         String sigunguCode = filterOption.isEmptySigungu() ?
                 "" : fetchAreaCodeAPI(areaCode, filterOption.getSigungu());
@@ -270,7 +268,7 @@ public class PlaceService {
 
         TourAPICommonListResponse tourAPIResponse = fetchAreaBasedTourAPI(request, areaFilterOption);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
+        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), userId, request.getMapX(), request.getMapY());
 
         return PlaceResponseDto.of(
                 simplePlaceResponse,
@@ -332,33 +330,42 @@ public class PlaceService {
         );
     }
 
-
     /**
      * TOUR API 응답 리스트를 SimplePlaceInformationDto 리스트로 변환
      */
-    private List<SimplePlaceInformationDto> convertTourAPIItemsToSimpleInfo (List<TourAPICommonItemResponse> tourAPIItemList, double reqX, double reqY) {
+    private List<SimplePlaceInformationDto> convertTourAPIItemsToSimpleInfo(List<TourAPICommonItemResponse> tourAPIItemList, Long userId, double reqX, double reqY) {
         return tourAPIItemList.stream()
-                .map(item -> SimplePlaceInformationDto.of(
-                        item.getTitle(),
-                        item.getAddress(),
-                        item.getContentId(),
-                        ContentType.getContentTypeByCode(item.getContentTypeId()),
-                        item.convertDistanceByFilter(reqX, reqY),
-                        item.getMapX(),
-                        item.getMapY(),
-                        item.getThumbnail(),
-                        item.getTel()
-                )).collect(Collectors.toList());
+                .map(item -> createSimpleInfo(item, userId, reqX, reqY))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 로그인 여부에 따라 찜하기 정보를 달리하여 SimplePlaceInformationDto 생성
+     */
+    private SimplePlaceInformationDto createSimpleInfo(TourAPICommonItemResponse tourAPIItem, Long userId, double reqX, double reqY) {
+        boolean existsDib = isDibbedByUser(tourAPIItem.getContentId(), userId);
+        return SimplePlaceInformationDto.of(
+                tourAPIItem.getTitle(),
+                tourAPIItem.getAddress(),
+                tourAPIItem.getContentId(),
+                ContentType.getContentTypeByCode(tourAPIItem.getContentTypeId()),
+                tourAPIItem.convertDistanceByFilter(reqX, reqY),
+                tourAPIItem.getMapX(),
+                tourAPIItem.getMapY(),
+                tourAPIItem.getThumbnail(),
+                tourAPIItem.getTel(),
+                existsDib
+        );
     }
 
     /**
      * 관광 정보 키워드 검색
      */
-    public SearchPlaceResponseDto searchKeyword(SearchPlaceRequestDto request) {
+    public SearchPlaceResponseDto searchKeyword(Long userId, SearchPlaceRequestDto request) {
         if(isLocationKeyword(request.getKeyword())) {
             return searchAreaKeyword(request);
         } else {
-            return searchPlaceKeyword(request);
+            return searchPlaceKeyword(userId, request);
         }
     }
 
@@ -423,11 +430,11 @@ public class PlaceService {
      * 관광 정보 검색
      * @return 키워드 기반 SearchPlaceResponseDto 타입의 Response
      */
-    private SearchPlaceResponseDto searchPlaceKeyword(SearchPlaceRequestDto request) {
+    private SearchPlaceResponseDto searchPlaceKeyword(Long userId, SearchPlaceRequestDto request) {
         boolean isAreaSearch = false;
         TourAPICommonListResponse tourAPIResponse = fetchSearchKeywordTourAPI(request);
 
-        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), request.getMapX(), request.getMapY());
+        List<SimplePlaceInformationDto> simplePlaceResponse = convertTourAPIItemsToSimpleInfo(tourAPIResponse.getTourAPICommonItemResponseList(), userId, request.getMapX(), request.getMapY());
 
         return SearchPlaceResponseDto.of(
                 request.getKeyword(),
@@ -460,7 +467,7 @@ public class PlaceService {
     /**
      * 관광 정보 상세 조회
      */
-    public DetailPlaceInformationResponseDto getPlaceDetail(GetPlaceDetailRequestDto request) {
+    public DetailPlaceInformationResponseDto getPlaceDetail(Long userId, GetPlaceDetailRequestDto request) {
         Long contentId = request.getContentId();
         ContentType contentType = request.getContentType();
 
@@ -474,6 +481,8 @@ public class PlaceService {
 
         List<FacilityInfo> facilityInfoList = Stream.concat(facilityInfoByIntro.stream(), facilityInfoByInfo.stream())
                 .collect(Collectors.toList());
+
+        boolean isDib = isDibbedByUser(contentId, userId);
 
         return DetailPlaceInformationResponseDto.of(
                 request.getContentId(),
@@ -489,6 +498,7 @@ public class PlaceService {
                 introAPIItem.extractRestDate(),
                 introAPIItem.extractReservationUrl(),
                 introAPIItem.extractEventDate(),
+                isDib,
                 facilityInfoList,
                 imageUrlList
         );
@@ -621,13 +631,32 @@ public class PlaceService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
 
-        Optional<Dib> findDib = dibRepository.findByUserAndContentId(user, contentId);
-        if(findDib.isPresent()) { return; }
+        if(dibRepository.existsByUserAndContentId(user, contentId)) {
+            return;
+        }
 
         // 공통 정보
         DetailCommonItemResponse commonItem = fetchCommonAPI(contentId, "").getDetailCommonItemResponse();
 
-        dibRepository.save(Dib.of(contentId, commonItem.getContentTypeId(), commonItem.getTitle(), commonItem.getAddress(), commonItem.getTel(), commonItem.getThumbnail(), user));
+        dibRepository.save(Dib.of(
+                contentId,
+                commonItem.getContentTypeId(),
+                commonItem.getTitle(),
+                commonItem.getAddress(),
+                commonItem.getTel(),
+                commonItem.getThumbnail(),
+                user
+        ));
+    }
+
+    @Transactional
+    boolean isDibbedByUser(Long contentId, Long userId) {
+        if(ValidatorUtil.isNotEmpty(userId)) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
+            return dibRepository.existsByUserAndContentId(user, contentId);
+        }
+        return false;
     }
 
     /**

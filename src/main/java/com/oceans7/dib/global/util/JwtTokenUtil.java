@@ -20,6 +20,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -147,4 +148,14 @@ public class JwtTokenUtil {
         RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n, e);
         return keyFactory.generatePublic(keySpec);
     }
+
+    public Long extractUserIdFromToken(String token) {
+        try {
+            Claims claims = parseToken(token).getBody();
+            return claims.get("user_id", Long.class);
+        } catch (JwtException e) {
+            return null;
+        }
+    }
+
 }

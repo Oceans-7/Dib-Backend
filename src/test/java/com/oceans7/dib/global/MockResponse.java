@@ -362,7 +362,8 @@ public class MockResponse {
                 item.getMapX(),
                 item.getMapY(),
                 item.getThumbnail(),
-                item.getTel()
+                item.getTel(),
+                false
         );
     }
 
@@ -405,7 +406,7 @@ public class MockResponse {
 
         return DetailPlaceInformationResponseDto.of(CONTENT_ID, CONTENT_TYPE, commonApiResponseMock.getTitle(), commonApiResponseMock.getAddress(),
                 commonApiResponseMock.getMapX(), commonApiResponseMock.getMapY(), commonApiResponseMock.extractOverview(), commonApiResponseMock.extractHomepageUrl(),
-                introApiReponseApi.extractUseTime(), introApiReponseApi.extractTel(), introApiReponseApi.extractRestDate(), introApiReponseApi.extractReservationUrl(), introApiReponseApi.extractEventDate(),
+                introApiReponseApi.extractUseTime(), introApiReponseApi.extractTel(), introApiReponseApi.extractRestDate(), introApiReponseApi.extractReservationUrl(), introApiReponseApi.extractEventDate(), false,
                 testFacilityInfo(), testImageUrlList());
     }
 

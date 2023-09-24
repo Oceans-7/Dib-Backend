@@ -5,10 +5,9 @@ import com.oceans7.dib.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface DibRepository extends JpaRepository<Dib, Long> {
-    Optional<Dib> findByUserAndContentId(User user, Long contentId);
+    boolean existsByUserAndContentId(User user, Long contentId);
 
     void deleteByUserAndContentId(User user, Long contentId);
 

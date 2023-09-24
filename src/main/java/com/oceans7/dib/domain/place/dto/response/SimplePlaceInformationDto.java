@@ -40,8 +40,11 @@ public class SimplePlaceInformationDto {
     @Schema(description = "전화번호", example = "061-532-1000")
     private String tel;
 
+    @Schema(description = "찜 여부", example = "true")
+    private boolean isDib;
+
     public static SimplePlaceInformationDto of(String title, String address, Long contentId, ContentType contentType, double distance,
-                                               double mapX, double mapY, String firstImage, String tel) {
+                                               double mapX, double mapY, String firstImage, String tel, boolean isDib) {
         SimplePlaceInformationDto simplePlaceInformation = new SimplePlaceInformationDto();
 
         simplePlaceInformation.title = title;
@@ -53,6 +56,7 @@ public class SimplePlaceInformationDto {
         simplePlaceInformation.mapY = mapY;
         simplePlaceInformation.firstImage = firstImage;
         simplePlaceInformation.tel = tel;
+        simplePlaceInformation.isDib = isDib;
 
         return simplePlaceInformation;
     }
