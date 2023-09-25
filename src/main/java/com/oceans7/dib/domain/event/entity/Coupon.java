@@ -33,20 +33,14 @@ public class Coupon {
     @JoinColumn(name = "id", nullable = false)
     private User user;
 
-    public static Coupon of(LocalDate issuedDate, CouponStatus status) {
+    public static Coupon of(LocalDate issuedDate, CouponStatus status, CouponGroup couponGroup, User user) {
         Coupon coupon = new Coupon();
 
         coupon.issuedDate = issuedDate;
         coupon.status = status;
+        coupon.couponGroup = couponGroup;
+        coupon.user = user;
 
         return coupon;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setCouponGroup(CouponGroup couponGroup) {
-        this.couponGroup = couponGroup;
     }
 }
