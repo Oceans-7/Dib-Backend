@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @MappedSuperclass
 public abstract class BaseImageEntity {
-    @Column(name = "url", nullable = false)
+    @Column(name = "url", length = 2100, nullable = false)
     private String url;
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
