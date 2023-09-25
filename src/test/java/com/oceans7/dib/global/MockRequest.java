@@ -18,7 +18,6 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.global.util.CoordinateUtil;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 public class MockRequest {
     public static final String KEYWORD_QUERY = "뷰티플레이";
@@ -145,7 +144,4 @@ public class MockRequest {
         return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
     }
 
-    public static Optional<Long> testOptionalId() {
-        return Optional.ofNullable(0L);
-    }
 }
