@@ -2,12 +2,15 @@ package com.oceans7.dib.domain.organism.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @MappedSuperclass
 public abstract class Organism {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "organism_id")
+    private Long organismId;
+
     @Column(name = "korean_name")
     private String koreanName;
 
@@ -22,4 +25,10 @@ public abstract class Organism {
 
     @Column(name = "detail_description")
     private String detailDescription;
+
+    @Column(name = "first_image_url")
+    private String firstImageUrl;
+
+    @Column(name = "illustration_image_url")
+    private String illustrationImageUrl;
 }

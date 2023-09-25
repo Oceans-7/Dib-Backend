@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,4 +17,6 @@ public class HarmfulOrganism extends Organism {
     @Column(name = "organism_id")
     private Long organismId;
 
+    @OneToMany(mappedBy = "harmfulOrganism")
+    private List<HarmfulOrganismImage> harmfulOrganismImageList = new ArrayList<>();
 }
