@@ -61,7 +61,7 @@ public class PlaceServiceTest {
         assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImageUrl()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
         assertThat(info.getDistance()).isBetween(MockResponse.MIN_DISTANCE, MockResponse.MAX_DISTANCE);
         assertThat(info.getDistance()).isEqualTo(1.0);
     }
@@ -127,7 +127,7 @@ public class PlaceServiceTest {
         assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImageUrl()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
         assertThat(info.getAddress().contains(placeWithAreaReq.getArea()) &&
                 info.getAddress().contains(placeWithAreaReq.getSigungu())
         ).isTrue();
@@ -176,7 +176,7 @@ public class PlaceServiceTest {
         assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.getFirstImageUrl()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
     }
 
     @Test

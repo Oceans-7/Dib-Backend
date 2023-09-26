@@ -72,7 +72,7 @@ public class PlaceControllerTest {
                 .andExpect(jsonPath("$.data.places[0].contentId").value(testGetPlaceInfoRes.getContentId()))
                 .andExpect(jsonPath("$.data.places[0].contentType").value(String.valueOf(testGetPlaceInfoRes.getContentType())))
                 .andExpect(jsonPath("$.data.places[0].distance").value(testGetPlaceInfoRes.getDistance()))
-                .andExpect(jsonPath("$.data.places[0].firstImage").value(testGetPlaceInfoRes.getFirstImage()))
+                .andExpect(jsonPath("$.data.places[0].firstImageUrl").value(testGetPlaceInfoRes.getFirstImageUrl()))
                 .andExpect(jsonPath("$.data.places[0].tel").value(testGetPlaceInfoRes.getTel()));
     }
 
@@ -110,7 +110,7 @@ public class PlaceControllerTest {
                 .andExpect(jsonPath("$.data.places[0].contentId").value(testGetPlaceInfoRes.getContentId()))
                 .andExpect(jsonPath("$.data.places[0].contentType").value(String.valueOf(testGetPlaceInfoRes.getContentType())))
                 .andExpect(jsonPath("$.data.places[0].distance").value(testGetPlaceInfoRes.getDistance()))
-                .andExpect(jsonPath("$.data.places[0].firstImage").value(testGetPlaceInfoRes.getFirstImage()))
+                .andExpect(jsonPath("$.data.places[0].firstImageUrl").value(testGetPlaceInfoRes.getFirstImageUrl()))
                 .andExpect(jsonPath("$.data.places[0].tel").value(testGetPlaceInfoRes.getTel()));
     }
 
@@ -287,7 +287,7 @@ public class PlaceControllerTest {
                 .andExpect(jsonPath("$.data.places[0].contentId").value(testSearchPlaceInfoRes.getContentId()))
                 .andExpect(jsonPath("$.data.places[0].contentType").value(String.valueOf(testSearchPlaceInfoRes.getContentType())))
                 .andExpect(jsonPath("$.data.places[0].distance").value(testSearchPlaceInfoRes.getDistance()))
-                .andExpect(jsonPath("$.data.places[0].firstImage").value(testSearchPlaceInfoRes.getFirstImage()))
+                .andExpect(jsonPath("$.data.places[0].firstImageUrl").value(testSearchPlaceInfoRes.getFirstImageUrl()))
                 .andExpect(jsonPath("$.data.places[0].tel").value(testSearchPlaceInfoRes.getTel()));
     }
 

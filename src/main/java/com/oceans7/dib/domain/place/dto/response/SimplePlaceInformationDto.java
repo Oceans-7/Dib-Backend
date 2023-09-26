@@ -35,7 +35,7 @@ public class SimplePlaceInformationDto {
     private double mapY;
 
     @Schema(description = "대표 이미지", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg")
-    private String firstImage;
+    private String firstImageUrl;
 
     @Schema(description = "전화번호", example = "061-532-1000")
     private String tel;
@@ -50,7 +50,7 @@ public class SimplePlaceInformationDto {
         simplePlaceInformation.distance = item.getDist();
         simplePlaceInformation.mapX = item.getMapX();
         simplePlaceInformation.mapY = item.getMapY();
-        simplePlaceInformation.firstImage = item.getFirstImage();
+        simplePlaceInformation.firstImageUrl = item.getFirstImage();
         simplePlaceInformation.tel = item.getTel();
 
         return simplePlaceInformation;
