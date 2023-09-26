@@ -24,8 +24,8 @@ public class ReportController {
     private final ReportService reportService;
 
     @Operation(
-            summary = "해양 생물 전체 조회",
-            description = "해양 생물의 전체 리스트를 조회한다.")
+            summary = "유해 생물 신고",
+            description = "유해 생물을 신고한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "C0001", description = "존재하지 않는 리소스 요청입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
