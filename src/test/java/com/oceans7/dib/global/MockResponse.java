@@ -1,7 +1,9 @@
 package com.oceans7.dib.global;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.domain.custom_content.dto.response.ContentResponseDto;
 import com.oceans7.dib.domain.custom_content.dto.response.detail.Content;
+import com.oceans7.dib.domain.custom_content.entity.CustomContent;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
@@ -497,5 +499,16 @@ public class MockResponse {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static List<ContentResponseDto> testCustomContentRes(CustomContent customContent) {
+        List<ContentResponseDto> customContentResponse = new ArrayList<>();
+        customContentResponse.add(ContentResponseDto.of(
+                customContent.getCustomContentId(),
+                customContent.getCoverImageUrl(),
+                customContent.getTitle(),
+                customContent.getSubTitle()
+        ));
+        return customContentResponse;
     }
 }
