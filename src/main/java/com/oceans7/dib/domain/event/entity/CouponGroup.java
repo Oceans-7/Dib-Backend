@@ -40,10 +40,10 @@ public class CouponGroup {
     @Column(name = "closing_date")
     private LocalDate closingDate;
 
-    @Column(name = "coupon_image_url")
+    @Column(name = "coupon_image_url", length = 2100)
     private String couponImageUrl;
 
-    @Column(name = "partner_image_url")
+    @Column(name = "partner_image_url", length = 2100)
     private String partnerImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

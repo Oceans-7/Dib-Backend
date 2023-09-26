@@ -17,7 +17,7 @@ public class CustomContent {
     @Column(name = "json_content", length = 3000)
     private String jsonContent;
 
-    @Column(name = "cover_image_url")
+    @Column(name = "cover_image_url", length = 2100)
     private String coverImageUrl;
 
     @Column(name = "title")

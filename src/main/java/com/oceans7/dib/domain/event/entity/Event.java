@@ -24,7 +24,7 @@ public class Event {
     @Column(name = "sub_color")
     private String subColor;
 
-    @Column(name = "banner_url")
+    @Column(name = "banner_url", length = 2100)
     private String bannerUrl;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
