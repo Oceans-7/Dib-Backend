@@ -35,27 +35,27 @@ public class SearchPlaceResponseDto {
     private boolean isAreaSearch;
 
     public static SearchPlaceResponseDto of(String keyword, List<SimplePlaceInformationDto> simpleDto, boolean isAreaSearch, int count, int page, int pageSize) {
-        SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
+        SearchPlaceResponseDto searchPlace = new SearchPlaceResponseDto();
 
-        searchPlaceResponse.keyword = keyword;
-        searchPlaceResponse.places = simpleDto;
-        searchPlaceResponse.count = count;
-        searchPlaceResponse.page = page;
-        searchPlaceResponse.pageSize = pageSize;
-        searchPlaceResponse.isAreaSearch = isAreaSearch;
+        searchPlace.keyword = keyword;
+        searchPlace.places = simpleDto;
+        searchPlace.count = count;
+        searchPlace.page = page;
+        searchPlace.pageSize = pageSize;
+        searchPlace.isAreaSearch = isAreaSearch;
 
-        return searchPlaceResponse;
+        return searchPlace;
     }
 
     public static SearchPlaceResponseDto of(String keyword, List<SimpleAreaResponseDto> simpleDto, boolean isAreaSearch, int count) {
-        SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
+        SearchPlaceResponseDto searchPlace = new SearchPlaceResponseDto();
 
-        searchPlaceResponse.keyword = keyword;
-        searchPlaceResponse.areas = simpleDto;
-        searchPlaceResponse.isAreaSearch = isAreaSearch;
-        searchPlaceResponse.count = count;
+        searchPlace.keyword = keyword;
+        searchPlace.areas = simpleDto;
+        searchPlace.isAreaSearch = isAreaSearch;
+        searchPlace.count = count;
 
-        return searchPlaceResponse;
+        return searchPlace;
     }
 
 }

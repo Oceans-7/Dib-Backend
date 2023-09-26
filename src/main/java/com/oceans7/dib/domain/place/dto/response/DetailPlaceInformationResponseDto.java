@@ -53,6 +53,9 @@ public class DetailPlaceInformationResponseDto {
     @Schema(description = "축제 기간", example = "2023/07/01~2023/08/09")
     private String eventDate;
 
+    @Schema(description = "찜 여부", example = "true")
+    private boolean isDib;
+
     @ArraySchema(schema = @Schema(description = "시설 이용 정보", implementation = FacilityInfo.class))
     private List<FacilityInfo> facilityInfo;
 
@@ -77,26 +80,27 @@ public class DetailPlaceInformationResponseDto {
     }
     public static DetailPlaceInformationResponseDto of(Long contentId, ContentType contentType, String title, String address,
                                                        double mapX, double mapY, String introduce, String homepageUrl,
-                                                       String useTime, String tel, String restDate, String reservationUrl, String eventDate,
+                                                       String useTime, String tel, String restDate, String reservationUrl, String eventDate, boolean isDib,
                                                        List<FacilityInfo> facilityInfoList, List<String> imageUrlList) {
-        DetailPlaceInformationResponseDto response = new DetailPlaceInformationResponseDto();
+        DetailPlaceInformationResponseDto detailPlaceInformation = new DetailPlaceInformationResponseDto();
 
-        response.contentId = contentId;
-        response.contentType = contentType;
-        response.title = title;
-        response.address = address;
-        response.mapX = mapX;
-        response.mapY = mapY;
-        response.introduce = introduce;
-        response.homepageUrl = homepageUrl;
-        response.useTime = useTime;
-        response.tel = tel;
-        response.restDate = restDate;
-        response.reservationUrl = reservationUrl;
-        response.eventDate = eventDate;
-        response.facilityInfo = facilityInfoList;
-        response.images = imageUrlList;
+        detailPlaceInformation.contentId = contentId;
+        detailPlaceInformation.contentType = contentType;
+        detailPlaceInformation.title = title;
+        detailPlaceInformation.address = address;
+        detailPlaceInformation.mapX = mapX;
+        detailPlaceInformation.mapY = mapY;
+        detailPlaceInformation.introduce = introduce;
+        detailPlaceInformation.homepageUrl = homepageUrl;
+        detailPlaceInformation.useTime = useTime;
+        detailPlaceInformation.tel = tel;
+        detailPlaceInformation.restDate = restDate;
+        detailPlaceInformation.reservationUrl = reservationUrl;
+        detailPlaceInformation.eventDate = eventDate;
+        detailPlaceInformation.facilityInfo = facilityInfoList;
+        detailPlaceInformation.images = imageUrlList;
+        detailPlaceInformation.isDib = isDib;
 
-        return response;
+        return detailPlaceInformation;
     }
 }

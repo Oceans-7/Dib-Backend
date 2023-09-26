@@ -11,7 +11,6 @@ import com.oceans7.dib.domain.place.service.PlaceService;
 import com.oceans7.dib.global.exception.ErrorResponse;
 import com.oceans7.dib.global.response.ApplicationResponse;
 import com.oceans7.dib.global.util.SecurityUtil;
-import com.oceans7.dib.global.util.ValidatorUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 
 @Tag(name = "place", description = "관광 정보 API")
 @RestController
@@ -43,7 +43,7 @@ public class PlaceController {
                 .request(placeRequestDto)
                 .build();
 
-        return ApplicationResponse.ok(placeService.getPlace(placeRequestDto, filterOption));
+        return ApplicationResponse.ok(placeService.getPlace(SecurityUtil.getCurrentUsername().get(), placeRequestDto, filterOption));
     }
 
     @Operation(summary = "키워드로 관광 정보 검색", description = "키워드를 입력받아 관련 정보를 조회한다.")
@@ -55,7 +55,7 @@ public class PlaceController {
     })
     @GetMapping("/search")
     public ApplicationResponse<SearchPlaceResponseDto> searchPlace(@ModelAttribute @Validated SearchPlaceRequestDto searchPlaceRequestDto) {
-        return ApplicationResponse.ok(placeService.searchKeyword(searchPlaceRequestDto));
+        return ApplicationResponse.ok(placeService.searchKeyword(SecurityUtil.getCurrentUsername().get(), searchPlaceRequestDto));
     }
 
     @Operation(summary = "관광 정보 상세 조회", description = "콘텐츠 ID와 콘텐츠 타입을 입력 받아 관광 상세 정보를 조회한다.")
@@ -67,7 +67,7 @@ public class PlaceController {
     })
     @GetMapping("/detail")
     public ApplicationResponse<DetailPlaceInformationResponseDto> getPlaceDetail(@ModelAttribute @Validated GetPlaceDetailRequestDto getPlaceDetailRequestDto) {
-            return ApplicationResponse.ok(placeService.getPlaceDetail(getPlaceDetailRequestDto));
+        return ApplicationResponse.ok(placeService.getPlaceDetail(SecurityUtil.getCurrentUsername().get(), getPlaceDetailRequestDto));
     }
 
     @Operation(summary = "관광 정보 찜하기", description = "콘텐츠 ID를 입력받아 찜하기.")

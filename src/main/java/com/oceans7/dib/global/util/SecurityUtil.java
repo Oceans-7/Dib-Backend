@@ -15,13 +15,15 @@ public class SecurityUtil {
 
     }
 
+    public static final String ANONYMOUS_USER = "anonymousUser";
+
     public static Optional<Long> getCurrentUsername() {
         final Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || authentication.getName() == null) {
+        if(authentication == null || authentication.getName() == null || ANONYMOUS_USER.equals(authentication.getName())) {
             log.error("Security Context에 인증 정보가 없습니다.");
-            throw new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION);
+            return Optional.empty();
         }
 
         return Optional.ofNullable(Long.valueOf(authentication.getName()));

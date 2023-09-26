@@ -29,14 +29,14 @@ public class PlaceResponseDto {
     private ArrangeType arrangeType;
 
     public static PlaceResponseDto of(List<SimplePlaceInformationDto> simpleDto, int count, int page, int pageSize, ArrangeType arrangeType) {
-        PlaceResponseDto placeResponse = new PlaceResponseDto();
+        PlaceResponseDto place = new PlaceResponseDto();
 
-        placeResponse.places = simpleDto;
-        placeResponse.count = count;
-        placeResponse.page = page;
-        placeResponse.pageSize = pageSize;
-        placeResponse.arrangeType = arrangeType;
+        place.places = simpleDto;
+        place.count = count;
+        place.page = page;
+        place.pageSize = pageSize;
+        place.arrangeType = arrangeType;
 
-        return placeResponse;
+        return place;
     }
 }

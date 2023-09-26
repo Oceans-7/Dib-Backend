@@ -143,4 +143,5 @@ public class MockRequest {
     public static UpdateProfileRequestDto testUpdateProfileReq() {
         return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
     }
+
 }

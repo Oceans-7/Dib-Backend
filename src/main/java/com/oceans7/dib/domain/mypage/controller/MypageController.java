@@ -67,7 +67,7 @@ public class MypageController {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
     @PutMapping
-    public ApplicationResponse updateMyProfile(@ModelAttribute UpdateProfileRequestDto updateProfileRequestDto) {
+    public ApplicationResponse updateMyProfile(@RequestBody UpdateProfileRequestDto updateProfileRequestDto) {
         mypageService.updateMyProfile(SecurityUtil.getCurrentUsername().get(), updateProfileRequestDto);
         return ApplicationResponse.ok();
     }
