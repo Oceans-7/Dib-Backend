@@ -7,7 +7,11 @@ import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
+import com.oceans7.dib.domain.report.dto.request.ReportRequestDto;
 import com.oceans7.dib.global.util.CoordinateUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MockRequest {
     public static final String KEYWORD_QUERY = "뷰티플레이";
@@ -90,5 +94,11 @@ public class MockRequest {
 
     public static UpdateProfileRequestDto testUpdateProfileReq() {
         return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+    }
+
+    public static ReportRequestDto testReportReq() {
+        List<String> imageUrlList = new ArrayList<>();
+        imageUrlList.add("https://images/2");
+        return new ReportRequestDto("갯주풀 / 영국 갯끈풀", "강원 강릉시 강문동", imageUrlList);
     }
 }

@@ -5,6 +5,8 @@ import com.oceans7.dib.domain.event.entity.*;
 import com.oceans7.dib.domain.notice.entity.MarineNotice;
 import com.oceans7.dib.domain.organism.entity.*;
 import com.oceans7.dib.domain.place.entity.Dib;
+import com.oceans7.dib.domain.report.entity.Report;
+import com.oceans7.dib.domain.report.entity.ReportImage;
 import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
@@ -155,5 +157,20 @@ public class MockEntity {
         harmfulOrganismImageList.add(HarmfulOrganismImage.of("https://images/4"));
 
         return harmfulOrganismImageList;
+    }
+
+    public static Report testReport(User user) {
+        return Report.of(
+                MockRequest.testReportReq().getOrganismName(),
+                MockRequest.testReportReq().getFoundLocation(),
+                user);
+    }
+
+    public static List<ReportImage> testReportImage() {
+        List<ReportImage> reportImageList = new ArrayList<>();
+
+        reportImageList.add(ReportImage.of(MockRequest.testReportReq().getImageUrlList().get(0)));
+
+        return reportImageList;
     }
 }
