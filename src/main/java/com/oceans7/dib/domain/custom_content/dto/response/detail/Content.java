@@ -28,6 +28,6 @@ public class Content {
     private DivingShopSection divingShopSection;
 
     @JsonProperty("restaurantSection")
-    @Schema(description = "식당/카페 소개 섹션", implementation = RestaurantSection.class)
+    @Schema(description = "맛집 소개 섹션", implementation = RestaurantSection.class)
     private RestaurantSection restaurantSection;
 }
