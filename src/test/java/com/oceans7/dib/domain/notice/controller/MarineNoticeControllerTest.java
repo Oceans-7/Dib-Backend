@@ -47,7 +47,7 @@ public class MarineNoticeControllerTest {
     }
 
     @Test
-    @DisplayName("이벤트 조회 테스트")
+    @DisplayName("해양 공지 조회 테스트")
     @WithMockUser("user1")
     public void getAllMarineNotice() throws Exception {
         // given
