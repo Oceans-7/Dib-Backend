@@ -67,9 +67,7 @@ public class MypageServiceTest {
     }
 
     private Coupon issueCoupon(CouponGroup couponGroup) {
-        Coupon coupon = MockEntity.testCoupon();
-        coupon.setUser(testUser);
-        coupon.setCouponGroup(couponGroup);
+        Coupon coupon = MockEntity.testCoupon(couponGroup, testUser);
         return couponRepository.save(coupon);
     }
 

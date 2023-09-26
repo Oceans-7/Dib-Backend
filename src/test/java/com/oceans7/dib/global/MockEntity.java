@@ -31,8 +31,8 @@ public class MockEntity {
         return CouponGroup.of("제주 서귀포 다이빙 체험 할인권", "제주 서귀포", CouponType.SCUBA_DIVING, "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1), "https://picsum.photos/150/190", "https://picsum.photos/150/190");
     }
 
-    public static Coupon testCoupon() {
-        return Coupon.of(LocalDate.now(), CouponStatus.UNUSED);
+    public static Coupon testCoupon(CouponGroup couponGroup, User user) {
+        return Coupon.of(LocalDate.now(), CouponStatus.UNUSED, couponGroup, user);
     }
 
     public static Dib testDib(User user) {
