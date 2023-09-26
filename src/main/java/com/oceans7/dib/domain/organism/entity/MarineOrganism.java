@@ -12,12 +12,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MarineOrganism extends Organism{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "organism_id")
-    private Long organismId;
-
     @OneToMany(mappedBy = "marineOrganism")
     private List<MarineOrganismImage> marineOrganismImageList = new ArrayList<>();
-
 }

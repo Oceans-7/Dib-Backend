@@ -69,7 +69,7 @@ public class OrganismService {
                 marineOrganism.getEnglishName(),
                 marineOrganism.getDescription(),
                 marineOrganism.getBasicAppearance(),
-                marineOrganism.getDescription(),
+                marineOrganism.getDetailDescription(),
                 extractImageUrl(marineOrganism.getMarineOrganismImageList()),
                 getOtherMarineOrganism(organismId)
         );
@@ -98,7 +98,7 @@ public class OrganismService {
                 harmfulOrganism.getEnglishName(),
                 harmfulOrganism.getDescription(),
                 harmfulOrganism.getBasicAppearance(),
-                harmfulOrganism.getDescription(),
+                harmfulOrganism.getDetailDescription(),
                 extractImageUrl(harmfulOrganism.getHarmfulOrganismImageList()),
                 getOtherHarmfulOrganism(organismId)
         );

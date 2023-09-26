@@ -18,4 +18,17 @@ public class MarineOrganismImage extends BaseImageEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organism_id", nullable = false)
     private MarineOrganism marineOrganism;
+
+    public static MarineOrganismImage of(String url) {
+        MarineOrganismImage marineOrganismImage = new MarineOrganismImage();
+
+        marineOrganismImage.setUrl(url);
+
+        return marineOrganismImage;
+    }
+
+    public void setMarineOrganism(MarineOrganism marineOrganism) {
+        this.marineOrganism = marineOrganism;
+        marineOrganism.getMarineOrganismImageList().add(this);
+    }
 }

@@ -14,6 +14,11 @@ import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
 import com.oceans7.dib.domain.notice.entity.MarineNotice;
+import com.oceans7.dib.domain.organism.dto.response.OrganismResponseDto;
+import com.oceans7.dib.domain.organism.dto.response.SimpleOrganismResponseDto;
+import com.oceans7.dib.domain.organism.entity.HarmfulOrganism;
+import com.oceans7.dib.domain.organism.entity.MarineOrganism;
+import com.oceans7.dib.domain.organism.entity.Organism;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.domain.place.dto.response.*;
@@ -515,5 +520,48 @@ public class MockResponse {
 
     public static DetailContentResponseDto testDetailCustomContentRes() {
         return DetailContentResponseDto.of(1L, testContentRes());
+    }
+
+    public static List<SimpleOrganismResponseDto> testSimpleOrganismRes(List<? extends Organism> organismList) {
+        return organismList.stream().map(organism ->
+            SimpleOrganismResponseDto.of(
+                    organism.getOrganismId(),
+                    organism.getIllustrationImageUrl(),
+                    organism.getKoreanName(),
+                    organism.getEnglishName(),
+                    organism.getDescription())
+        ).collect(Collectors.toList());
+    }
+
+    public static OrganismResponseDto testMarineOrganismRes(MarineOrganism marineOrganism, List<MarineOrganism> otherMarineOrganism) {
+        return OrganismResponseDto.of(
+                marineOrganism.getOrganismId(),
+                marineOrganism.getFirstImageUrl(),
+                marineOrganism.getKoreanName(),
+                marineOrganism.getEnglishName(),
+                marineOrganism.getDescription(),
+                marineOrganism.getBasicAppearance(),
+                marineOrganism.getDetailDescription(),
+                testMarineOrganismImageUrlRes(),
+                testSimpleOrganismRes(otherMarineOrganism)
+        );
+    }
+
+    private static List<String> testMarineOrganismImageUrlRes() {
+        return MockEntity.testMarineOrganismImage().stream().map(image -> image.getUrl()).collect(Collectors.toList());
+    }
+
+    public static OrganismResponseDto testHarmfulOrganismRes(HarmfulOrganism harmfulOrganism, List<HarmfulOrganism> otherHarmfulOrganism) {
+        return OrganismResponseDto.of(
+                harmfulOrganism.getOrganismId(),
+                harmfulOrganism.getFirstImageUrl(),
+                harmfulOrganism.getKoreanName(),
+                harmfulOrganism.getEnglishName(),
+                harmfulOrganism.getDescription(),
+                harmfulOrganism.getBasicAppearance(),
+                harmfulOrganism.getDetailDescription(),
+                testMarineOrganismImageUrlRes(),
+                testSimpleOrganismRes(otherHarmfulOrganism)
+        );
     }
 }

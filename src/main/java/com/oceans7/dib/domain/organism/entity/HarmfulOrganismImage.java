@@ -18,4 +18,17 @@ public class HarmfulOrganismImage extends BaseImageEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organism_id", nullable = false)
     private HarmfulOrganism harmfulOrganism;
+
+    public static HarmfulOrganismImage of(String url) {
+        HarmfulOrganismImage harmfulOrganismImage = new HarmfulOrganismImage();
+
+        harmfulOrganismImage.setUrl(url);
+
+        return harmfulOrganismImage;
+    }
+
+    public void setHarmfulOrganism(HarmfulOrganism harmfulOrganism) {
+        this.harmfulOrganism = harmfulOrganism;
+        harmfulOrganism.getHarmfulOrganismImageList().add(this);
+    }
 }
