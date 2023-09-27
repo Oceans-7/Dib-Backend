@@ -18,8 +18,8 @@ public class ApplicationResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private T data;
 
-    public static ApplicationResponse<Void> ok() {
-        return new ApplicationResponse<>("200", "요청 성공", null);
+    public static ApplicationResponse<String> ok() {
+        return new ApplicationResponse<>("200", "요청 성공", "");
     }
 
     public static <T> ApplicationResponse<T> ok(T data) {

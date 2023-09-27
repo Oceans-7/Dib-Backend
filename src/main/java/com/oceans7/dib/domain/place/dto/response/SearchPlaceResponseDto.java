@@ -34,28 +34,28 @@ public class SearchPlaceResponseDto {
     @Schema(description = "지역명 검색 시 true: 지역명 검색 시 areas 변수로 결과 전달", example = "true")
     private boolean isAreaSearch;
 
-    public static SearchPlaceResponseDto of(String keyword, List<SimplePlaceInformationDto> simpleDto,
-                                            TourAPICommonListResponse list, boolean isAreaSearch) {
-        SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
+    public static SearchPlaceResponseDto of(String keyword, List<SimplePlaceInformationDto> simpleDto, boolean isAreaSearch, int count, int page, int pageSize) {
+        SearchPlaceResponseDto searchPlace = new SearchPlaceResponseDto();
 
-        searchPlaceResponse.keyword = keyword;
-        searchPlaceResponse.places = simpleDto;
-        searchPlaceResponse.count = list.getTotalCount();
-        searchPlaceResponse.page = list.getPage();
-        searchPlaceResponse.pageSize = list.getPageSize();
-        searchPlaceResponse.isAreaSearch = isAreaSearch;
+        searchPlace.keyword = keyword;
+        searchPlace.places = simpleDto;
+        searchPlace.count = count;
+        searchPlace.page = page;
+        searchPlace.pageSize = pageSize;
+        searchPlace.isAreaSearch = isAreaSearch;
 
-        return searchPlaceResponse;
+        return searchPlace;
     }
 
-    public static SearchPlaceResponseDto of(String keyword, List<SimpleAreaResponseDto> simpleDto, boolean isAreaSearch) {
-        SearchPlaceResponseDto searchPlaceResponse = new SearchPlaceResponseDto();
+    public static SearchPlaceResponseDto of(String keyword, List<SimpleAreaResponseDto> simpleDto, boolean isAreaSearch, int count) {
+        SearchPlaceResponseDto searchPlace = new SearchPlaceResponseDto();
 
-        searchPlaceResponse.keyword = keyword;
-        searchPlaceResponse.areas = simpleDto;
-        searchPlaceResponse.isAreaSearch = isAreaSearch;
+        searchPlace.keyword = keyword;
+        searchPlace.areas = simpleDto;
+        searchPlace.isAreaSearch = isAreaSearch;
+        searchPlace.count = count;
 
-        return searchPlaceResponse;
+        return searchPlace;
     }
 
 }

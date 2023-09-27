@@ -6,6 +6,7 @@ import com.oceans7.dib.domain.weather.dto.FcstType;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
+import com.oceans7.dib.global.api.response.kakao.AddressItem;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
@@ -45,7 +46,7 @@ public class LocationService {
             throw new ApplicationException(ErrorCode.NOT_FOUNT_USER_LOCATION);
         }
 
-        LocalResponse.AddressItem addressItem = addressItems.getAddressItems().get(0);
+        AddressItem addressItem = addressItems.getAddressItems().get(0);
 
         addressName = ValidatorUtil.isNotEmpty(addressItem.getRoadAddress()) ?
                 addressItem.getRoadAddress().getAddressName() : addressItem.getAddress().getAddressName();
