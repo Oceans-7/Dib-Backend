@@ -2,6 +2,7 @@ package com.oceans7.dib.global.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -83,5 +84,9 @@ public class TextManipulatorUtil {
             return input.replace("<br>", "\n");
         }
         return input;
+    }
+
+    public static String generateRedisKey(String... args) {
+        return String.join("::", args);
     }
 }
