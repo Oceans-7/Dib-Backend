@@ -1,5 +1,7 @@
 package com.oceans7.dib.global.util;
 
+import lombok.Getter;
+
 public class CoordinateUtil {
     private static final double EARTH_RADIUS_KM = 6371.0;
 
@@ -73,6 +75,7 @@ public class CoordinateUtil {
         return rs;
     }
 
+    @Getter
     public static class LatXLngY
     {
         public double lat;

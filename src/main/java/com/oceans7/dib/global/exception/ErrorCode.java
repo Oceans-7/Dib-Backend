@@ -22,6 +22,9 @@ public enum ErrorCode {
     // Place
     NOT_FOUNT_AREA_NAME(HttpStatus.BAD_REQUEST, "P0000", "지역명을 찾을 수 없습니다."),
 
+    // Weather
+    NOT_FOUNT_WEATHER_INFO(HttpStatus.BAD_REQUEST, "W0000", "날씨 정보를 찾을 수 없습니다."),
+
     // Auth
     TOKEN_VERIFICATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "A0000", "토큰 검증에 실패했습니다."),
     OPENKEY_NOT_MATCHED(HttpStatus.BAD_REQUEST, "A0001", "일치하는 공개키를 찾을 수 없습니다."),

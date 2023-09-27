@@ -19,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,12 +53,12 @@ public class LocationServiceTest {
 
         baseDate = calculateBaseDate(MockRequest.NCST_CALLABLE_TIME);
         baseTime = calculateBaseTime(MockRequest.NCST_CALLABLE_TIME);
-        when(vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime))
+        when(vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime).exceptionally(e -> null).join())
                 .thenReturn(MockResponse.testLocationNcstRes(baseDate, baseTime));
 
         fcstDate = calculateBaseDate(MockRequest.FCST_CALLABLE_TIME);
         fcstTime = calculateBaseTime(MockRequest.FCST_CALLABLE_TIME);
-        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, fcstDate, fcstTime))
+        when(vilageFcstAPIService.getUltraForecast(baseX, baseY, fcstDate, fcstTime).exceptionally(e -> null).join())
                 .thenReturn(MockResponse.testLocationFcstRes(baseDate, fcstTime, fcstDate, nowTimeFormat));
 
         // when
