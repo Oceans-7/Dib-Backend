@@ -13,7 +13,7 @@ public enum TideType {
         this.description = description;
     }
 
-    public static TideType getTidType(String tideType) {
+    public static TideType getTideType(String tideType) {
         return Stream.of(TideType.values())
                 .filter(t -> t.description.equals(tideType))
                 .findFirst()

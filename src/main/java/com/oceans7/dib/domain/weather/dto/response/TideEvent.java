@@ -29,7 +29,7 @@ public class TideEvent {
         TideEvent tideEvent = new TideEvent();
         tideEvent.time = time;
         tideEvent.height = height;
-        tideEvent.type = TideType.getTidType(type);
+        tideEvent.type = TideType.getTideType(type);
         return tideEvent;
     }
 
