@@ -22,9 +22,6 @@ public abstract class OpenAPIService {
             log.error(e.getMessage());
             e.printStackTrace();
             throw new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION);
-        } catch(Exception e) {
-            e.printStackTrace();
-            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION);
         }
     }
 }
