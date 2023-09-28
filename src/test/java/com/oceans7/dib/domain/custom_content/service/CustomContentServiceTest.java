@@ -44,7 +44,7 @@ public class CustomContentServiceTest {
         assertThat(response.get(0).getCustomContentId()).isEqualTo(customContent.getCustomContentId());
         assertThat(response.get(0).getTitle()).isEqualTo(customContent.getTitle());
         assertThat(response.get(0).getSubTitle()).isEqualTo(customContent.getSubTitle());
-        assertThat(response.get(0).getFirstImage()).isEqualTo(customContent.getCoverImageUrl());
+        assertThat(response.get(0).getFirstImageUrl()).isEqualTo(customContent.getFirstImageUrl());
     }
 
     @Test

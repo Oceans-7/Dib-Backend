@@ -69,7 +69,7 @@ public class CustomContentControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].customContentId").value(mockResponse.get(0).getCustomContentId()))
-                .andExpect(jsonPath("$.data[0].firstImage").value(mockResponse.get(0).getFirstImage()))
+                .andExpect(jsonPath("$.data[0].firstImageUrl").value(mockResponse.get(0).getFirstImageUrl()))
                 .andExpect(jsonPath("$.data[0].title").value(mockResponse.get(0).getTitle()))
                 .andExpect(jsonPath("$.data[0].subTitle").value(mockResponse.get(0).getSubTitle()));
     }

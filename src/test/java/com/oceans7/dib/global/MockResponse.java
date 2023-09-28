@@ -518,7 +518,7 @@ public class MockResponse {
         List<ContentResponseDto> customContentResponse = new ArrayList<>();
         customContentResponse.add(ContentResponseDto.of(
                 customContent.getCustomContentId(),
-                customContent.getCoverImageUrl(),
+                customContent.getFirstImageUrl(),
                 customContent.getTitle(),
                 customContent.getSubTitle()
         ));

@@ -17,8 +17,8 @@ public class CustomContent {
     @Column(name = "json_content", length = 3000)
     private String jsonContent;
 
-    @Column(name = "cover_image_url", length = 2100)
-    private String coverImageUrl;
+    @Column(name = "first_image_url", length = 2100)
+    private String firstImageUrl;
 
     @Column(name = "title")
     private String title;
@@ -26,11 +26,11 @@ public class CustomContent {
     @Column(name = "sub_title")
     private String subTitle;
 
-    public static CustomContent of(String jsonContent, String coverImageUrl, String title, String subTitle) {
+    public static CustomContent of(String jsonContent, String firstImageUrl, String title, String subTitle) {
         CustomContent customContent = new CustomContent();
 
         customContent.jsonContent = jsonContent;
-        customContent.coverImageUrl = coverImageUrl;
+        customContent.firstImageUrl = firstImageUrl;
         customContent.title = title;
         customContent.subTitle = subTitle;
 

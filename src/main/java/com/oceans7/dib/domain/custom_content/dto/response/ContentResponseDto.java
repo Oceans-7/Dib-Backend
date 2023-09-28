@@ -12,7 +12,7 @@ public class ContentResponseDto {
     private Long customContentId;
 
     @Schema(description = "대표 이미지", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg")
-    private String firstImage;
+    private String firstImageUrl;
 
     @Schema(description = "제목", example = "제주 서귀포")
     private String title;
@@ -24,7 +24,7 @@ public class ContentResponseDto {
         ContentResponseDto contentResponseDto = new ContentResponseDto();
 
         contentResponseDto.customContentId = customContentId;
-        contentResponseDto.firstImage = firstImage;
+        contentResponseDto.firstImageUrl = firstImage;
         contentResponseDto.title = title;
         contentResponseDto.subTitle = subTitle;
 

@@ -28,7 +28,7 @@ public class CustomContentService extends JsonParsingService {
         return customContentList.stream()
                 .map(content -> ContentResponseDto.of(
                         content.getCustomContentId(),
-                        content.getCoverImageUrl(),
+                        content.getFirstImageUrl(),
                         content.getTitle(),
                         content.getSubTitle()
                 ))
