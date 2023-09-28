@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,6 +51,9 @@ public class CouponGroup {
     @JoinColumn(name = "event_id")
     private Event event;
 
+    @OneToMany(mappedBy = "couponGroup")
+    private List<Coupon> couponList = new ArrayList<>();
+
     public static CouponGroup of(String name, String region, CouponType couponType, String checkCode,
                                  int discountPercentage, LocalDate startDate, LocalDate closingDate, String couponImageUrl, String partnerImageUrl) {
         CouponGroup couponGroup = new CouponGroup();
@@ -68,5 +72,6 @@ public class CouponGroup {
 
     public void setEvent(Event event) {
         this.event = event;
+        event.getCouponGroupList().add(this);
     }
 }

@@ -35,11 +35,11 @@ public class CouponService {
             throw new ApplicationException(ErrorCode.ALREADY_ISSUED_EXCEPTION);
         }
 
-        couponRepository.save(Coupon.of(
-                LocalDate.now(),
-                CouponStatus.UNUSED,
-                couponGroup,
-                user));
+        Coupon coupon = Coupon.of(LocalDate.now(), CouponStatus.UNUSED);
+        coupon.setCouponGroup(couponGroup);
+        coupon.setUser(user);
+
+        couponRepository.save(coupon);
     }
 
     private ApplicationException handleNotFoundException() {

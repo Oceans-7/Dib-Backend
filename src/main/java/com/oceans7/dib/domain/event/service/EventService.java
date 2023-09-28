@@ -25,8 +25,8 @@ public class EventService {
     public EventResponseDto getEventDetail(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> handleNotFoundException());
 
-        CouponGroup firstCouponGroup = event.getCouponGroups().get(FIRST_SECTION_INDEX);
-        CouponGroup secondCouponGroup = event.getCouponGroups().get(SECOND_SECTION_INDEX);
+        CouponGroup firstCouponGroup = event.getCouponGroupList().get(FIRST_SECTION_INDEX);
+        CouponGroup secondCouponGroup = event.getCouponGroupList().get(SECOND_SECTION_INDEX);
 
         CouponSectionResponseDto firstCouponSection = CouponSectionResponseDto.from(firstCouponGroup);
         CouponSectionResponseDto secondCouponSection = CouponSectionResponseDto.from(secondCouponGroup);

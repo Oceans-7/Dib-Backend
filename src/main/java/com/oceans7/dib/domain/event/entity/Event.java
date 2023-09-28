@@ -28,7 +28,7 @@ public class Event {
     private String bannerUrl;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CouponGroup> couponGroups;
+    private List<CouponGroup> couponGroupList;
 
     public static Event of(String mainColor, String subColor, String bannerUrl) {
         Event event = new Event();
@@ -36,18 +36,8 @@ public class Event {
         event.mainColor = mainColor;
         event.subColor = subColor;
         event.bannerUrl = bannerUrl;
-        event.couponGroups = new ArrayList<>();
+        event.couponGroupList = new ArrayList<>();
 
         return event;
-    }
-
-    public void addCouponGroup(final CouponGroup couponGroup) {
-        couponGroups.add(couponGroup);
-        couponGroup.setEvent(this);
-    }
-
-    public void removeCouponGroup(final CouponGroup couponGroup) {
-        couponGroups.remove(couponGroup);
-        couponGroup.setEvent(null);
     }
 }
