@@ -63,7 +63,6 @@ public class CustomContentServiceTest {
         assertThat(titleSection.getSubTitle()).isEqualTo(MockResponse.testContentRes().getTitleSection().getSubTitle());
         assertThat(titleSection.getThumbnailUrl()).isEqualTo(MockResponse.testContentRes().getTitleSection().getThumbnailUrl());
         assertThat(titleSection.getRegion()).isEqualTo(MockResponse.testContentRes().getTitleSection().getRegion());
-        assertThat(titleSection.getKeyword()).isEqualTo(MockResponse.testContentRes().getTitleSection().getKeyword());
 
         // 지역 소개 섹션
         RegionSection regionSection = response.getContent().getRegionSection();
@@ -104,10 +103,10 @@ public class CustomContentServiceTest {
             assertThat(restaurantList.get(i).getContentId()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getRestaurantList().get(i).getContentId());
         }
 
-        CouponSection couponSection = restaurantSection.getCouponSection();
-        assertThat(couponSection.getTitle()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getCouponSection().getTitle());
-        assertThat(couponSection.getContent()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getCouponSection().getContent());
-        assertThat(couponSection.getEventId()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getCouponSection().getEventId());
+        CouponSection couponSection = response.getContent().getCouponSection();
+        assertThat(couponSection.getTitle()).isEqualTo(MockResponse.testContentRes().getCouponSection().getTitle());
+        assertThat(couponSection.getContent()).isEqualTo(MockResponse.testContentRes().getCouponSection().getContent());
+        assertThat(couponSection.getEventId()).isEqualTo(MockResponse.testContentRes().getCouponSection().getEventId());
     }
 
 }

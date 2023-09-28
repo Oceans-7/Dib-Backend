@@ -92,6 +92,7 @@ public class CustomContentControllerTest {
         DivingPointSection mockDivingPointSection = mockResponse.getContent().getDivingPointSection();
         DivingShopSection mockDivingShopSection = mockResponse.getContent().getDivingShopSection();
         RestaurantSection mockRestaurantSection = mockResponse.getContent().getRestaurantSection();
+        CouponSection mockCouponSection = mockResponse.getContent().getCouponSection();
 
         result.andExpect(status().isOk())
                 .andDo(print())
@@ -101,7 +102,6 @@ public class CustomContentControllerTest {
                 .andExpect(jsonPath("$.data.content.titleSection.title").value(mockTitleSection.getTitle()))
                 .andExpect(jsonPath("$.data.content.titleSection.subTitle").value(mockTitleSection.getSubTitle()))
                 .andExpect(jsonPath("$.data.content.titleSection.region").value(mockTitleSection.getRegion()))
-                .andExpect(jsonPath("$.data.content.titleSection.keyword").value(mockTitleSection.getKeyword()))
                 // 지역 소개 섹션
                 .andExpect(jsonPath("$.data.content.regionSection.title").value(mockRegionSection.getTitle()))
                 .andExpect(jsonPath("$.data.content.regionSection.imageTopContent").value(mockRegionSection.getImageTopContent()))
@@ -129,9 +129,9 @@ public class CustomContentControllerTest {
                 .andExpect(jsonPath("$.data.content.restaurantSection.title").value(mockRestaurantSection.getTitle()))
                 .andExpect(jsonPath("$.data.content.restaurantSection.keyword").value(mockRestaurantSection.getKeyword()))
                 // 맛집 소개 섹션 > 할인 쿠폰
-                .andExpect(jsonPath("$.data.content.restaurantSection.couponSection.title").value(mockRestaurantSection.getCouponSection().getTitle()))
-                .andExpect(jsonPath("$.data.content.restaurantSection.couponSection.content").value(mockRestaurantSection.getCouponSection().getContent()))
-                .andExpect(jsonPath("$.data.content.restaurantSection.couponSection.eventId").value(mockRestaurantSection.getCouponSection().getEventId()));
+                .andExpect(jsonPath("$.data.content.couponSection.title").value(mockCouponSection.getTitle()))
+                .andExpect(jsonPath("$.data.content.couponSection.content").value(mockCouponSection.getContent()))
+                .andExpect(jsonPath("$.data.content.couponSection.eventId").value(mockCouponSection.getEventId()));
 
         // 맛집 소개 섹션 > 식당/카페 정보
         for(int i = 0 ; i < mockRestaurantSection.getRestaurantList().size(); i++) {

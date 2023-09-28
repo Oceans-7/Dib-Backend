@@ -24,9 +24,4 @@ public class RestaurantSection {
     @JsonProperty("restaurantList")
     @ArraySchema(schema = @Schema(description = "식당/카페 정보", implementation = Restaurant.class))
     private List<Restaurant> restaurantList;
-
-    @JsonProperty("couponSection")
-    @Schema(description = "할인 쿠폰 섹션", implementation = CouponSection.class)
-    private CouponSection couponSection;
-
 }

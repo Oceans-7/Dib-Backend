@@ -25,8 +25,4 @@ public class TitleSection {
     @JsonProperty("region")
     @Schema(description = "지역명", example = "제주 서귀포")
     private String region;
-
-    @JsonProperty("keyword")
-    @Schema(description = "하이라이트 키워드", example = "제주 서귀포")
-    private String keyword;
 }

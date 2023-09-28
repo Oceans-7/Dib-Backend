@@ -30,4 +30,8 @@ public class Content {
     @JsonProperty("restaurantSection")
     @Schema(description = "맛집 소개 섹션", implementation = RestaurantSection.class)
     private RestaurantSection restaurantSection;
+
+    @JsonProperty("couponSection")
+    @Schema(description = "할인 쿠폰 섹션", implementation = CouponSection.class)
+    private CouponSection couponSection;
 }
