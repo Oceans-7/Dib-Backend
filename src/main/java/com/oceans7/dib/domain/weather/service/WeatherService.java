@@ -4,7 +4,7 @@ import com.oceans7.dib.domain.weather.dto.FcstType;
 import com.oceans7.dib.domain.weather.dto.ObsCode;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.domain.weather.dto.request.GetLocationWeatherRequestDto;
-import com.oceans7.dib.domain.weather.dto.response.GetCurrentLocationWeatherResponseDto;
+import com.oceans7.dib.domain.weather.dto.response.GetCurrentWeatherResponseDto;
 import com.oceans7.dib.domain.weather.dto.response.TideEvent;
 import com.oceans7.dib.domain.weather.dto.response.WeatherInformation;
 import com.oceans7.dib.domain.weather.service.vo.CurrentWeatherVO;
@@ -25,16 +25,13 @@ import com.oceans7.dib.global.util.BaseTimeUtil;
 import com.oceans7.dib.global.util.CoordinateUtil;
 import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
@@ -52,7 +49,7 @@ public class WeatherService {
 
     private final KakaoLocalAPIService kakaoLocalAPIService;
 
-    public GetCurrentLocationWeatherResponseDto getWeather(GetLocationWeatherRequestDto getLocationWeatherRequestDto) {
+    public GetCurrentWeatherResponseDto getWeather(GetLocationWeatherRequestDto getLocationWeatherRequestDto) {
 
         LocalDateTime localDateTime = LocalDateTime.now();
         double latitude = getLocationWeatherRequestDto.getLatitude();
@@ -73,7 +70,7 @@ public class WeatherService {
             );
 
 
-            return GetCurrentLocationWeatherResponseDto.of(
+            return GetCurrentWeatherResponseDto.of(
                     addressName,
                     localDateTime,
                     weatherInformation

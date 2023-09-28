@@ -1,9 +1,8 @@
 package com.oceans7.dib.domain.weather.controller;
 
-import com.oceans7.dib.domain.weather.dto.response.GetCurrentLocationWeatherResponseDto;
+import com.oceans7.dib.domain.weather.dto.response.GetCurrentWeatherResponseDto;
 import com.oceans7.dib.domain.weather.service.WeatherService;
 import com.oceans7.dib.domain.weather.dto.request.GetLocationWeatherRequestDto;
-import com.oceans7.dib.domain.weather.dto.response.GetLocationWeatherResponseDto;
 import com.oceans7.dib.global.exception.ErrorResponse;
 import com.oceans7.dib.global.response.ApplicationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,10 +34,13 @@ public class WeatherController {
             @ApiResponse(responseCode = "W0000", description = "날씨 정보를 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "O0001", description = "Open API 서버 연결에 실패하였습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
-    public ApplicationResponse<GetCurrentLocationWeatherResponseDto> getWeather(
+    public ApplicationResponse<GetCurrentWeatherResponseDto> getWeather(
             @ParameterObject @ModelAttribute @Validated GetLocationWeatherRequestDto getLocationWeatherRequestDto
     ) {
-        GetCurrentLocationWeatherResponseDto weather = weatherService.getWeather(getLocationWeatherRequestDto);
+        GetCurrentWeatherResponseDto weather = weatherService.getWeather(getLocationWeatherRequestDto);
         return ApplicationResponse.ok(weather);
     }
+
+
+    public ApplicationResponse<GetForecastWeather>
 }
