@@ -177,6 +177,7 @@ public class PlaceServiceTest {
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
         assertThat(info.getFirstImageUrl()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        assertThat(info.isDib()).isFalse();
     }
 
     @Test

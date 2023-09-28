@@ -12,6 +12,7 @@ import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
 import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
 import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
 import com.oceans7.dib.domain.notice.entity.MarineNotice;
 import com.oceans7.dib.domain.organism.dto.response.OrganismResponseDto;
@@ -444,6 +445,125 @@ public class MockResponse {
 
         mock.updateItem(spotItem.getUseTime(), spotItem.getInfoCenter(), spotItem.getRestDate(), null, null, facilityInfo);
         return mock;
+    }
+
+    public static PartnerResponseDto testPartnerRes(CouponGroup couponGroup) {
+        return PartnerResponseDto.from(couponGroup);
+    }
+
+    public static PartnerSectionResponseDto testPartnerSectionRes(CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
+        String partnerSectionKeyword = String.format("%s, %s", firstCouponGroup.getCouponType().getKeyword(), secondCouponGroup.getCouponType().getKeyword());
+        String partnerSectionTitle = String.format("%s %s \n할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
+
+        return PartnerSectionResponseDto.of(
+                partnerSectionTitle,
+                partnerSectionKeyword,
+                testPartnerRes(firstCouponGroup),
+                testPartnerRes(secondCouponGroup)
+        );
+    }
+
+    public static CouponSectionResponseDto testCouponSectionRes(CouponGroup couponGroup) {
+        return CouponSectionResponseDto.from(couponGroup);
+    }
+
+    public static EventResponseDto testEventRes(Event event, CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
+        return EventResponseDto.of(
+                event.getEventId(),
+                event.getBannerUrl(),
+                event.getMainColor(),
+                event.getSubColor(),
+                testCouponSectionRes(firstCouponGroup),
+                testCouponSectionRes(secondCouponGroup),
+                testPartnerSectionRes(firstCouponGroup, secondCouponGroup)
+        );
+    }
+
+    public static List<NoticeResponseDto> testMarineNoticeRes(MarineNotice marineNotice) {
+        List<NoticeResponseDto> noticeResponse = new ArrayList<>();
+        noticeResponse.add(NoticeResponseDto.from(marineNotice));
+        return noticeResponse;
+    }
+
+    public static Content testContentRes() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Content result = mapper.readValue(getCustomContentTestJsonFile(), Content.class);
+
+            return result;
+        } catch(Exception e) {
+            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION);
+        }
+    }
+
+    public static String getCustomContentTestJsonFile() {
+        try{
+            ClassPathResource resource = new ClassPathResource("custom-content-test-data.json");
+            InputStream inputStream = resource.getInputStream();
+
+            return new String(FileCopyUtils.copyToByteArray(inputStream), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<ContentResponseDto> testCustomContentRes(CustomContent customContent) {
+        List<ContentResponseDto> customContentResponse = new ArrayList<>();
+        customContentResponse.add(ContentResponseDto.of(
+                customContent.getCustomContentId(),
+                customContent.getCoverImageUrl(),
+                customContent.getTitle(),
+                customContent.getSubTitle()
+        ));
+        return customContentResponse;
+    }
+
+    public static DetailContentResponseDto testDetailCustomContentRes() {
+        return DetailContentResponseDto.of(1L, testContentRes());
+    }
+
+    public static List<SimpleOrganismResponseDto> testSimpleOrganismRes(List<? extends Organism> organismList) {
+        return organismList.stream().map(organism ->
+            SimpleOrganismResponseDto.of(
+                    organism.getOrganismId(),
+                    organism.getIllustrationImageUrl(),
+                    organism.getKoreanName(),
+                    organism.getEnglishName(),
+                    organism.getDescription())
+        ).collect(Collectors.toList());
+    }
+
+    public static OrganismResponseDto testMarineOrganismRes(MarineOrganism marineOrganism, List<MarineOrganism> otherMarineOrganism) {
+        return OrganismResponseDto.of(
+                marineOrganism.getOrganismId(),
+                marineOrganism.getFirstImageUrl(),
+                marineOrganism.getKoreanName(),
+                marineOrganism.getEnglishName(),
+                marineOrganism.getDescription(),
+                marineOrganism.getBasicAppearance(),
+                marineOrganism.getDetailDescription(),
+                testMarineOrganismImageUrlRes(),
+                testSimpleOrganismRes(otherMarineOrganism)
+        );
+    }
+
+    private static List<String> testMarineOrganismImageUrlRes() {
+        return MockEntity.testMarineOrganismImage().stream().map(image -> image.getUrl()).collect(Collectors.toList());
+    }
+
+    public static OrganismResponseDto testHarmfulOrganismRes(HarmfulOrganism harmfulOrganism, List<HarmfulOrganism> otherHarmfulOrganism) {
+        return OrganismResponseDto.of(
+                harmfulOrganism.getOrganismId(),
+                harmfulOrganism.getFirstImageUrl(),
+                harmfulOrganism.getKoreanName(),
+                harmfulOrganism.getEnglishName(),
+                harmfulOrganism.getDescription(),
+                harmfulOrganism.getBasicAppearance(),
+                harmfulOrganism.getDetailDescription(),
+                testMarineOrganismImageUrlRes(),
+                testSimpleOrganismRes(otherHarmfulOrganism)
+        );
     }
 
     public static PartnerResponseDto testPartnerRes(CouponGroup couponGroup) {
