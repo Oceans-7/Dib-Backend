@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.weather.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.domain.weather.service.vo.DivingIndicator;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -10,12 +11,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 public class WeatherInformation {
+
+    @Schema(description = "날짜", example = "2021-07-01")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate localDate;
 
     @Schema(description = "날씨 타입", example = "SUNNY")
     private WeatherType weatherType;
@@ -37,9 +43,4 @@ public class WeatherInformation {
 
     @ArraySchema(schema = @Schema(description = "조수 정보", implementation = TideEvent.class))
     private List<TideEvent> tideEvents;
-
-    public static WeatherInformation of(WeatherType weatherType, Double airTemperature, Double waterTemperature, Double windSpeed, Double waveHeight, DivingIndicator divingIndicator, List<TideEvent> tideEvents) {
-        return new WeatherInformation(weatherType, airTemperature, waterTemperature, windSpeed, waveHeight, divingIndicator, tideEvents);
-    }
-
 }

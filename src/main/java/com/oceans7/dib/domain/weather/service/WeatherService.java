@@ -59,7 +59,15 @@ public class WeatherService {
         try {
             CurrentWeatherVO currentWeather = getCurrentWeather(latitude, longitude, localDateTime);
 
+            if (ValidatorUtil.isEmpty(currentWeather)) {
+                return GetCurrentWeatherResponseDto.of(
+                        null,
+                        null
+                );
+            }
+
             WeatherInformation weatherInformation = WeatherInformation.of(
+                    LocalDate.now(),
                     currentWeather.getWeatherType(),
                     currentWeather.getAirTemperature(),
                     currentWeather.getWaterTemperature(),
@@ -72,7 +80,6 @@ public class WeatherService {
 
             return GetCurrentWeatherResponseDto.of(
                     addressName,
-                    localDateTime,
                     weatherInformation
             );
 
@@ -210,11 +217,11 @@ public class WeatherService {
     private ObsCode getNearestObsCode(double x, double y) {
 
         // TODO : 최대 거리는 추후에 변경
-        double maximumDistance = 24;
+        double maximumDistance = 26;
 
         ObsCode obsCode = Stream.of(ObsCode.values()).min((o1, o2) -> {
-            double o1Distance = getDistance(o1.getX(), o1.getY(), x, y);
-            double o2Distance = getDistance(o2.getX(), o2.getY(), x, y);
+            double o1Distance = CoordinateUtil.calculateDistance(o1.getX(), o1.getY(), x, y);
+            double o2Distance = CoordinateUtil.calculateDistance(o2.getX(), o2.getY(), x, y);
 
             return Double.compare(o1Distance, o2Distance);
         }).orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
