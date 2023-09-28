@@ -28,16 +28,15 @@ public class PlaceResponseDto {
     @Schema(description = "정렬 형식", example = "TITLE")
     private ArrangeType arrangeType;
 
-    public static PlaceResponseDto of(List<SimplePlaceInformationDto> simpleDto, TourAPICommonListResponse list,
-                                      ArrangeType arrangeType) {
-        PlaceResponseDto placeResponse = new PlaceResponseDto();
+    public static PlaceResponseDto of(List<SimplePlaceInformationDto> simpleDto, int count, int page, int pageSize, ArrangeType arrangeType) {
+        PlaceResponseDto place = new PlaceResponseDto();
 
-        placeResponse.places = simpleDto;
-        placeResponse.count = list.getTotalCount();
-        placeResponse.page = list.getPage();
-        placeResponse.pageSize = list.getPageSize();
-        placeResponse.arrangeType = arrangeType;
+        place.places = simpleDto;
+        place.count = count;
+        place.page = page;
+        place.pageSize = pageSize;
+        place.arrangeType = arrangeType;
 
-        return placeResponse;
+        return place;
     }
 }

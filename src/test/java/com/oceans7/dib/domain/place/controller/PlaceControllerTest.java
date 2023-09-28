@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.place.controller;
 
+import com.oceans7.dib.domain.place.dto.PlaceFilterOptions;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
@@ -40,16 +41,17 @@ public class PlaceControllerTest {
     @MockBean
     private PlaceService placeService;
 
+    private final String TEST_USER_ID = "1";
+
     @Test
     @DisplayName("위치 기반 관광 정보 조회 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceBasedLocationTest() throws Exception {
         //given
         GetPlaceRequestDto placeReq = MockRequest.testPlaceReq();
-        String contentType = String.valueOf(placeReq.getContentType().getCode());
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeReq);
 
-        when(placeService.getPlace(placeReq, contentType, arrangeType))
+        when(placeService.getPlace(Long.valueOf(TEST_USER_ID), placeReq, options))
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
@@ -78,14 +80,13 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("지역 기반 관광 정보 조회 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceBasedAreaTest() throws Exception {
         //given
         GetPlaceRequestDto placeWithAreaReq = MockRequest.testPlaceWithAreaReq();
-        String contentType = String.valueOf(placeWithAreaReq.getContentType().getCode());
-        String arrangeType = "";
+        PlaceFilterOptions filterOption = MockRequest.testPlaceFilterOptionReq(placeWithAreaReq);
 
-        when(placeService.getPlace(placeWithAreaReq, contentType, arrangeType))
+        when(placeService.getPlace(Long.valueOf(TEST_USER_ID), placeWithAreaReq, filterOption))
                 .thenReturn(MockResponse.testGetPlaceBasedAreaRes());
 
         // when
@@ -116,14 +117,13 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("관광 정보 조회 필터링, 정렬 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceBasedLocationWithContentTypeAndSortingTest() throws Exception {
         //given
         GetPlaceRequestDto placeWithSortingReq = MockRequest.testPlaceWithSortingReq();
-        String contentType = String.valueOf(placeWithSortingReq.getContentType().getCode());
-        String arrangeType = placeWithSortingReq.getArrangeType().name();
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeWithSortingReq);
 
-        when(placeService.getPlace(placeWithSortingReq, contentType, arrangeType))
+        when(placeService.getPlace(Long.valueOf(TEST_USER_ID), placeWithSortingReq, options))
                 .thenReturn(MockResponse.testGetPlaceRes());
 
         // when
@@ -162,14 +162,13 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("[exception] 유효하지 않은 좌표 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceInvalidXYThrowsExceptionTest() throws Exception {
         //given
         GetPlaceRequestDto placeXYExceptionReq = MockRequest.testPlaceXYExceptionReq();
-        String contentType = "";
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeXYExceptionReq);
 
-        when(placeService.getPlace(placeXYExceptionReq, contentType, arrangeType))
+        when(placeService.getPlace(Long.valueOf(TEST_USER_ID), placeXYExceptionReq, options))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when
@@ -188,7 +187,7 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("[exception] 유효하지 않은 콘텐츠 타입 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceInvalidContentTypeThrowsExceptionTest() throws Exception {
         //given
         String contentType = "Invalid Content Type!!";
@@ -210,7 +209,7 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("[exception] 유효하지 않은 정렬 타입 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceInvalidArrangeTypeThrowsExceptionTest() throws Exception {
         //given
         String arrangeType = "Invalid Arrange Type!!";
@@ -232,15 +231,14 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("[exception] 유효하지 않은 지역 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceInvalidAreaThrowsExceptionTest() throws Exception {
         //given
         GetPlaceRequestDto placeAreaExceptionReq = MockRequest.testPlaceAreaExceptionReq();
-        String contentType = "";
-        String arrangeType = "";
+        PlaceFilterOptions options = MockRequest.testPlaceFilterOptionReq(placeAreaExceptionReq);
 
-        when(placeService.getPlace(placeAreaExceptionReq, contentType, arrangeType))
-                .thenThrow(new ApplicationException(ErrorCode.NOT_FOUNT_AREA_NAME));
+        when(placeService.getPlace(Long.valueOf(TEST_USER_ID), placeAreaExceptionReq, options))
+                .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_AREA_NAME));
 
         // when
         ResultActions result = mvc.perform(get("/place")
@@ -252,18 +250,18 @@ public class PlaceControllerTest {
 
         //then
         result.andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_FOUNT_AREA_NAME.getCode()))
-                .andExpect(jsonPath("$.message").value(ErrorCode.NOT_FOUNT_AREA_NAME.getMessage()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.NOT_FOUND_AREA_NAME.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.NOT_FOUND_AREA_NAME.getMessage()))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("키워드 검색 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void searchPlaceTest() throws Exception {
         //given
         SearchPlaceRequestDto searchReq = MockRequest.testSearchReq();
-        when(placeService.searchPlace(searchReq))
+        when(placeService.searchKeyword(Long.valueOf(TEST_USER_ID), searchReq))
                 .thenReturn(MockResponse.testSearchPlaceBasedKeywordRes());
 
         // when
@@ -293,11 +291,11 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("지역 검색 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void searchAreaTest() throws Exception {
         //given
         SearchPlaceRequestDto searchAreaReq = MockRequest.testSearchAreaReq();
-        when(placeService.searchPlace(searchAreaReq))
+        when(placeService.searchKeyword(Long.valueOf(TEST_USER_ID), searchAreaReq))
                 .thenReturn(MockResponse.testSearchPlaceBasedAreaRes());
 
         // when
@@ -326,11 +324,11 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("[exception] 검색어 결과 없음 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void searchPlaceNotFoundItemExceptionTest() throws Exception {
         //given
         SearchPlaceRequestDto searchNotFoundExceptionReq = MockRequest.testSearchNotFoundExceptionReq();
-        when(placeService.searchPlace(searchNotFoundExceptionReq))
+        when(placeService.searchKeyword(Long.valueOf(TEST_USER_ID), searchNotFoundExceptionReq))
                 .thenThrow(new ApplicationException(ErrorCode.NOT_FOUND_ITEM_EXCEPTION));
 
         // when
@@ -350,11 +348,11 @@ public class PlaceControllerTest {
 
     @Test
     @DisplayName("관광 정보 상세 조회 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getPlaceDetail() throws Exception {
         //given
         GetPlaceDetailRequestDto placeDetailReq = MockRequest.testPlaceDetailReq();
-        when(placeService.getPlaceDetail(placeDetailReq))
+        when(placeService.getPlaceDetail(Long.valueOf(TEST_USER_ID), placeDetailReq))
                 .thenReturn(MockResponse.testGetDetailPlaceRes());
 
         // when

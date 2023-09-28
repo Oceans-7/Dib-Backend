@@ -2,26 +2,34 @@ package com.oceans7.dib.global.api.response.tourapi.detail.intro;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oceans7.dib.domain.place.dto.FacilityType;
+import com.oceans7.dib.domain.place.dto.response.DetailPlaceInformationResponseDto;
+import com.oceans7.dib.global.util.TextManipulatorUtil;
+import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 소개 정보
  */
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DetailIntroItemResponse {
-    // 기본 응답
-    @JsonProperty("contentid")
-    private Long contentId;
+public abstract class DetailIntroItemResponse {
 
-    @JsonProperty("contenttypeid")
-    private int contentTypeId;
+    public abstract String extractUseTime();
+    public abstract String extractTel();
+    public abstract String extractRestDate();
+    public abstract String extractReservationUrl();
+    public abstract String extractEventDate();
+
+    public abstract List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo();
 
     @Getter
+    @AllArgsConstructor // 테스트 mock data 생성을 위한 생성자
     @NoArgsConstructor
     public static class SpotItemResponse extends DetailIntroItemResponse {
         // 문의 및 안내
@@ -38,6 +46,9 @@ public class DetailIntroItemResponse {
         @JsonProperty("chkpet")
         private String checkPet;
 
+        @JsonProperty("parking")
+        private String checkParking;
+
         // 쉬는 날
         @JsonProperty("restdate")
         private String restDate;
@@ -46,17 +57,43 @@ public class DetailIntroItemResponse {
         @JsonProperty("usetime")
         private String useTime;
 
-        public SpotItemResponse(Long contentId, int contentTypeId, String infoCenter,
-                                String checkBabyCarriage, String checkCreditCard, String checkPet,
-                                String restDate, String useTime) {
-            super(contentId, contentTypeId);
-            this.infoCenter = infoCenter;
-            this.checkBabyCarriage = checkBabyCarriage;
-            this.checkCreditCard = checkCreditCard;
-            this.checkPet = checkPet;
-            this.restDate = restDate;
-            this.useTime = useTime;
+        @Override
+        public String extractUseTime() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.useTime);
         }
+
+        @Override
+        public String extractTel() {
+            return TextManipulatorUtil.extractTel(this.infoCenter);
+        }
+
+        @Override
+        public String extractRestDate() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.restDate);
+        }
+
+        @Override
+        public String extractReservationUrl() {
+            return "";
+        }
+
+        @Override
+        public String extractEventDate() {
+            return "";
+        }
+
+        @Override
+        public List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo() {
+            List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(this.checkBabyCarriage)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(this.checkCreditCard)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(this.checkPet)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(this.checkParking)));
+
+            return facilityInfo;
+        }
+
     }
 
     @Getter
@@ -85,6 +122,43 @@ public class DetailIntroItemResponse {
         // 이용 시간
         @JsonProperty("usetimeculture")
         private String useTime;
+
+        @Override
+        public String extractUseTime() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.useTime);
+        }
+
+        @Override
+        public String extractTel() {
+            return TextManipulatorUtil.extractTel(this.infoCenter);
+        }
+
+        @Override
+        public String extractRestDate() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.restDate);
+        }
+
+        @Override
+        public String extractReservationUrl() {
+            return "";
+        }
+
+        @Override
+        public String extractEventDate() {
+            return "";
+        }
+
+        @Override
+        public List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo() {
+            List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(this.checkBabyCarriage)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(this.checkCreditCard)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(this.checkPet)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(this.checkParking)));
+
+            return facilityInfo;
+        }
     }
 
     @Getter
@@ -111,6 +185,38 @@ public class DetailIntroItemResponse {
         // 공연 시간
         @JsonProperty("playtime")
         private String playTime;
+
+        @Override
+        public String extractUseTime() {
+            String prefix = "공연 시간";
+            String useTimeFormatOfEvent = "%s : %s";
+            return String.format(useTimeFormatOfEvent, prefix, this.playTime);
+        }
+
+        @Override
+        public String extractTel() {
+            return TextManipulatorUtil.extractTel(this.sponsor1Tel);
+        }
+
+        @Override
+        public String extractRestDate() {
+            return "";
+        }
+
+        @Override
+        public String extractReservationUrl() {
+            return this.bookingPlace;
+        }
+
+        @Override
+        public String extractEventDate() {
+            return TextManipulatorUtil.convertDateRangeFormat(this.eventStartDate, this.eventEndDate);
+        }
+
+        @Override
+        public List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo() {
+            return new ArrayList<>();
+        }
     }
 
     @Getter
@@ -139,6 +245,43 @@ public class DetailIntroItemResponse {
         // 쉬는날
         @JsonProperty("restdateleports")
         private String restDate;
+
+        @Override
+        public String extractUseTime() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.useTime);
+        }
+
+        @Override
+        public String extractTel() {
+            return TextManipulatorUtil.extractTel(this.infoCenter);
+        }
+
+        @Override
+        public String extractRestDate() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.restDate);
+        }
+
+        @Override
+        public String extractReservationUrl() {
+            return "";
+        }
+
+        @Override
+        public String extractEventDate() {
+            return "";
+        }
+
+        @Override
+        public List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo() {
+            List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(this.checkBabyCarriage)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(this.checkCreditCard)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(this.checkPet)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(this.checkParking)));
+
+            return facilityInfo;
+        }
     }
 
     @Getter
@@ -176,6 +319,49 @@ public class DetailIntroItemResponse {
         // 예약 안내 홈페이지
         @JsonProperty("reservationurl")
         private String reservationUrl;
+
+        @Override
+        public String extractUseTime() {
+            String firstPrefix = "체크인";
+            String secondPrefix = "체크아웃";
+            String useTimeFormatOfAccommodation = "%s : %s, %s : %s";
+
+            return String.format(useTimeFormatOfAccommodation, firstPrefix, this.checkInTime, secondPrefix, this.checkOutTime);
+        }
+
+        @Override
+        public String extractTel() {
+            return this.infoCenter;
+        }
+
+        @Override
+        public String extractRestDate() {
+            return "";
+        }
+
+        @Override
+        public String extractReservationUrl() {
+            return this.reservationUrl;
+        }
+
+        @Override
+        public String extractEventDate() {
+            return "";
+        }
+
+        @Override
+        public List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo() {
+            List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BARBECUE, ValidatorUtil.checkAvailability(this.checkBarbecue)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BEVERAGE, ValidatorUtil.checkAvailability(this.checkBeverage)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.COOKING, ValidatorUtil.checkAvailability(this.checkCooking)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PICK_UP_SERVICE, ValidatorUtil.checkAvailability(this.checkPickup)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.SAUNA, ValidatorUtil.checkAvailability(this.checkSauna)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(this.checkParking)));
+
+            return facilityInfo;
+        }
     }
 
     @Getter
@@ -207,6 +393,43 @@ public class DetailIntroItemResponse {
         // 쉬는 날
         @JsonProperty("restdateshopping")
         private String restDate;
+
+        @Override
+        public String extractUseTime() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.openTime);
+        }
+
+        @Override
+        public String extractTel() {
+            return TextManipulatorUtil.extractTel(this.infoCenter);
+        }
+
+        @Override
+        public String extractRestDate() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.restDate);
+        }
+
+        @Override
+        public String extractReservationUrl() {
+            return "";
+        }
+
+        @Override
+        public String extractEventDate() {
+            return "";
+        }
+
+        @Override
+        public List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo() {
+            List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.BABY_CARRIAGE, ValidatorUtil.checkAvailability(this.checkBabyCarriage)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(this.checkCreditCard)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PET, ValidatorUtil.checkAvailability(this.checkPet)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(this.checkParking)));
+
+            return facilityInfo;
+        }
     }
 
     @Getter
@@ -236,5 +459,42 @@ public class DetailIntroItemResponse {
         // 쉬는 날
         @JsonProperty("restdatefood")
         private String restDate;
+
+        @Override
+        public String extractUseTime() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.openTime);
+        }
+
+        @Override
+        public String extractTel() {
+            return TextManipulatorUtil.extractTel(this.infoCenter);
+        }
+
+        @Override
+        public String extractRestDate() {
+            return TextManipulatorUtil.replaceBrWithNewLine(this.restDate);
+        }
+
+        @Override
+        public String extractReservationUrl() {
+            return "";
+        }
+
+        @Override
+        public String extractEventDate() {
+            return "";
+        }
+
+        @Override
+        public List<DetailPlaceInformationResponseDto.FacilityInfo> getFacilityAvailabilityInfo() {
+            List<DetailPlaceInformationResponseDto.FacilityInfo> facilityInfo = new ArrayList<>();
+
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.KIDS_FACILITY, ValidatorUtil.checkAvailability(this.checkKidsFacility)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.CREDIT_CARD, ValidatorUtil.checkAvailability(this.checkCreditCard)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.SMOKING, ValidatorUtil.checkAvailability(this.checkSmoking)));
+            facilityInfo.add(DetailPlaceInformationResponseDto.FacilityInfo.of(FacilityType.PARKING, ValidatorUtil.checkAvailability(this.checkParking)));
+
+            return facilityInfo;
+        }
     }
 }

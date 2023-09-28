@@ -32,7 +32,6 @@ public class SecurityConfig {
                 "/swagger-ui/**",
                 "/swagger-resources/**",
                 "/v3/api-docs/**",
-                "/place/**",
                 "/location/**",
                 "/auth/kakao-login",
                 "/error",
