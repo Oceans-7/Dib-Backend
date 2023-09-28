@@ -1,15 +1,18 @@
 package com.oceans7.dib.domain.event.controller;
 
+import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
+import com.oceans7.dib.domain.event.repository.CouponRepository;
 import com.oceans7.dib.domain.event.repository.EventRepository;
 import com.oceans7.dib.domain.event.service.CouponService;
 import com.oceans7.dib.domain.event.service.EventService;
 import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
+import com.oceans7.dib.domain.user.entity.User;
+import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,9 +51,21 @@ public class EventControllerTest {
     @MockBean
     private CouponGroupRepository couponGroupRepository;
 
-    @BeforeEach
-    public void before() {
+    @MockBean
+    private CouponRepository couponRepository;
 
+    @MockBean
+    private UserRepository userRepository;
+
+    private final String TEST_USER_ID = "1";
+
+    public User makeUser() {
+        User user = MockEntity.testUser();
+
+        ReflectionTestUtils.setField(user, "id", 1L);
+
+        when(userRepository.save(user)).thenReturn(user);
+        return userRepository.save(user);
     }
 
     private Event makeEvent() {
@@ -77,10 +97,21 @@ public class EventControllerTest {
         return couponGroupRepository.save(couponGroup);
     }
 
+    private Coupon makeCoupon(CouponGroup couponGroup, User user) {
+        Coupon coupon = MockEntity.testCoupon();
+        coupon.setCouponGroup(couponGroup);
+        coupon.setUser(user);
+
+        ReflectionTestUtils.setField(coupon, "couponId", 1L);
+
+        when(couponRepository.save(coupon)).thenReturn(coupon);
+        return couponRepository.save(coupon);
+    }
+
 
     @Test
     @DisplayName("이벤트 조회 테스트")
-    @WithMockUser("user1")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getEventDetail() throws Exception {
         // given
         Event event = makeEvent();
@@ -121,4 +152,29 @@ public class EventControllerTest {
 
     }
 
+    @Test
+    @DisplayName("쿠폰 발급 테스트")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
+    public void issueCoupon() throws Exception {
+        // given
+        CouponGroup firstCouponGroup = makeFirstCouponGroup(makeEvent());
+        User user = makeUser();
+        Coupon coupon = makeCoupon(firstCouponGroup, user);
+
+        when(couponRepository.findByUserAndCouponGroup(user, firstCouponGroup))
+                .thenReturn(Optional.of(coupon));
+
+        // when
+        ResultActions result = mvc.perform(post("/coupon/" + coupon.getCouponId())
+                .with(csrf()));
+
+        // then
+        result.andExpect(status().isOk());
+        Coupon findCoupon = couponRepository.findByUserAndCouponGroup(user, firstCouponGroup).orElseThrow();
+
+        assertThat(findCoupon.getStatus()).isEqualTo(coupon.getStatus());
+        assertThat(findCoupon.getIssuedDate()).isEqualTo(coupon.getIssuedDate());
+        assertThat(findCoupon.getUser().getId()).isEqualTo(coupon.getUser().getId());
+        assertThat(findCoupon.getCouponGroup().getCouponGroupId()).isEqualTo(coupon.getCouponGroup().getCouponGroupId());
+    }
 }
