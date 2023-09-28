@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class ReportServiceTest {
     @Autowired
     private ReportService reportService;
@@ -38,7 +39,6 @@ public class ReportServiceTest {
 
     @Test
     @DisplayName("해양 생물 신고")
-    @Transactional
     public void report() {
         // when
         reportService.report(testUser.getId(), MockRequest.testReportReq());
