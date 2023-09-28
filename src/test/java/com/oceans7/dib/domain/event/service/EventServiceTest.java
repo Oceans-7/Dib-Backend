@@ -1,13 +1,10 @@
 package com.oceans7.dib.domain.event.service;
 
+import com.oceans7.dib.domain.event.dto.response.*;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.EventRepository;
-import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
-import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
-import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
-import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.global.MockEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +48,23 @@ public class EventServiceTest {
     }
 
     @Test
-    @DisplayName("이벤트 조회")
+    @DisplayName("이벤트 리스트 조회")
+    public void getAllEvent() {
+        // given
+        Event event = makeEvent();
+
+        // when
+        List<EventResponseDto> eventList = eventService.getALlEvent();
+
+        // then
+        // 이벤트는 단일 레코드로 존재함.
+        EventResponseDto response = eventList.get(0);
+        assertThat(response.getEventId()).isEqualTo(event.getEventId());
+        assertThat(response.getBannerImageUrl()).isEqualTo(event.getBannerImageUrl());
+    }
+
+    @Test
+    @DisplayName("이벤트 상세 조회")
     public void getEventDetail() {
         // given
         Event event = makeEvent();
@@ -58,14 +72,14 @@ public class EventServiceTest {
         CouponGroup secondCouponGroup = makeSecondCouponGroup(event);
 
         // when
-        EventResponseDto response = eventService.getEventDetail(event.getEventId());
+        DetailEventResponseDto response = eventService.getEventDetail(event.getEventId());
 
         // then
         // 이벤트 검증
         assertThat(response.getEventId()).isEqualTo(event.getEventId());
         assertThat(response.getMainColor()).isEqualTo(event.getMainColor());
         assertThat(response.getSubColor()).isEqualTo(event.getSubColor());
-        assertThat(response.getBannerImageUrl()).isEqualTo(event.getBannerUrl());
+        assertThat(response.getFirstImageUrl()).isEqualTo(event.getFirstImageUrl());
 
         // 쿠폰 검증
         CouponSectionResponseDto firstCouponSection = response.getFirstCouponSection();

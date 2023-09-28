@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.event.controller;
 
+import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
@@ -8,7 +9,7 @@ import com.oceans7.dib.domain.event.repository.CouponRepository;
 import com.oceans7.dib.domain.event.repository.EventRepository;
 import com.oceans7.dib.domain.event.service.CouponService;
 import com.oceans7.dib.domain.event.service.EventService;
-import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
+import com.oceans7.dib.domain.event.dto.response.DetailEventResponseDto;
 import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockEntity;
@@ -23,6 +24,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,6 +110,25 @@ public class EventControllerTest {
         return couponRepository.save(coupon);
     }
 
+    @Test
+    @DisplayName("이벤트 조회 테스트")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
+    public void getAllEvent() throws Exception {
+        // given
+        Event event = makeEvent();
+
+        List<EventResponseDto> mockResponse = MockResponse.testEventRes(event);
+        when(eventService.getALlEvent()).thenReturn(mockResponse);
+
+        // when
+        ResultActions result = mvc.perform(get("/event"));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].eventId").value(mockResponse.get(0).getEventId()))
+                .andExpect(jsonPath("$.data[0].bannerImageUrl").value(mockResponse.get(0).getBannerImageUrl()));
+
+    }
 
     @Test
     @DisplayName("이벤트 조회 테스트")
@@ -118,7 +139,7 @@ public class EventControllerTest {
         CouponGroup firstCouponGroup = makeFirstCouponGroup(event);
         CouponGroup secondCouponGroup = makeSecondCouponGroup(event);
 
-        EventResponseDto mockResponse = MockResponse.testEventRes(event, firstCouponGroup, secondCouponGroup);
+        DetailEventResponseDto mockResponse = MockResponse.testDetailEventRes(event, firstCouponGroup, secondCouponGroup);
         when(eventService.getEventDetail(event.getEventId()))
                 .thenReturn(mockResponse);
 
@@ -128,7 +149,7 @@ public class EventControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.eventId").value(mockResponse.getEventId()))
-                .andExpect(jsonPath("$.data.bannerImageUrl").value(mockResponse.getBannerImageUrl()))
+                .andExpect(jsonPath("$.data.firstImageUrl").value(mockResponse.getFirstImageUrl()))
                 .andExpect(jsonPath("$.data.mainColor").value(mockResponse.getMainColor()))
                 .andExpect(jsonPath("$.data.subColor").value(mockResponse.getSubColor()))
                 .andExpect(jsonPath("$.data.firstCouponSection.couponGroupId").value(mockResponse.getFirstCouponSection().getCouponGroupId()))

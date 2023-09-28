@@ -5,12 +5,9 @@ import com.oceans7.dib.domain.custom_content.dto.response.ContentResponseDto;
 import com.oceans7.dib.domain.custom_content.dto.response.detail.Content;
 import com.oceans7.dib.domain.custom_content.dto.response.detail.DetailContentResponseDto;
 import com.oceans7.dib.domain.custom_content.entity.CustomContent;
+import com.oceans7.dib.domain.event.dto.response.*;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
-import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
-import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
-import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
-import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
@@ -473,10 +470,21 @@ public class MockResponse {
         return CouponSectionResponseDto.from(couponGroup);
     }
 
-    public static EventResponseDto testEventRes(Event event, CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
-        return EventResponseDto.of(
+    public static List<EventResponseDto> testEventRes(Event event) {
+        List<EventResponseDto> eventList = new ArrayList<>();
+
+        eventList.add(EventResponseDto.of(
                 event.getEventId(),
-                event.getBannerUrl(),
+                event.getBannerImageUrl()
+        ));
+
+        return eventList;
+    }
+
+    public static DetailEventResponseDto testDetailEventRes(Event event, CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
+        return DetailEventResponseDto.of(
+                event.getEventId(),
+                event.getFirstImageUrl(),
                 event.getMainColor(),
                 event.getSubColor(),
                 testCouponSectionRes(firstCouponGroup),

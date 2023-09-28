@@ -1,8 +1,9 @@
 package com.oceans7.dib.domain.event.controller;
 
+import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
 import com.oceans7.dib.domain.event.service.CouponService;
 import com.oceans7.dib.domain.event.service.EventService;
-import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
+import com.oceans7.dib.domain.event.dto.response.DetailEventResponseDto;
 import com.oceans7.dib.global.exception.ErrorResponse;
 import com.oceans7.dib.global.response.ApplicationResponse;
 import com.oceans7.dib.global.util.SecurityUtil;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "event", description = "이벤트/쿠폰 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +27,17 @@ public class EventController {
     private final EventService eventService;
 
     @Operation(
+            summary = "이벤트 배너 조회",
+            description = "메인홈에서 이벤트 배너 리스트를 조회한다. (확장성 고려하여 리스트)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+    })
+    @GetMapping("/event")
+    public ApplicationResponse<List<EventResponseDto>> getAllEvent() {
+        return ApplicationResponse.ok(eventService.getALlEvent());
+    }
+
+    @Operation(
             summary = "이벤트 상세 조회",
             description = "배너 이벤트 내용을 상세 조회한다.")
     @ApiResponses(value = {
@@ -31,7 +45,7 @@ public class EventController {
             @ApiResponse(responseCode = "C0001", description = "존재하지 않는 리소스 요청입니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @GetMapping("/event/{eventId}")
-    public ApplicationResponse<EventResponseDto> getEventDetail(@PathVariable("eventId") Long eventId) {
+    public ApplicationResponse<DetailEventResponseDto> getEventDetail(@PathVariable("eventId") Long eventId) {
         return ApplicationResponse.ok(eventService.getEventDetail(eventId));
     }
 

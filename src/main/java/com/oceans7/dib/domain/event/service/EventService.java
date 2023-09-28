@@ -1,28 +1,43 @@
 package com.oceans7.dib.domain.event.service;
 
+import com.oceans7.dib.domain.event.dto.response.*;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.EventRepository;
-import com.oceans7.dib.domain.event.dto.response.CouponSectionResponseDto;
-import com.oceans7.dib.domain.event.dto.response.EventResponseDto;
-import com.oceans7.dib.domain.event.dto.response.PartnerResponseDto;
-import com.oceans7.dib.domain.event.dto.response.PartnerSectionResponseDto;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventService {
     private final EventRepository eventRepository;
 
     private final static int FIRST_SECTION_INDEX = 0;
     private final static int SECOND_SECTION_INDEX = 1;
 
-    @Transactional(readOnly = true)
-    public EventResponseDto getEventDetail(Long eventId) {
+    /**
+     * 이벤트 조회
+     */
+    public List<EventResponseDto> getALlEvent() {
+        List<Event> eventList = eventRepository.findAll();
+
+        return eventList.stream().map(event -> EventResponseDto.of(
+                event.getEventId(),
+                event.getBannerImageUrl()
+        )).collect(Collectors.toList());
+    }
+
+    /**
+     * 이벤트 상세 콘텐츠 조회
+     */
+    public DetailEventResponseDto getEventDetail(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> handleNotFoundException());
 
         CouponGroup firstCouponGroup = event.getCouponGroupList().get(FIRST_SECTION_INDEX);
@@ -33,9 +48,9 @@ public class EventService {
 
         PartnerSectionResponseDto partnerSection = makePartnerSectionResponse(firstCouponGroup, secondCouponGroup);
 
-        return EventResponseDto.of(
+        return DetailEventResponseDto.of(
                 event.getEventId(),
-                event.getBannerUrl(),
+                event.getFirstImageUrl(),
                 event.getMainColor(),
                 event.getSubColor(),
                 firstCouponSection,

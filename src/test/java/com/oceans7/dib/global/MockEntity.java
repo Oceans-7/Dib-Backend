@@ -44,7 +44,7 @@ public class MockEntity {
         return Dib.of(CONTENT_ID, CONTENT_TYPE.getCode(), "뷰티플레이", "서울특별시 중구 명동1가 1-3 YWCA연합회", "070-4070-9675", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg", user);
     }
     public static Event testEvent() {
-        return Event.of("FF0770EF", "FFEBF4FE", "https://picsum.photos/150/190");
+        return Event.of("FF0770EF", "FFEBF4FE", "https://first.Image/150/190", "https://banner.Image/150/190");
     }
 
     public static CustomContent testCustomContent() {
