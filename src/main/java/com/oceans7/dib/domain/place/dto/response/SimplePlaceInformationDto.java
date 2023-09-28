@@ -44,7 +44,7 @@ public class SimplePlaceInformationDto {
     private boolean isDib;
 
     public static SimplePlaceInformationDto of(String title, String address, Long contentId, ContentType contentType, double distance,
-                                               double mapX, double mapY, String firstImage, String tel, boolean isDib) {
+                                               double mapX, double mapY, String firstImageUrl, String tel, boolean isDib) {
         SimplePlaceInformationDto simplePlaceInformation = new SimplePlaceInformationDto();
 
         simplePlaceInformation.title = title;
@@ -54,7 +54,7 @@ public class SimplePlaceInformationDto {
         simplePlaceInformation.distance = distance;
         simplePlaceInformation.mapX = mapX;
         simplePlaceInformation.mapY = mapY;
-        simplePlaceInformation.firstImage = firstImage;
+        simplePlaceInformation.firstImageUrl = firstImageUrl;
         simplePlaceInformation.tel = tel;
         simplePlaceInformation.isDib = isDib;
 

@@ -44,22 +44,6 @@ public class MockRequest {
         return filterOption;
     }
 
-    public static PlaceFilterOptions testPlaceFilterOptionReq(GetPlaceRequestDto testPlaceReq) {
-        PlaceFilterOptions filterOption = PlaceFilterOptions.initialBuilder()
-                .request(testPlaceReq)
-                .build();
-
-        return filterOption;
-    }
-
-    public static PlaceFilterOptions testPlaceFilterOptionReq(GetPlaceRequestDto testPlaceReq) {
-        PlaceFilterOptions filterOption = PlaceFilterOptions.initialBuilder()
-                .request(testPlaceReq)
-                .build();
-
-        return filterOption;
-    }
-
     public static GetPlaceRequestDto testPlaceReq() {
         return new GetPlaceRequestDto(X, Y, CONTENT_TYPE, null, null, null, 1, 2);
     }
