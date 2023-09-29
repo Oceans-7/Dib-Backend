@@ -135,7 +135,7 @@ public class MypageServiceTest {
             assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate().format(formatter));
             assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate().format(formatter));
 
-            assertThat(couponResponseDto.isUse()).isEqualTo(coupon.getStatus() == CouponStatus.USED ? true : false);
+            assertThat(couponResponseDto.isUsed()).isEqualTo(coupon.getStatus() == CouponStatus.USED ? true : false);
             assertThat(couponResponseDto.getCouponId()).isEqualTo(coupon.getCouponId());
 
             Long remainingDays = Duration.between(

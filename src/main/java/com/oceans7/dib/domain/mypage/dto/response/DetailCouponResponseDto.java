@@ -37,14 +37,14 @@ public class DetailCouponResponseDto {
     private Long remainingDays;
 
     @Schema(description = "쿠폰 사용 완료 여부", example = "false")
-    private boolean isUse;
+    private boolean isUsed;
 
     public static DetailCouponResponseDto from(Coupon coupon) {
         CouponGroup couponGroup = coupon.getCouponGroup();
         DetailCouponResponseDto couponResponseDto = new DetailCouponResponseDto();
 
         couponResponseDto.couponId = coupon.getCouponId();
-        couponResponseDto.isUse = coupon.getStatus() == CouponStatus.USED ? true : false;
+        couponResponseDto.isUsed = coupon.getStatus() == CouponStatus.USED ? true : false;
         couponResponseDto.region = couponGroup.getRegion();
         couponResponseDto.couponType = couponGroup.getCouponType().getKeyword();
         couponResponseDto.discountPercentage = couponGroup.getDiscountPercentage();
