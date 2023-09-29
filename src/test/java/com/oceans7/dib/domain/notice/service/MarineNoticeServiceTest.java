@@ -40,12 +40,8 @@ public class MarineNoticeServiceTest {
         List<NoticeResponseDto> response = marineNoticeService.getAllMarineNotice();
 
         // then
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
-
         assertThat(response.get(0).getNoticeId()).isEqualTo(marineNotice.getNoticeId());
         assertThat(response.get(0).getTitle()).isEqualTo(String.format("[%s] %s", marineNotice.getCategory(), marineNotice.getTitle()));
-        assertThat(response.get(0).getCreateDate()).isEqualTo(marineNotice.getCreatedAt().format(dateFormatter));
-        assertThat(response.get(0).getCreateTime()).isEqualTo( marineNotice.getCreatedAt().format(timeFormatter));
+        assertThat(response.get(0).getCreateDateTime()).isEqualTo(marineNotice.getCreatedAt());
     }
 }
