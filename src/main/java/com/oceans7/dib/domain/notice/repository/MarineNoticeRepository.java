@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MarineNoticeRepository extends JpaRepository<MarineNotice, Long> {
-    List<MarineNotice> findAllByOrderByCreatedAtDesc();
+    List<MarineNotice> findAllByOrderByNoticeId();
 }

@@ -18,7 +18,7 @@ public class MarineNoticeService {
 
     @Transactional(readOnly = true)
     public List<NoticeResponseDto> getAllMarineNotice() {
-        List<MarineNotice> marineNoticeList = marineNoticeRepository.findAllByOrderByCreatedAtDesc();
+        List<MarineNotice> marineNoticeList = marineNoticeRepository.findAllByOrderByNoticeId();
 
         return marineNoticeList.stream().map(NoticeResponseDto :: from).collect(Collectors.toList());
     }
