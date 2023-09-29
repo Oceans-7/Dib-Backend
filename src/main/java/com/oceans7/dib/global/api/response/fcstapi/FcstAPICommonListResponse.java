@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.global.api.response.BaseAPiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FcstAPICommonListResponse {
+public class FcstAPICommonListResponse extends BaseAPiResponse {
     @JsonProperty("item")
     private List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList;
 

@@ -43,7 +43,7 @@ public class LocationService {
         LocalResponse addressItems = kakaoLocalAPIService.getGeoAddressLocalApi(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
 
         if(ValidatorUtil.isEmpty(addressItems.getAddressItems())) {
-            throw new ApplicationException(ErrorCode.NOT_FOUNT_USER_LOCATION);
+            throw new ApplicationException(ErrorCode.NOT_FOUND_USER_LOCATION);
         }
 
         AddressItem addressItem = addressItems.getAddressItems().get(0);
@@ -58,11 +58,17 @@ public class LocationService {
 
         baseDate = calculateBaseDate(now, NCST_CALLABLE_TIME);
         baseTime = calculateBaseTime(now, NCST_CALLABLE_TIME);
-        FcstAPICommonListResponse nowCast = vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime);
+        FcstAPICommonListResponse nowCast = vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime).exceptionally(e -> {
+            throw new ApplicationException(ErrorCode.SOCKET_TIMEOUT_EXCEPTION);
+        }).join();
 
         baseDate = calculateBaseDate(now, FCST_CALLABLE_TIME);
         baseTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
-        FcstAPICommonListResponse ultraFcst = vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime);
+        FcstAPICommonListResponse ultraFcst = vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime).exceptionally(
+                e -> {
+                    throw new ApplicationException(ErrorCode.SOCKET_TIMEOUT_EXCEPTION);
+                }
+        ).join();
 
         String nowTime = now.format(DateTimeFormatter.ofPattern("HH00"));
 

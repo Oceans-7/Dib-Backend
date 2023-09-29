@@ -3,6 +3,7 @@ package com.oceans7.dib.global.api.config;
 import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.http.KakaoApi;
 import com.oceans7.dib.global.api.http.KakaoAuthApi;
+import com.oceans7.dib.global.api.http.KhoaGoKrApi;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -27,6 +28,9 @@ public class OpenApiConfig {
     @Value("${open-api.data-go-kr.base-url}")
     private String dataGoKrBaseUrl;
 
+    @Value("${open-api.khoa-go-kr.base-url}")
+    private String KhoaGoKrBaseUrl;
+
     @Value("${open-api.kakao.base-url}")
     private String kakaoBaseUrl;
 
@@ -36,15 +40,16 @@ public class OpenApiConfig {
     @Value("${open-api.kakao.open-key-url}")
     private String kakaoOpenKeyUrl;
 
+
     private final static String kakaoHeader = "KakaoAK ";
 
     private HttpClient httpClient() {
         return HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-                .responseTimeout(Duration.ofMillis(5000))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 50000)
+                .responseTimeout(Duration.ofMillis(50000))
                 .doOnConnected(conn ->
-                                conn.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS))
-                                    .addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS))
+                                conn.addHandlerLast(new ReadTimeoutHandler(50000, TimeUnit.MILLISECONDS))
+                                    .addHandlerLast(new WriteTimeoutHandler(50000, TimeUnit.MILLISECONDS))
                 ).resolver(DefaultAddressResolverGroup.INSTANCE);
     }
 
@@ -59,10 +64,27 @@ public class OpenApiConfig {
 
         return HttpServiceProxyFactory
                 .builder(WebClientAdapter.forClient(webClient))
-                .blockTimeout(Duration.ofMillis(5000))
+                .blockTimeout(Duration.ofMillis(30000))
                 .build()
                 .createClient(DataGoKrApi.class);
     }
+
+    @Bean
+    KhoaGoKrApi khoaGoKrApi() {
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl(KhoaGoKrBaseUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient()))
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+        return HttpServiceProxyFactory
+                .builder(WebClientAdapter.forClient(webClient))
+                .blockTimeout(Duration.ofMillis(50000))
+                .build()
+                .createClient(KhoaGoKrApi.class);
+    }
+
 
     @Bean
     KakaoApi kakaoApi() {

@@ -4,7 +4,10 @@ import com.oceans7.dib.global.api.http.DataGoKrApi;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -23,25 +26,41 @@ public class VilageFcstAPIService extends OpenAPIService {
     private final static int NCST_PAGE_SIZE = 8;
     private final static int FCST_PAGE_SIZE = 60;
 
+    private final static int VILLAGE_FCST_PAGE_SIZE = 1000;
+
     /**
      * 기상청 초단기 실황
      */
-    public FcstAPICommonListResponse getNowCast(int x, int y, String baseDate, String baseTime) {
+    @Async
+    public CompletableFuture<FcstAPICommonListResponse> getNowCast(int x, int y, String baseDate, String baseTime) {
 
         String result = dataGoKrApi.getNowForecastInfo(serviceKey, dataType, x, y,
                 baseDate, baseTime, BASE_PAGE, NCST_PAGE_SIZE);
 
-        return parsingJsonObject(result, FcstAPICommonListResponse.class);
+        return CompletableFuture.completedFuture(parsingJsonObject(result, FcstAPICommonListResponse.class));
     }
 
     /**
      * 기상청 초단기 예보
      */
-    public FcstAPICommonListResponse getUltraForecast(int x, int y, String baseDate, String baseTime) {
+    @Async
+    public CompletableFuture<FcstAPICommonListResponse> getUltraForecast(int x, int y, String baseDate, String baseTime) {
 
         String result = dataGoKrApi.getUltraForecastInfo(serviceKey, dataType, x, y,
                 baseDate, baseTime, BASE_PAGE, FCST_PAGE_SIZE);
 
-        return parsingJsonObject(result, FcstAPICommonListResponse.class);
+        return CompletableFuture.completedFuture(parsingJsonObject(result, FcstAPICommonListResponse.class));
+    }
+
+    /**
+     * 기상청 단기 예보
+     */
+    @Async
+    public CompletableFuture<FcstAPICommonListResponse> getForecastInfo(int x, int y, String baseDate, String baseTime) {
+
+        String result = dataGoKrApi.getForecastInfo(serviceKey, dataType, x, y,
+                baseDate, baseTime, BASE_PAGE, VILLAGE_FCST_PAGE_SIZE);
+
+        return CompletableFuture.completedFuture(parsingJsonObject(result, FcstAPICommonListResponse.class));
     }
 }

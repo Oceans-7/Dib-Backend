@@ -17,12 +17,15 @@ public enum ErrorCode {
     // Open API
     NOT_FOUND_ITEM_EXCEPTION(HttpStatus.BAD_REQUEST, "O0000", "관광 정보 검색 결과가 없습니다."),
     SOCKET_TIMEOUT_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "O0001", "Open API 서버 연결에 실패하였습니다."),
-    NOT_FOUNT_USER_LOCATION(HttpStatus.BAD_REQUEST, "O0002", "사용자 위치를 찾을 수 없습니다."),
+    NOT_FOUND_USER_LOCATION(HttpStatus.BAD_REQUEST, "O0002", "사용자 위치를 찾을 수 없습니다."),
 
     // Place
     NOT_FOUND_AREA_NAME(HttpStatus.BAD_REQUEST, "P0000", "지역명을 찾을 수 없습니다."),
     INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "P0001", "올바르지 않은 콘텐츠 타입입니다."),
     NOT_FOUND_TOUR_PLACE(HttpStatus.BAD_REQUEST, "P0003", "존재하지 않는 관광 정보입니다."),
+
+    // Weather
+    NOT_FOUND_WEATHER_INFO(HttpStatus.BAD_REQUEST, "W0000", "날씨 정보를 찾을 수 없습니다."),
 
     // Auth
     TOKEN_VERIFICATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "A0000", "토큰 검증에 실패했습니다."),
