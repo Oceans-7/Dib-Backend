@@ -68,8 +68,6 @@ public class CouponGroup {
         couponGroup.partnerImageUrl = partnerImageUrl;
         couponGroup.setEvent(event);
 
-        event.getCouponGroupList().add(couponGroup);
-
         return couponGroup;
     }
 
