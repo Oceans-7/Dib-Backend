@@ -13,11 +13,11 @@ import lombok.Setter;
 public class GetLocationWeatherRequestDto {
 
     @NotNull
-    @Schema(description = "위도", example = "36.000000")
-    private float latitude;
+    @Schema(description = "위도", example = "127.000000")
+    private double latitude;
 
     @NotNull
-    @Schema(description = "경도", example = "127.000000")
-    private float longitude;
+    @Schema(description = "경도", example = "36.000000")
+    private double longitude;
 
 }

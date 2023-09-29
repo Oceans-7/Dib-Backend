@@ -59,7 +59,10 @@ public class VilageFcstAPIServiceTest {
                 baseDate, baseTime, MockRequest.BASE_PAGE, MockRequest.NCST_PAGE_SIZE))
                 .thenReturn(apiResponse);
 
-        FcstAPICommonListResponse list = vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime);
+        FcstAPICommonListResponse list = vilageFcstAPIService.getNowCast(baseX, baseY, baseDate, baseTime).exceptionally(e -> {
+            e.printStackTrace();
+            return null;
+        }).join();
 
         // then
         for(FcstAPICommonItemResponse item : list.getFcstAPICommonItemResponseList()) {
@@ -95,7 +98,10 @@ public class VilageFcstAPIServiceTest {
                 baseDate, baseTime, MockRequest.BASE_PAGE, MockRequest.FCST_PAGE_SIZE))
                 .thenReturn(apiResponse);
 
-        FcstAPICommonListResponse list = vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime);
+        FcstAPICommonListResponse list = vilageFcstAPIService.getUltraForecast(baseX, baseY, baseDate, baseTime).exceptionally(e -> {
+            e.printStackTrace();
+            return null;
+        }).join();
 
         // then
         for(FcstAPICommonItemResponse item : list.getFcstAPICommonItemResponseList()) {
