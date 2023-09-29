@@ -80,8 +80,7 @@ public class EventControllerTest {
     }
 
     private CouponGroup makeFirstCouponGroup(Event event) {
-        CouponGroup couponGroup = MockEntity.testCouponGroup();
-        couponGroup.setEvent(event);
+        CouponGroup couponGroup = MockEntity.testCouponGroup(event);
 
         ReflectionTestUtils.setField(couponGroup, "couponGroupId", 1L);
 
@@ -90,8 +89,7 @@ public class EventControllerTest {
     }
 
     private CouponGroup makeSecondCouponGroup(Event event) {
-        CouponGroup couponGroup = MockEntity.testCouponGroup2();
-        couponGroup.setEvent(event);
+        CouponGroup couponGroup = MockEntity.testCouponGroup2(event);
 
         ReflectionTestUtils.setField(couponGroup, "couponGroupId", 2L);
 
@@ -100,9 +98,7 @@ public class EventControllerTest {
     }
 
     private Coupon makeCoupon(CouponGroup couponGroup, User user) {
-        Coupon coupon = MockEntity.testCoupon();
-        coupon.setCouponGroup(couponGroup);
-        coupon.setUser(user);
+        Coupon coupon = MockEntity.testCoupon(couponGroup, user);
 
         ReflectionTestUtils.setField(coupon, "couponId", 1L);
 

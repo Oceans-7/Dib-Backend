@@ -10,12 +10,7 @@ import com.oceans7.dib.domain.report.entity.ReportImage;
 import com.oceans7.dib.domain.user.entity.Role;
 import com.oceans7.dib.domain.user.entity.SocialType;
 import com.oceans7.dib.domain.user.entity.User;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.FileCopyUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,16 +23,16 @@ public class MockEntity {
         return User.of("profile_img", "oceans", SocialType.KAKAO, "dib123", Role.USER);
     }
 
-    public static CouponGroup testCouponGroup() {
-        return CouponGroup.of("제주 서귀포 숙박 할인권", "제주 서귀포", CouponType.ACCOMMODATION, "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1), "https://picsum.photos/150/190", "https://picsum.photos/150/190");
+    public static CouponGroup testCouponGroup(Event event) {
+        return CouponGroup.of("제주 서귀포 숙박 할인권", "제주 서귀포", CouponType.ACCOMMODATION, "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1), "https://picsum.photos/150/190", "https://picsum.photos/150/190", event);
     }
 
-    public static CouponGroup testCouponGroup2() {
-        return CouponGroup.of("제주 서귀포 다이빙 체험 할인권", "제주 서귀포", CouponType.SCUBA_DIVING, "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1), "https://picsum.photos/150/190", "https://picsum.photos/150/190");
+    public static CouponGroup testCouponGroup2(Event event) {
+        return CouponGroup.of("제주 서귀포 다이빙 체험 할인권", "제주 서귀포", CouponType.SCUBA_DIVING, "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1), "https://picsum.photos/150/190", "https://picsum.photos/150/190", event);
     }
 
-    public static Coupon testCoupon() {
-        return Coupon.of(LocalDate.now(), CouponStatus.UNUSED);
+    public static Coupon testCoupon(CouponGroup couponGroup, User user) {
+        return Coupon.of(LocalDate.now(), CouponStatus.UNUSED, couponGroup, user);
     }
 
     public static Dib testDib(User user) {

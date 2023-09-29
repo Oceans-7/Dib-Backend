@@ -55,7 +55,7 @@ public class CouponGroup {
     private List<Coupon> couponList = new ArrayList<>();
 
     public static CouponGroup of(String name, String region, CouponType couponType, String checkCode,
-                                 int discountPercentage, LocalDate startDate, LocalDate closingDate, String couponImageUrl, String partnerImageUrl) {
+                                 int discountPercentage, LocalDate startDate, LocalDate closingDate, String couponImageUrl, String partnerImageUrl, Event event) {
         CouponGroup couponGroup = new CouponGroup();
         couponGroup.name = name;
         couponGroup.region = region;
@@ -66,11 +66,14 @@ public class CouponGroup {
         couponGroup.closingDate = closingDate;
         couponGroup.couponImageUrl = couponImageUrl;
         couponGroup.partnerImageUrl = partnerImageUrl;
+        couponGroup.setEvent(event);
+
+        event.getCouponGroupList().add(couponGroup);
 
         return couponGroup;
     }
 
-    public void setEvent(Event event) {
+    private void setEvent(Event event) {
         this.event = event;
         event.getCouponGroupList().add(this);
     }

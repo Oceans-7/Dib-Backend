@@ -54,8 +54,7 @@ public class CouponServiceTest {
     }
 
     private CouponGroup makeCouponGroup(Event event) {
-        CouponGroup couponGroup = MockEntity.testCouponGroup();
-        couponGroup.setEvent(event);
+        CouponGroup couponGroup = MockEntity.testCouponGroup(event);
         return couponGroupRepository.save(couponGroup);
     }
 
