@@ -15,7 +15,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = { ApplicationException.class })
     protected ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException e) {
         log.error("handleApplicationException", e);
-        e.printStackTrace();
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
                 .body(ErrorResponse.error(e.getErrorCode()));
     }
