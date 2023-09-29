@@ -259,12 +259,9 @@ public class WeatherService {
         // TODO : 최대 거리는 추후에 변경
         double maximumDistance = 26;
 
-        ObsCode obsCode = Stream.of(ObsCode.values()).min((o1, o2) -> {
-            double o1Distance = CoordinateUtil.calculateDistance(o1.getX(), o1.getY(), x, y);
-            double o2Distance = CoordinateUtil.calculateDistance(o2.getX(), o2.getY(), x, y);
-
-            return Double.compare(o1Distance, o2Distance);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
+        ObsCode obsCode = Stream.of(ObsCode.values())
+                .min(Comparator.comparingDouble(o -> CoordinateUtil.calculateDistance(o.getX(), o.getY(), x, y)))
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
 
         double distance = CoordinateUtil.calculateDistance(obsCode.getX(), obsCode.getY(), x, y);
 
@@ -282,7 +279,7 @@ public class WeatherService {
 
         FcstAPICommonItemResponse fcstAPICommonItemResponse = items.stream().filter(item ->
                 item.getCategory().equals(FcstType.T1H.name())
-        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO));
+        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_WEATHER_INFO));
 
         return Double.parseDouble(fcstAPICommonItemResponse.getObsrValue());
     }
@@ -305,7 +302,7 @@ public class WeatherService {
 
         FcstAPICommonItemResponse windSpeedResponse = items.stream().filter(item ->
                 item.getCategory().equals(FcstType.WSD.name())
-        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO));
+        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_WEATHER_INFO));
 
         return Double.parseDouble(windSpeedResponse.getObsrValue());
     }
@@ -341,7 +338,7 @@ public class WeatherService {
             double o2Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o2.getLat()), Double.parseDouble(o2.getLat()), latitude, longitude);
 
             return Double.compare(o1Distance, o2Distance);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO)).getName();
+        }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_WEATHER_INFO)).getName();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String date = dateFormat.format(new Date());
@@ -349,7 +346,7 @@ public class WeatherService {
 
         OceanIndexPredictionResponse.IndexInfo indexInfo = indexInfoList.stream().filter(index ->
                 index.getName().equals(name) && index.getDate().equals(date) && index.getTimeType().equals(timeOfDay)
-        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO));
+        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_WEATHER_INFO));
 
 
         if (ValidatorUtil.isEmpty(indexInfo)) {
@@ -516,7 +513,7 @@ public class WeatherService {
             double o2Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o2.getLat()), Double.parseDouble(o2.getLat()), latitude, longitude);
 
             return Double.compare(o1Distance, o2Distance);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO)).getName();
+        }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_WEATHER_INFO)).getName();
 
         DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -524,7 +521,7 @@ public class WeatherService {
 
         OceanIndexPredictionResponse.IndexInfo indexInfo = indexInfoList.stream().filter(index ->
                 index.getName().equals(name) && index.getDate().equals(targetDate)
-        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO));
+        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_WEATHER_INFO));
 
 
         if (ValidatorUtil.isEmpty(indexInfo)) {

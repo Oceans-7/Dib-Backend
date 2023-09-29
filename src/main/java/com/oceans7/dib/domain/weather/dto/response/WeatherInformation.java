@@ -26,7 +26,7 @@ public class WeatherInformation {
     @Schema(description = "날씨 타입", example = "SUNNY")
     private WeatherType weatherType;
 
-    @Schema(description = "날씨 타입", example = "SUNNY")
+    @Schema(description = "기온", example = "15.00")
     private Double airTemperature;
 
     @Schema(description = "수온", example = "15.00")

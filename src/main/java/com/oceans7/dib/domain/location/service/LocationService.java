@@ -43,7 +43,7 @@ public class LocationService {
         LocalResponse addressItems = kakaoLocalAPIService.getGeoAddressLocalApi(searchLocationRequestDto.getMapX(), searchLocationRequestDto.getMapY());
 
         if(ValidatorUtil.isEmpty(addressItems.getAddressItems())) {
-            throw new ApplicationException(ErrorCode.NOT_FOUNT_USER_LOCATION);
+            throw new ApplicationException(ErrorCode.NOT_FOUND_USER_LOCATION);
         }
 
         AddressItem addressItem = addressItems.getAddressItems().get(0);
