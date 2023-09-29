@@ -5,7 +5,7 @@ import com.oceans7.dib.domain.custom_content.dto.response.detail.Content;
 import com.oceans7.dib.domain.custom_content.dto.response.detail.DetailContentResponseDto;
 import com.oceans7.dib.domain.custom_content.entity.CustomContent;
 import com.oceans7.dib.domain.custom_content.repository.CustomContentRepository;
-import com.oceans7.dib.global.api.service.JsonParsingService;
+import com.oceans7.dib.global.api.service.OpenAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CustomContentService extends JsonParsingService {
+public class CustomContentService extends OpenAPIService {
 
     private final CustomContentRepository customContentRepository;
 

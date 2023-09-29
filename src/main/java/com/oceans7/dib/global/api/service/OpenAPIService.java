@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
 
-public abstract class JsonParsingService {
+public abstract class OpenAPIService {
 
     protected <T> T parsingJsonObject(String json, Class<T> valueType) {
         try {

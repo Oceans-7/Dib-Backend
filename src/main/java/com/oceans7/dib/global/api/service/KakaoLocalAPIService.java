@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoLocalAPIService extends JsonParsingService {
+public class KakaoLocalAPIService extends OpenAPIService {
 
     private final KakaoApi kakaoApi;
 

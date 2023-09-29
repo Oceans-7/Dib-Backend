@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class DataGoKrAPIService extends JsonParsingService {
+public class DataGoKrAPIService extends OpenAPIService {
 
     private final DataGoKrApi dataGoKrApi;
     private final DetailIntroItemFactory detailIntroItemFactory;

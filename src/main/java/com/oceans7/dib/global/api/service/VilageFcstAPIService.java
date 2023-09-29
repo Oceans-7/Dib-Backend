@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class VilageFcstAPIService extends JsonParsingService {
+public class VilageFcstAPIService extends OpenAPIService {
 
     private final DataGoKrApi dataGoKrApi;
 
