@@ -2,7 +2,7 @@ package com.oceans7.dib.domain.event.service;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
-import com.oceans7.dib.domain.event.entity.UseStatus;
+import com.oceans7.dib.domain.event.entity.CouponStatus;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.CouponRepository;
 import com.oceans7.dib.domain.user.entity.User;
@@ -35,11 +35,11 @@ public class CouponService {
             throw new ApplicationException(ErrorCode.ALREADY_ISSUED_EXCEPTION);
         }
 
-        getIssuedCoupon(user, couponGroup);
-    }
-
-    private void getIssuedCoupon(User user, CouponGroup couponGroup) {
-        couponRepository.save(Coupon.of(LocalDate.now(), couponGroup, user, UseStatus.UNUSED));
+        couponRepository.save(Coupon.of(
+                LocalDate.now(),
+                CouponStatus.UNUSED,
+                couponGroup,
+                user));
     }
 
     private ApplicationException handleNotFoundException() {

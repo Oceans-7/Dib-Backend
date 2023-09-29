@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class PlaceServiceTest {
 
     @Autowired
@@ -61,7 +63,7 @@ public class PlaceServiceTest {
         assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
+        assertThat(info.getFirstImageUrl()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.getDistance()).isBetween(MockResponse.MIN_DISTANCE, MockResponse.MAX_DISTANCE);
         assertThat(info.getDistance()).isEqualTo(1.0);
         assertThat(info.isDib()).isFalse();
@@ -125,7 +127,7 @@ public class PlaceServiceTest {
         assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
+        assertThat(info.getFirstImageUrl()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.getAddress().contains(placeWithAreaReq.getArea()) &&
                 info.getAddress().contains(placeWithAreaReq.getSigungu())
         ).isTrue();
@@ -174,7 +176,7 @@ public class PlaceServiceTest {
         assertThat(info.getAddress()).isEqualTo("서울특별시 중구 명동1가 1-3 YWCA연합회 ");
         assertThat(info.getTel()).isEqualTo("");
         assertThat(info.getTitle()).isEqualTo("뷰티플레이");
-        assertThat(info.getFirstImage()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
+        assertThat(info.getFirstImageUrl()).isEqualTo("http://tong.visitkorea.or.kr/cms/resource/49/2947649_image3_1.jpg");
         assertThat(info.isDib()).isFalse();
     }
 

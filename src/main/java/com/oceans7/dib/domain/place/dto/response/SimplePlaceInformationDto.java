@@ -35,7 +35,7 @@ public class SimplePlaceInformationDto {
     private double mapY;
 
     @Schema(description = "대표 이미지", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg")
-    private String firstImage;
+    private String firstImageUrl;
 
     @Schema(description = "전화번호", example = "061-532-1000")
     private String tel;
@@ -44,7 +44,7 @@ public class SimplePlaceInformationDto {
     private boolean isDib;
 
     public static SimplePlaceInformationDto of(String title, String address, Long contentId, ContentType contentType, double distance,
-                                               double mapX, double mapY, String firstImage, String tel, boolean isDib) {
+                                               double mapX, double mapY, String firstImageUrl, String tel, boolean isDib) {
         SimplePlaceInformationDto simplePlaceInformation = new SimplePlaceInformationDto();
 
         simplePlaceInformation.title = title;
@@ -54,7 +54,7 @@ public class SimplePlaceInformationDto {
         simplePlaceInformation.distance = distance;
         simplePlaceInformation.mapX = mapX;
         simplePlaceInformation.mapY = mapY;
-        simplePlaceInformation.firstImage = firstImage;
+        simplePlaceInformation.firstImageUrl = firstImageUrl;
         simplePlaceInformation.tel = tel;
         simplePlaceInformation.isDib = isDib;
 

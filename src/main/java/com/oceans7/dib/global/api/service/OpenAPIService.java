@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class OpenAPIService {
 
-    <T> T parsingJsonObject(String json, Class<T> valueType) {
+    protected <T> T parsingJsonObject(String json, Class<T> valueType) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             T result = mapper.readValue(json, valueType);

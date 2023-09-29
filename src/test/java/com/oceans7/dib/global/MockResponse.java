@@ -1,7 +1,22 @@
 package com.oceans7.dib.global;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oceans7.dib.domain.custom_content.dto.response.ContentResponseDto;
+import com.oceans7.dib.domain.custom_content.dto.response.detail.Content;
+import com.oceans7.dib.domain.custom_content.dto.response.detail.DetailContentResponseDto;
+import com.oceans7.dib.domain.custom_content.entity.CustomContent;
+import com.oceans7.dib.domain.event.dto.response.*;
+import com.oceans7.dib.domain.event.entity.CouponGroup;
+import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
 import com.oceans7.dib.domain.place.ContentType;
+import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
+import com.oceans7.dib.domain.notice.entity.MarineNotice;
+import com.oceans7.dib.domain.organism.dto.response.OrganismResponseDto;
+import com.oceans7.dib.domain.organism.dto.response.SimpleOrganismResponseDto;
+import com.oceans7.dib.domain.organism.entity.HarmfulOrganism;
+import com.oceans7.dib.domain.organism.entity.MarineOrganism;
+import com.oceans7.dib.domain.organism.entity.Organism;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.domain.place.dto.FacilityType;
 import com.oceans7.dib.domain.place.dto.response.*;
@@ -24,8 +39,15 @@ import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListRespons
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroItemResponse.*;
 import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroResponse.*;
 import com.oceans7.dib.global.ResponseWrapper.Response;
+import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.exception.ErrorCode;
 import com.oceans7.dib.global.util.ValidatorUtil;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -394,7 +416,7 @@ public class MockResponse {
         return SearchPlaceResponseDto.of(KEYWORD_QUERY, simpleDto, false, testSearchRes().getTotalCount(), testSearchRes().getPage(), testSearchRes().getPageSize());
     }
 
-    public static  SearchPlaceResponseDto testSearchPlaceBasedAreaRes() {
+    public static SearchPlaceResponseDto testSearchPlaceBasedAreaRes() {
         List<SimpleAreaResponseDto> simpleDto = new ArrayList<>();
         simpleDto.add(SimpleAreaResponseDto.of("서울 중구", "서울", "중구", X, Y, 1000.1711716167842));
         return SearchPlaceResponseDto.of(AREA_QUERY, simpleDto, true, simpleDto.size());
@@ -426,5 +448,135 @@ public class MockResponse {
         return imageItems.stream()
                 .map(image -> image.getOriginImageUrl())
                 .collect(Collectors.toList());
+    }
+
+    public static PartnerResponseDto testPartnerRes(CouponGroup couponGroup) {
+        return PartnerResponseDto.from(couponGroup);
+    }
+
+    public static PartnerSectionResponseDto testPartnerSectionRes(CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
+        String partnerSectionKeyword = String.format("%s, %s", firstCouponGroup.getCouponType().getKeyword(), secondCouponGroup.getCouponType().getKeyword());
+        String partnerSectionTitle = String.format("%s %s \n할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
+
+        return PartnerSectionResponseDto.of(
+                partnerSectionTitle,
+                partnerSectionKeyword,
+                testPartnerRes(firstCouponGroup),
+                testPartnerRes(secondCouponGroup)
+        );
+    }
+
+    public static CouponSectionResponseDto testCouponSectionRes(CouponGroup couponGroup) {
+        return CouponSectionResponseDto.from(couponGroup);
+    }
+
+    public static List<EventResponseDto> testEventRes(Event event) {
+        List<EventResponseDto> eventList = new ArrayList<>();
+
+        eventList.add(EventResponseDto.of(
+                event.getEventId(),
+                event.getBannerImageUrl()
+        ));
+
+        return eventList;
+    }
+
+    public static DetailEventResponseDto testDetailEventRes(Event event, CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
+        return DetailEventResponseDto.of(
+                event.getEventId(),
+                event.getFirstImageUrl(),
+                event.getMainColor(),
+                event.getSubColor(),
+                testCouponSectionRes(firstCouponGroup),
+                testCouponSectionRes(secondCouponGroup),
+                testPartnerSectionRes(firstCouponGroup, secondCouponGroup)
+        );
+    }
+
+    public static List<NoticeResponseDto> testMarineNoticeRes(MarineNotice marineNotice) {
+        List<NoticeResponseDto> noticeResponse = new ArrayList<>();
+        noticeResponse.add(NoticeResponseDto.from(marineNotice));
+        return noticeResponse;
+    }
+
+    public static Content testContentRes() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Content result = mapper.readValue(getCustomContentTestJsonFile(), Content.class);
+
+            return result;
+        } catch(Exception e) {
+            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION);
+        }
+    }
+
+    public static String getCustomContentTestJsonFile() {
+        try{
+            ClassPathResource resource = new ClassPathResource("custom-content-test-data.json");
+            InputStream inputStream = resource.getInputStream();
+
+            return new String(FileCopyUtils.copyToByteArray(inputStream), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<ContentResponseDto> testCustomContentRes(CustomContent customContent) {
+        List<ContentResponseDto> customContentResponse = new ArrayList<>();
+        customContentResponse.add(ContentResponseDto.of(
+                customContent.getCustomContentId(),
+                customContent.getFirstImageUrl(),
+                customContent.getTitle(),
+                customContent.getSubTitle()
+        ));
+        return customContentResponse;
+    }
+
+    public static DetailContentResponseDto testDetailCustomContentRes() {
+        return DetailContentResponseDto.of(1L, testContentRes());
+    }
+
+    public static List<SimpleOrganismResponseDto> testSimpleOrganismRes(List<? extends Organism> organismList) {
+        return organismList.stream().map(organism ->
+            SimpleOrganismResponseDto.of(
+                    organism.getOrganismId(),
+                    organism.getIllustrationImageUrl(),
+                    organism.getKoreanName(),
+                    organism.getEnglishName(),
+                    organism.getDescription())
+        ).collect(Collectors.toList());
+    }
+
+    public static OrganismResponseDto testMarineOrganismRes(MarineOrganism marineOrganism, List<MarineOrganism> otherMarineOrganism) {
+        return OrganismResponseDto.of(
+                marineOrganism.getOrganismId(),
+                marineOrganism.getFirstImageUrl(),
+                marineOrganism.getKoreanName(),
+                marineOrganism.getEnglishName(),
+                marineOrganism.getDescription(),
+                marineOrganism.getBasicAppearance(),
+                marineOrganism.getDetailDescription(),
+                testMarineOrganismImageUrlRes(),
+                testSimpleOrganismRes(otherMarineOrganism)
+        );
+    }
+
+    private static List<String> testMarineOrganismImageUrlRes() {
+        return MockEntity.testMarineOrganismImage().stream().map(image -> image.getUrl()).collect(Collectors.toList());
+    }
+
+    public static OrganismResponseDto testHarmfulOrganismRes(HarmfulOrganism harmfulOrganism, List<HarmfulOrganism> otherHarmfulOrganism) {
+        return OrganismResponseDto.of(
+                harmfulOrganism.getOrganismId(),
+                harmfulOrganism.getFirstImageUrl(),
+                harmfulOrganism.getKoreanName(),
+                harmfulOrganism.getEnglishName(),
+                harmfulOrganism.getDescription(),
+                harmfulOrganism.getBasicAppearance(),
+                harmfulOrganism.getDetailDescription(),
+                testMarineOrganismImageUrlRes(),
+                testSimpleOrganismRes(otherHarmfulOrganism)
+        );
     }
 }

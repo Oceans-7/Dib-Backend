@@ -1,8 +1,5 @@
 package com.oceans7.dib.global;
 
-import com.oceans7.dib.domain.event.entity.Coupon;
-import com.oceans7.dib.domain.event.entity.CouponGroup;
-import com.oceans7.dib.domain.event.entity.UseStatus;
 import com.oceans7.dib.domain.location.dto.request.SearchLocationRequestDto;
 import com.oceans7.dib.domain.mypage.dto.request.UpdateProfileRequestDto;
 import com.oceans7.dib.domain.place.dto.ArrangeType;
@@ -11,13 +8,11 @@ import com.oceans7.dib.domain.place.dto.PlaceFilterOptions;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceDetailRequestDto;
 import com.oceans7.dib.domain.place.dto.request.GetPlaceRequestDto;
 import com.oceans7.dib.domain.place.dto.request.SearchPlaceRequestDto;
-import com.oceans7.dib.domain.place.entity.Dib;
-import com.oceans7.dib.domain.user.entity.Role;
-import com.oceans7.dib.domain.user.entity.SocialType;
-import com.oceans7.dib.domain.user.entity.User;
+import com.oceans7.dib.domain.report.dto.request.ReportRequestDto;
 import com.oceans7.dib.global.util.CoordinateUtil;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MockRequest {
     public static final String KEYWORD_QUERY = "뷰티플레이";
@@ -40,10 +35,6 @@ public class MockRequest {
     public final static int BASE_PAGE = 1;
     public final static int NCST_PAGE_SIZE = 8;
     public final static int FCST_PAGE_SIZE = 60;
-
-    public static User testUser() {
-        return User.of("profile_img", "oceans", SocialType.KAKAO, "dib123", Role.USER);
-    }
 
     public static PlaceFilterOptions testPlaceFilterOptionReq(GetPlaceRequestDto testPlaceReq) {
         PlaceFilterOptions filterOption = PlaceFilterOptions.initialBuilder()
@@ -128,20 +119,13 @@ public class MockRequest {
         return CoordinateUtil.convertGRID_GPS(X, Y);
     }
 
-    public static CouponGroup testCouponGroup() {
-        return CouponGroup.of("제주 서귀포시 10% 할인 쿠폰", "제주 서귀포시", "식당", "1234", 10, LocalDate.now(), LocalDate.now().plusMonths(1));
-    }
-
-    public static Coupon testCoupon(User user, CouponGroup couponGroup) {
-        return Coupon.of(LocalDate.now(), couponGroup, user, UseStatus.UNUSED);
-    }
-
-    public static Dib testDib(User user) {
-        return Dib.of(CONTENT_ID, CONTENT_TYPE.getCode(), "뷰티플레이", "서울특별시 중구 명동1가 1-3 YWCA연합회", "070-4070-9675", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg", user);
-    }
-
     public static UpdateProfileRequestDto testUpdateProfileReq() {
         return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
     }
 
+    public static ReportRequestDto testReportReq() {
+        List<String> imageUrlList = new ArrayList<>();
+        imageUrlList.add("https://images/2");
+        return new ReportRequestDto("갯주풀 / 영국 갯끈풀", "강원 강릉시 강문동", imageUrlList);
+    }
 }
