@@ -12,13 +12,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class WaterTemperatureResponse extends BaseAPiResponse {
+public class WaterTemperatureForecastResponse extends BaseAPiResponse {
 
     @JsonProperty("result")
-    private Result result;
+    private WaterTemperatureForecastResponse.Result result;
 
     @JsonCreator
-    public WaterTemperatureResponse(@JsonProperty("result") Result result) {
+    public WaterTemperatureForecastResponse(@JsonProperty("result") WaterTemperatureForecastResponse.Result result) {
         this.result = result;
     }
 
@@ -28,7 +28,7 @@ public class WaterTemperatureResponse extends BaseAPiResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Result {
         @JsonProperty("data")
-        private LinkedList<WaterTemperatureData> data;
+        private List<WaterTemperatureData> data;
     }
 
     @Getter
@@ -36,10 +36,13 @@ public class WaterTemperatureResponse extends BaseAPiResponse {
     @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class WaterTemperatureData {
-        @JsonProperty("record_time")
-        private String recordTime;
+        @JsonProperty("hour")
+        private String hour;
 
-        @JsonProperty("water_temp")
-        private String waterTemp;
+        @JsonProperty("date")
+        private String date;
+
+        @JsonProperty("temperature")
+        private String temperature;
     }
 }

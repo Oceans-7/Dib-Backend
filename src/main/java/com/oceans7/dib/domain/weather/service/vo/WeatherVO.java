@@ -5,13 +5,15 @@ import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.domain.weather.dto.response.TideEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor(staticName = "of")
-public class CurrentWeatherVO {
+public class WeatherVO {
+
+    private LocalDate date;
 
     private WeatherType weatherType;
 

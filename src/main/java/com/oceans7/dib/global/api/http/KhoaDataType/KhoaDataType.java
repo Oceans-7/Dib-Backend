@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum KhoaDataType {
     tideObsTemp("tideObsTemp"),
+    romsTemp("romsTemp"),
     tideObsPreTab("tideObsPreTab"),
     obsWaveHight("obsWaveHight"),
     fcIndexOfType("fcIndexOfType"),

@@ -24,5 +24,13 @@ public interface KhoaGoKrApi {
                     @RequestParam("ResultType") String resultType
     );
 
+    @GetExchange("/api/oceangrid/{dataType}/search.do")
+    String getValue(@PathVariable("dataType") String dataType,
+                    @RequestParam("ServiceKey") String serviceKey,
+                    @RequestParam("ObsLon") double ObsLon,
+                    @RequestParam("ObsLat") double ObsLat,
+                    @RequestParam("ResultType") String resultType
+    );
+
 
 }

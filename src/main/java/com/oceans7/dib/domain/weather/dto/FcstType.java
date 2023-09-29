@@ -1,6 +1,7 @@
 package com.oceans7.dib.domain.weather.dto;
 
 public enum FcstType {
+    // 초단기 예보 타입
     T1H("기온"),
     RN1("1시간 강수량"),
     SKY("하늘상태"),
@@ -10,7 +11,11 @@ public enum FcstType {
     PTY("강수 형태"),
     VEC("풍향"),
     WSD("풍속"),
-    LGT("낙뢰")
+    LGT("낙뢰"),
+
+    // 단기 예보 타입
+    TMP("기온"),
+    WAV("파고"),
     ;
 
     private String description;

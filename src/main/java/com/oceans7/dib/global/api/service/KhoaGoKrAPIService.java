@@ -3,10 +3,7 @@ package com.oceans7.dib.global.api.service;
 import com.oceans7.dib.domain.weather.dto.ObsCode;
 import com.oceans7.dib.global.api.http.KhoaDataType.KhoaDataType;
 import com.oceans7.dib.global.api.http.KhoaGoKrApi;
-import com.oceans7.dib.global.api.response.khoaGoKr.GetCurrentWaveHeightResponse;
-import com.oceans7.dib.global.api.response.khoaGoKr.OceanIndexPredictionResponse;
-import com.oceans7.dib.global.api.response.khoaGoKr.TidePredictionListResponse;
-import com.oceans7.dib.global.api.response.khoaGoKr.WaterTemperatureResponse;
+import com.oceans7.dib.global.api.response.khoaGoKr.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,6 +37,13 @@ public class KhoaGoKrAPIService extends OpenAPIService{
         return CompletableFuture.completedFuture(parsingJsonObject(result, WaterTemperatureResponse.class));
     }
 
+    @Async
+    public CompletableFuture<WaterTemperatureForecastResponse> getForecastWaterTemperature(ObsCode obsCode) {
+        String dataType = "json";
+        String result = khoaGoKrApi.getValue(KhoaDataType.romsTemp.getValue(), serviceKey, obsCode.getX(), obsCode.getY(), dataType);
+
+        return CompletableFuture.completedFuture(parsingJsonObject(result, WaterTemperatureForecastResponse.class));
+    }
 
     @Async
     public CompletableFuture<GetCurrentWaveHeightResponse> getCurrentWaveHeight(ObsCode obsCode, String date) {

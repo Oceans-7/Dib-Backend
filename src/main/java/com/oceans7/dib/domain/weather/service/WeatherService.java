@@ -5,17 +5,16 @@ import com.oceans7.dib.domain.weather.dto.ObsCode;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.domain.weather.dto.request.GetLocationWeatherRequestDto;
 import com.oceans7.dib.domain.weather.dto.response.GetCurrentWeatherResponseDto;
+import com.oceans7.dib.domain.weather.dto.response.GetForeCastWeatherResponseDto;
 import com.oceans7.dib.domain.weather.dto.response.TideEvent;
 import com.oceans7.dib.domain.weather.dto.response.WeatherInformation;
-import com.oceans7.dib.domain.weather.service.vo.CurrentWeatherVO;
+import com.oceans7.dib.domain.weather.service.vo.WeatherVO;
 import com.oceans7.dib.domain.weather.service.vo.DivingIndicator;
+import com.oceans7.dib.global.api.response.BaseAPiResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonItemResponse;
 import com.oceans7.dib.global.api.response.fcstapi.FcstAPICommonListResponse;
 import com.oceans7.dib.global.api.response.kakao.LocalResponse;
-import com.oceans7.dib.global.api.response.khoaGoKr.GetCurrentWaveHeightResponse;
-import com.oceans7.dib.global.api.response.khoaGoKr.OceanIndexPredictionResponse;
-import com.oceans7.dib.global.api.response.khoaGoKr.TidePredictionListResponse;
-import com.oceans7.dib.global.api.response.khoaGoKr.WaterTemperatureResponse;
+import com.oceans7.dib.global.api.response.khoaGoKr.*;
 import com.oceans7.dib.global.api.service.KakaoLocalAPIService;
 import com.oceans7.dib.global.api.service.KhoaGoKrAPIService;
 import com.oceans7.dib.global.api.service.VilageFcstAPIService;
@@ -27,17 +26,20 @@ import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.oceans7.dib.global.util.BaseTimeUtil.FCST_CALLABLE_TIME;
-import static com.oceans7.dib.global.util.BaseTimeUtil.NCST_CALLABLE_TIME;
+import static com.oceans7.dib.global.util.BaseTimeUtil.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +51,7 @@ public class WeatherService {
 
     private final KakaoLocalAPIService kakaoLocalAPIService;
 
-    public GetCurrentWeatherResponseDto getWeather(GetLocationWeatherRequestDto getLocationWeatherRequestDto) {
+    public GetCurrentWeatherResponseDto getCurrentWeather(GetLocationWeatherRequestDto getLocationWeatherRequestDto) {
 
         LocalDateTime localDateTime = LocalDateTime.now();
         double latitude = getLocationWeatherRequestDto.getLatitude();
@@ -57,7 +59,7 @@ public class WeatherService {
         String addressName = getAddressName(latitude, longitude);
 
         try {
-            CurrentWeatherVO currentWeather = getCurrentWeather(latitude, longitude, localDateTime);
+            WeatherVO currentWeather = getCurrentWeatherInfo(latitude, longitude, localDateTime);
 
             if (ValidatorUtil.isEmpty(currentWeather)) {
                 return GetCurrentWeatherResponseDto.of(
@@ -90,7 +92,7 @@ public class WeatherService {
 
     }
 
-    public CurrentWeatherVO getCurrentWeather(double latitude, double longitude, LocalDateTime now) throws ExecutionException, InterruptedException {
+    public WeatherVO getCurrentWeatherInfo(double latitude, double longitude, LocalDateTime now) throws ExecutionException, InterruptedException {
 
         String baseDate = BaseTimeUtil.calculateBaseDate(now, NCST_CALLABLE_TIME);
         String baseTime = BaseTimeUtil.calculateBaseTime(now, NCST_CALLABLE_TIME);
@@ -136,7 +138,7 @@ public class WeatherService {
                 throwable -> null
         ).get().getFcstAPICommonItemResponseList();
 
-        WeatherType weatherType = getCurrentWeatherType(fcstAPICommonItemResponseList);
+        WeatherType weatherType = getWeatherType(fcstAPICommonItemResponseList);
 
         // 조석
         List<TidePredictionListResponse.TideData> tideEventData = tidePrediction.exceptionally(
@@ -165,7 +167,8 @@ public class WeatherService {
         ).get().getResult().getData();
         DivingIndicator divingIndicator = getCurrentDivingIndex(indexInfoData, latitude, longitude);
 
-        return CurrentWeatherVO.of(
+        return WeatherVO.of(
+                now.toLocalDate(),
                 weatherType,
                 airTemperature,
                 currentWaterTemperature,
@@ -174,6 +177,43 @@ public class WeatherService {
                 currentTideEvent,
                 currentWaveHeight
         );
+    }
+
+    public GetForeCastWeatherResponseDto getForecastWeather(GetLocationWeatherRequestDto getLocationWeatherRequestDto) {
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+        double latitude = getLocationWeatherRequestDto.getLatitude();
+        double longitude = getLocationWeatherRequestDto.getLongitude();
+        String addressName = getAddressName(latitude, longitude);
+
+        List<WeatherVO> forecastWeather = getForecastWeatherInfo(latitude, longitude, localDateTime);
+
+        if (ValidatorUtil.isEmpty(forecastWeather)) {
+            return GetForeCastWeatherResponseDto.of(
+                    null,
+                    null
+            );
+        }
+
+        List<WeatherInformation> weatherInformationList = forecastWeather.stream().map(
+                weatherVO -> WeatherInformation.of(
+                        weatherVO.getDate(),
+                        weatherVO.getWeatherType(),
+                        weatherVO.getAirTemperature(),
+                        weatherVO.getWaterTemperature(),
+                        weatherVO.getWindSpeed(),
+                        weatherVO.getWaveHeight(),
+                        weatherVO.getDivingIndicator(),
+                        weatherVO.getTideEvents()
+                )
+        ).collect(Collectors.toList());
+
+
+        return GetForeCastWeatherResponseDto.of(
+                addressName,
+                weatherInformationList
+        );
+
     }
 
     private int getFcstItem(List<FcstAPICommonItemResponse> items, FcstType category, String nowTime) {
@@ -201,9 +241,9 @@ public class WeatherService {
         return null;
     }
 
-    private List<String> getBaseDateList() {
-
-        return Stream.of(0, 1, 2, 3, 4).map(i -> LocalDate.now().plusDays(i)).map(this::getBaseDate).toList();
+    private List<LocalDate> getForecastDateList(LocalDateTime localDateTime) {
+        LocalDate localDate = localDateTime.toLocalDate();
+        return Stream.of(1, 2, 3).map(localDate::plusDays).toList();
     }
 
     private String getBaseDate(LocalDate localDate) {
@@ -235,10 +275,6 @@ public class WeatherService {
         return obsCode;
     }
 
-    private double getDistance(double x, double y, double x1, double y1) {
-        return Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
-    }
-
     private Double getCurrentTemperature(List<FcstAPICommonItemResponse> items) {
         if (ValidatorUtil.isEmpty(items)) {
             return null;
@@ -251,12 +287,9 @@ public class WeatherService {
         return Double.parseDouble(fcstAPICommonItemResponse.getObsrValue());
     }
 
-    private WeatherType getCurrentWeatherType(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList) {
+    private WeatherType getWeatherType(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList) {
         LocalDateTime now = LocalDateTime.now();
-        int oneHour = 1;
-        LocalDateTime forecastTime = now.withMinute(0).withSecond(0).withNano(0).plusHours(oneHour);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HHmm");
-        String baseTime = forecastTime.format(formatter);
+        String baseTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
         boolean isDay = now.getHour() >= 6 && now.getHour() < 18;
         int sky = getFcstItem(fcstAPICommonItemResponseList, FcstType.SKY, baseTime);
         int precipitation = getFcstItem(fcstAPICommonItemResponseList, FcstType.PTY, baseTime);
@@ -297,15 +330,27 @@ public class WeatherService {
     }
 
     private DivingIndicator getCurrentDivingIndex(List<OceanIndexPredictionResponse.IndexInfo> indexInfoList, Double latitude, Double longitude) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int noon = 12;
         if (ValidatorUtil.isEmpty(indexInfoList)) {
             return null;
         }
-        OceanIndexPredictionResponse.IndexInfo indexInfo = indexInfoList.stream().min((o1, o2) -> {
+
+        String name = indexInfoList.stream().min((o1, o2) -> {
             double o1Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o1.getLat()), Double.parseDouble(o1.getLon()), latitude, longitude);
             double o2Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o2.getLat()), Double.parseDouble(o2.getLat()), latitude, longitude);
 
             return Double.compare(o1Distance, o2Distance);
-        }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO));
+        }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO)).getName();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = dateFormat.format(new Date());
+        String timeOfDay = localDateTime.getHour() >= noon ? "오후" : "오전";
+
+        OceanIndexPredictionResponse.IndexInfo indexInfo = indexInfoList.stream().filter(index ->
+                index.getName().equals(name) && index.getDate().equals(date) && index.getTimeType().equals(timeOfDay)
+        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO));
+
 
         if (ValidatorUtil.isEmpty(indexInfo)) {
             return null;
@@ -315,6 +360,181 @@ public class WeatherService {
     }
 
     private List<TideEvent> getCurrentTideEvent(List<TidePredictionListResponse.TideData> tideEventData) {
+        if (ValidatorUtil.isEmpty(tideEventData)) {
+            return null;
+        }
+        return tideEventData.stream().map(
+                tideData -> TideEvent.of(LocalDateTime.parse(tideData.getTphTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), Double.parseDouble(tideData.getTphLevel()), tideData.getHlCode())
+        ).toList();
+
+    }
+
+    private List<WeatherVO> getForecastWeatherInfo(double latitude, double longitude, LocalDateTime now) {
+
+        String forecastBaseDate = BaseTimeUtil.calculateBaseDate(now, FCST_CALLABLE_TIME);
+        String forecastBaseTime = BaseTimeUtil.calculateBaseTime(now, FCST_CALLABLE_TIME);
+        List<LocalDate> forcastDateList = getForecastDateList(now);
+
+        ObsCode nearestObsCode = getNearestObsCode(longitude, latitude);
+
+
+        if (nearestObsCode == null) {
+            return null;
+        }
+
+        List<CompletableFuture<? extends BaseAPiResponse>> futures = new ArrayList<>();
+
+        // 단기 예측
+        CompletableFuture<FcstAPICommonListResponse> commonFcst = vilageFcstAPIService.getForecastInfo(nearestObsCode.getNx(), nearestObsCode.getNy(), forecastBaseDate, forecastBaseTime);
+        futures.add(commonFcst);
+
+        // 조석
+        List<CompletableFuture<TidePredictionListResponse>> tidePredictionList
+                = forcastDateList.stream().map(date -> khoaGoKrAPIService.getTidePrediction(nearestObsCode, getBaseDate(date))).toList();
+        futures.addAll(tidePredictionList);
+
+        // 수온
+        CompletableFuture<WaterTemperatureForecastResponse> waterTemperatureForecast = khoaGoKrAPIService.getForecastWaterTemperature(nearestObsCode);
+        futures.add(waterTemperatureForecast);
+
+        //다이빙 지수
+        CompletableFuture<OceanIndexPredictionResponse> divingIndex = khoaGoKrAPIService.getOceanIndexPrediction();
+        futures.add(divingIndex);
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+        // 단치 예측
+        List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList = commonFcst.exceptionally(
+                throwable -> null
+        ).join().getFcstAPICommonItemResponseList();
+
+        // 다이빙 지수
+        List<OceanIndexPredictionResponse.IndexInfo> indexInfoList = divingIndex.exceptionally(
+                throwable -> null
+        ).join().getResult().getData();
+
+        // 수온
+        List<WaterTemperatureForecastResponse.WaterTemperatureData> waterTemperatureData = waterTemperatureForecast.exceptionally(
+                throwable -> null
+        ).join().getResult().getData();
+
+        // 조석
+        List<TidePredictionListResponse> tidePredictionListResponsesList = tidePredictionList.stream().map(
+                tidePrediction -> tidePrediction.exceptionally(
+                        throwable -> null
+                ).join()
+        ).toList();
+
+        AtomicInteger index = new AtomicInteger(0);
+        return forcastDateList.stream().map(
+                date -> {
+                    double averageAirTemperature = getAverageAirTemperature(fcstAPICommonItemResponseList, date);
+
+                    double averageWindSpeed = getAverageWindSpeed(fcstAPICommonItemResponseList, date);
+
+                    double averageWaveHeight = getAverageWaveHeight(fcstAPICommonItemResponseList, date);
+
+                    double averageWaterTemperature = getAverageWaterTemperature(waterTemperatureData, date);
+
+                    WeatherType weatherType = getNoonWeatherType(fcstAPICommonItemResponseList, date);
+
+                    DivingIndicator divingIndicator = getDivingIndex(indexInfoList, latitude, longitude, date);
+
+                    List<TideEvent> tideEvent = getTideEvent(tidePredictionListResponsesList.get(index.getAndIncrement()).getResult().getData());
+
+
+                    return WeatherVO.of(
+                            date,
+                            weatherType,
+                            averageAirTemperature,
+                            averageWaterTemperature,
+                            averageWindSpeed,
+                            divingIndicator,
+                            tideEvent,
+                            averageWaveHeight
+                    );
+                }
+        ).toList();
+    }
+
+    private double getAverageAirTemperature(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList, LocalDate date) {
+        return fcstAPICommonItemResponseList.stream().filter(
+                        item -> item.getFcstDate().equals(getBaseDate(date)) && item.getCategory().equals(FcstType.TMP.name())
+                ).mapToDouble(item -> Double.parseDouble(item.getFcstValue())).average()
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
+    }
+
+    private double getAverageWindSpeed(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList, LocalDate date) {
+        return fcstAPICommonItemResponseList.stream().filter(
+                        item -> item.getFcstDate().equals(getBaseDate(date)) && item.getCategory().equals(FcstType.WSD.name())
+                ).mapToDouble(item -> Double.parseDouble(item.getFcstValue())).average()
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
+    }
+
+    private double getAverageWaveHeight(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList, LocalDate date) {
+        return fcstAPICommonItemResponseList.stream().filter(
+                        item -> item.getFcstDate().equals(getBaseDate(date)) && item.getCategory().equals(FcstType.WAV.name())
+                ).mapToDouble(item -> Double.parseDouble(item.getFcstValue())).average()
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
+    }
+
+    private double getAverageWaterTemperature(List<WaterTemperatureForecastResponse.WaterTemperatureData> waterTemperatureData, LocalDate date) {
+        return waterTemperatureData.stream().filter(
+                        item -> item.getDate().equals(getBaseDate(date))
+                ).mapToDouble(item -> Double.parseDouble(item.getTemperature())).average()
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
+    }
+
+    private WeatherType getNoonWeatherType(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList, LocalDate date) {
+        LocalDate now = LocalDate.now();
+        int dateDiff = (int) ChronoUnit.DAYS.between(now, date);
+        int threeDateDiff = 3;
+
+        // 3일 이내라면 12시, 아니라면 0시
+        String forecastTime = dateDiff < threeDateDiff ? "1200" : "0000";
+
+        List<FcstAPICommonItemResponse> itemResponseList = fcstAPICommonItemResponseList.stream().filter(
+                item -> item.getFcstDate().equals(getBaseDate(date)) && item.getFcstTime().equals(forecastTime)
+        ).toList();
+
+        boolean isDay = true;
+        int sky = getFcstItem(fcstAPICommonItemResponseList, FcstType.SKY, forecastTime);
+        int precipitation = getFcstItem(fcstAPICommonItemResponseList, FcstType.PTY, forecastTime);
+        boolean isThunder = (getFcstItem(fcstAPICommonItemResponseList, FcstType.LGT, forecastTime) > 0);
+
+        return WeatherType.getWeatherType(sky, precipitation, isThunder, isDay);
+    }
+
+    private DivingIndicator getDivingIndex(List<OceanIndexPredictionResponse.IndexInfo> indexInfoList, Double latitude, Double longitude, LocalDate date) {
+
+        if (ValidatorUtil.isEmpty(indexInfoList)) {
+            return null;
+        }
+
+        String name = indexInfoList.stream().min((o1, o2) -> {
+            double o1Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o1.getLat()), Double.parseDouble(o1.getLon()), latitude, longitude);
+            double o2Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o2.getLat()), Double.parseDouble(o2.getLat()), latitude, longitude);
+
+            return Double.compare(o1Distance, o2Distance);
+        }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO)).getName();
+
+        DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String targetDate = date.toString();
+
+        OceanIndexPredictionResponse.IndexInfo indexInfo = indexInfoList.stream().filter(index ->
+                index.getName().equals(name) && index.getDate().equals(targetDate)
+        ).findFirst().orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUNT_WEATHER_INFO));
+
+
+        if (ValidatorUtil.isEmpty(indexInfo)) {
+            return null;
+        }
+
+        return DivingIndicator.of(indexInfo.getTotalScore());
+    }
+
+    private List<TideEvent> getTideEvent(List<TidePredictionListResponse.TideData> tideEventData) {
         if (ValidatorUtil.isEmpty(tideEventData)) {
             return null;
         }
