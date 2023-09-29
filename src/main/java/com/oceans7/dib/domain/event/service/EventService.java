@@ -25,7 +25,7 @@ public class EventService {
     /**
      * 이벤트 조회
      */
-    public List<EventResponseDto> getALlEvent() {
+    public List<EventResponseDto> getAllEvent() {
         List<Event> eventList = eventRepository.findAll();
 
         return eventList.stream().map(event -> EventResponseDto.of(

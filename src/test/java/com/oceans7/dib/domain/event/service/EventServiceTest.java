@@ -52,7 +52,7 @@ public class EventServiceTest {
         Event event = makeEvent();
 
         // when
-        List<EventResponseDto> eventList = eventService.getALlEvent();
+        List<EventResponseDto> eventList = eventService.getAllEvent();
 
         // then
         // 이벤트는 단일 레코드로 존재함.

@@ -114,7 +114,7 @@ public class EventControllerTest {
         Event event = makeEvent();
 
         List<EventResponseDto> mockResponse = MockResponse.testEventRes(event);
-        when(eventService.getALlEvent()).thenReturn(mockResponse);
+        when(eventService.getAllEvent()).thenReturn(mockResponse);
 
         // when
         ResultActions result = mvc.perform(get("/event"));

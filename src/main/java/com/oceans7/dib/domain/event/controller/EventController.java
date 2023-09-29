@@ -34,7 +34,7 @@ public class EventController {
     })
     @GetMapping("/event")
     public ApplicationResponse<List<EventResponseDto>> getAllEvent() {
-        return ApplicationResponse.ok(eventService.getALlEvent());
+        return ApplicationResponse.ok(eventService.getAllEvent());
     }
 
     @Operation(
