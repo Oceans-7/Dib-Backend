@@ -18,6 +18,9 @@ public class DetailCouponResponseDto {
     @Schema(description = "쿠폰 아이디", example = "0")
     private Long couponId;
 
+    @Schema(description = "쿠폰 이미지 URL", example = "https://coupon.image")
+    private String couponImageUrl;
+
     @Schema(description = "쿠폰 해당 지역", example = "제주 서귀포시")
     private String region;
 
@@ -44,6 +47,7 @@ public class DetailCouponResponseDto {
         DetailCouponResponseDto couponResponseDto = new DetailCouponResponseDto();
 
         couponResponseDto.couponId = coupon.getCouponId();
+        couponResponseDto.couponImageUrl = couponGroup.getPartnerImageUrl();
         couponResponseDto.isUsed = coupon.getStatus() == CouponStatus.USED ? true : false;
         couponResponseDto.region = couponGroup.getRegion();
         couponResponseDto.couponType = couponGroup.getCouponType().getKeyword();

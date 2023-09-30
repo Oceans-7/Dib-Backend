@@ -128,6 +128,7 @@ public class MypageServiceTest {
 
         // then
         for(DetailCouponResponseDto couponResponseDto : response.getCouponList()) {
+            assertThat(couponResponseDto.getCouponImageUrl()).isEqualTo(couponGroup.getPartnerImageUrl());
             assertThat(couponResponseDto.getRegion()).isEqualTo(couponGroup.getRegion());
             assertThat(couponResponseDto.getCouponType()).isEqualTo(couponGroup.getCouponType().getKeyword());
             assertThat(couponResponseDto.getDiscountPercentage()).isEqualTo(couponGroup.getDiscountPercentage());
