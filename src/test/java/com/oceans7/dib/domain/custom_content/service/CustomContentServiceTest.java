@@ -48,6 +48,16 @@ public class CustomContentServiceTest {
     }
 
     @Test
+    @DisplayName("자체 콘텐츠 리스트 조회 : 등록된 자체 콘텐츠가 없는 경우")
+    public void getAllCustomContentIfNotRegisteredContent() {
+        // when
+        List<ContentResponseDto> response = customContentService.getAllCustomContent();
+
+        // then
+        assertThat(response).isEmpty();
+    }
+
+    @Test
     @DisplayName("자체 콘텐츠 상세 조회")
     public void getDetailCustomContent() {
         // given

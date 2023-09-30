@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class CustomContentService extends OpenAPIService {
         List<CustomContent> customContentList = customContentRepository.findAll();
 
         if(ValidatorUtil.isEmpty(customContentList)) {
-            return null;
+            return new ArrayList<>();
         }
 
         return customContentList.stream()
