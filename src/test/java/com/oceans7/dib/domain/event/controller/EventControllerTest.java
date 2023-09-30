@@ -24,6 +24,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -127,7 +128,22 @@ public class EventControllerTest {
     }
 
     @Test
-    @DisplayName("이벤트 조회 테스트")
+    @DisplayName("이벤트 조회 테스트 : 진행중인 이벤트 없는 경우")
+    @WithMockUser()
+    public void getAllEventIfNotRegisteredEvent() throws Exception {
+        // given
+        when(eventService.getAllEvent()).thenReturn(new ArrayList<>());
+
+        // when
+        ResultActions result = mvc.perform(get("/event"));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(new ArrayList<>()));
+    }
+
+    @Test
+    @DisplayName("이벤트 상세 조회 테스트")
     @WithMockUser(username = TEST_USER_ID, roles = "USER")
     public void getEventDetail() throws Exception {
         // given
