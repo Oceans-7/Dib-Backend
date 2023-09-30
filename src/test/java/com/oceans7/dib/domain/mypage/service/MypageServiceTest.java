@@ -111,6 +111,7 @@ public class MypageServiceTest {
             assertThat(dibResponseDto.getTitle()).isEqualTo(dib.getTitle());
             assertThat(dibResponseDto.getTel()).isEqualTo(dib.getTel());
             assertThat(dibResponseDto.getFirstImageUrl()).isEqualTo(dib.getFirstImage());
+            assertThat(dibResponseDto.isDib()).isEqualTo(true);
         }
     }
 

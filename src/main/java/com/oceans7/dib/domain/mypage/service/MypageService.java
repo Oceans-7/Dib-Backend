@@ -48,7 +48,7 @@ public class MypageService {
         List<Dib> dibList = dibRepository.findByUser(user);
 
         List<DetailDibResponseDto> detailDibResponseDtoList = dibList.stream()
-                .map(dib -> DetailDibResponseDto.of(dib))
+                .map(DetailDibResponseDto :: from)
                 .collect(Collectors.toList());
 
         return DibResponseDto.of(detailDibResponseDtoList);
