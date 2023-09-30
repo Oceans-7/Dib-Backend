@@ -39,16 +39,12 @@ public class DetailCouponResponseDto {
     @Schema(description = "쿠폰 남은 기간(만료 쿠폰은 null)", example = "8")
     private Long remainingDays;
 
-    @Schema(description = "쿠폰 사용 완료 여부", example = "false")
-    private boolean isUsed;
-
     public static DetailCouponResponseDto from(Coupon coupon) {
         CouponGroup couponGroup = coupon.getCouponGroup();
         DetailCouponResponseDto couponResponseDto = new DetailCouponResponseDto();
 
         couponResponseDto.couponId = coupon.getCouponId();
         couponResponseDto.couponImageUrl = couponGroup.getPartnerImageUrl();
-        couponResponseDto.isUsed = coupon.getStatus() == CouponStatus.USED ? true : false;
         couponResponseDto.region = couponGroup.getRegion();
         couponResponseDto.couponType = couponGroup.getCouponType().getKeyword();
         couponResponseDto.discountPercentage = couponGroup.getDiscountPercentage();

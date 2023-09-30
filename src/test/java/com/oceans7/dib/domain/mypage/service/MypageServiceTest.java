@@ -136,8 +136,6 @@ public class MypageServiceTest {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
             assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate().format(formatter));
             assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate().format(formatter));
-
-            assertThat(couponResponseDto.isUsed()).isEqualTo(coupon.getStatus() == CouponStatus.USED ? true : false);
             assertThat(couponResponseDto.getCouponId()).isEqualTo(coupon.getCouponId());
 
             Long remainingDays = Duration.between(
