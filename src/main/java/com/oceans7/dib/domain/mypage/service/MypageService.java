@@ -10,6 +10,7 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,10 +49,10 @@ public class MypageService {
         List<Dib> dibList = dibRepository.findByUser(user);
 
         List<DetailDibResponseDto> detailDibResponseDtoList = dibList.stream()
-                .map(dib -> DetailDibResponseDto.of(dib))
+                .map(DetailDibResponseDto :: from)
                 .collect(Collectors.toList());
 
-        return DibResponseDto.of(detailDibResponseDtoList);
+        return DibResponseDto.from(detailDibResponseDtoList);
     }
 
     @Transactional(readOnly = true)
@@ -62,7 +63,7 @@ public class MypageService {
                 .map(DetailCouponResponseDto :: from)
                 .collect(Collectors.toList());
 
-        return CouponResponseDto.of(detailCouponResponseDtoList);
+        return CouponResponseDto.from(detailCouponResponseDtoList);
     }
 
     @Transactional

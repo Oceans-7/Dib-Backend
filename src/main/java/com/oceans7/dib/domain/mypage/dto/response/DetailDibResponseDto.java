@@ -29,14 +29,19 @@ public class DetailDibResponseDto {
     @Schema(description = "썸네일 URL", example = "http://tong.visitkorea.or.kr/cms/resource/06/2510606_image2_1.jpg")
     private String firstImageUrl;
 
-    public static DetailDibResponseDto of(Dib dib) {
+    @Schema(description = "찜 여부", example = "true")
+    private boolean isDib;
+
+    public static DetailDibResponseDto from(Dib dib) {
         DetailDibResponseDto dibResponse = new DetailDibResponseDto();
+
         dibResponse.contentId = dib.getContentId();
         dibResponse.contentType = ContentType.getContentTypeByCode(dib.getContentTypeId());
         dibResponse.title = dib.getTitle();
         dibResponse.address = dib.getAddress();
         dibResponse.tel = dib.getTel();
         dibResponse.firstImageUrl = dib.getFirstImage();
+        dibResponse.isDib = true;
 
         return dibResponse;
     }

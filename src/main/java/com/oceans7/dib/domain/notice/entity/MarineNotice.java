@@ -15,10 +15,10 @@ public class MarineNotice extends BaseEntity {
     @Column(name = "notice_id")
     private Long noticeId;
 
-    @Column(name = "title")
+    @Column(name = "title", length = 60, nullable = false)
     private String title;
 
-    @Column(name = "category")
+    @Column(name = "category", length = 10, nullable = false)
     private String category;
 
     @Column(name = "content", length = 1000)

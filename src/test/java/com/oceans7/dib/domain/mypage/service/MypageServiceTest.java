@@ -16,6 +16,7 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.exception.ApplicationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -94,6 +96,17 @@ public class MypageServiceTest {
     }
 
     @Test
+    @DisplayName("[exception] 사용자를 찾지 못함 테스트")
+    public void getMyProfileNotFoundUserException() {
+        // given
+        Long notFoundUserId = testUser.getId() + 1;
+
+        // when, then
+        assertThrows(ApplicationException.class, () -> mypageService.getMyProfile(notFoundUserId));
+
+    }
+
+    @Test
     @DisplayName("찜 목록 조회")
     public void getMyDibs() {
         // given
@@ -111,7 +124,19 @@ public class MypageServiceTest {
             assertThat(dibResponseDto.getTitle()).isEqualTo(dib.getTitle());
             assertThat(dibResponseDto.getTel()).isEqualTo(dib.getTel());
             assertThat(dibResponseDto.getFirstImageUrl()).isEqualTo(dib.getFirstImage());
+            assertThat(dibResponseDto.isDib()).isEqualTo(true);
         }
+    }
+
+    @Test
+    @DisplayName("찜 목록 조회 : 찜이 하나도 없는 경우")
+    public void getMyDibsIfNoDib() {
+        // when
+        DibResponseDto response = mypageService.getMyDibs(testUser.getId());
+
+        // then
+        assertThat(response.getCount()).isEqualTo(0);
+        assertThat(response.getDibList()).isNull();
     }
 
     @Test
@@ -128,14 +153,13 @@ public class MypageServiceTest {
 
         // then
         for(DetailCouponResponseDto couponResponseDto : response.getCouponList()) {
+            assertThat(couponResponseDto.getCouponImageUrl()).isEqualTo(couponGroup.getPartnerImageUrl());
             assertThat(couponResponseDto.getRegion()).isEqualTo(couponGroup.getRegion());
             assertThat(couponResponseDto.getCouponType()).isEqualTo(couponGroup.getCouponType().getKeyword());
             assertThat(couponResponseDto.getDiscountPercentage()).isEqualTo(couponGroup.getDiscountPercentage());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
             assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate().format(formatter));
             assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate().format(formatter));
-
-            assertThat(couponResponseDto.isUsed()).isEqualTo(coupon.getStatus() == CouponStatus.USED ? true : false);
             assertThat(couponResponseDto.getCouponId()).isEqualTo(coupon.getCouponId());
 
             Long remainingDays = Duration.between(
@@ -144,6 +168,17 @@ public class MypageServiceTest {
 
             assertThat(couponResponseDto.getRemainingDays()).isEqualTo(remainingDays);
         }
+    }
+
+    @Test
+    @DisplayName("쿠폰 목록 조회 : 쿠폰이 하나도 없는 경우")
+    public void getMyCouponsIfNoCoupon() {
+        // when
+        CouponResponseDto response = mypageService.getMyCoupons(testUser.getId());
+
+        // then
+        assertThat(response.getCount()).isEqualTo(0);
+        assertThat(response.getCouponList()).isNull();
     }
 
     @Test

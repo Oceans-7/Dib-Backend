@@ -128,4 +128,8 @@ public class MockRequest {
         imageUrlList.add("https://images/2");
         return new ReportRequestDto("갯주풀 / 영국 갯끈풀", "강원 강릉시 강문동", imageUrlList);
     }
+
+    public static ReportRequestDto testReportInvalidArgumentExceptionReq() {
+        return new ReportRequestDto("", "강원 강릉시 강문동", new ArrayList<>());
+    }
 }

@@ -18,6 +18,9 @@ public class DetailCouponResponseDto {
     @Schema(description = "쿠폰 아이디", example = "0")
     private Long couponId;
 
+    @Schema(description = "쿠폰 이미지 URL", example = "https://coupon.image")
+    private String couponImageUrl;
+
     @Schema(description = "쿠폰 해당 지역", example = "제주 서귀포시")
     private String region;
 
@@ -36,15 +39,12 @@ public class DetailCouponResponseDto {
     @Schema(description = "쿠폰 남은 기간(만료 쿠폰은 null)", example = "8")
     private Long remainingDays;
 
-    @Schema(description = "쿠폰 사용 완료 여부", example = "false")
-    private boolean isUsed;
-
     public static DetailCouponResponseDto from(Coupon coupon) {
         CouponGroup couponGroup = coupon.getCouponGroup();
         DetailCouponResponseDto couponResponseDto = new DetailCouponResponseDto();
 
         couponResponseDto.couponId = coupon.getCouponId();
-        couponResponseDto.isUsed = coupon.getStatus() == CouponStatus.USED ? true : false;
+        couponResponseDto.couponImageUrl = couponGroup.getPartnerImageUrl();
         couponResponseDto.region = couponGroup.getRegion();
         couponResponseDto.couponType = couponGroup.getCouponType().getKeyword();
         couponResponseDto.discountPercentage = couponGroup.getDiscountPercentage();

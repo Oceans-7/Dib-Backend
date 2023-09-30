@@ -18,10 +18,10 @@ public class Report {
     @Column(name = "report_id")
     private Long reportId;
 
-    @Column(name = "organism_name")
+    @Column(name = "organism_name", length = 60, nullable = false)
     private String organismName;
 
-    @Column(name = "found_location")
+    @Column(name = "found_location", nullable = false)
     private String foundLocation;
 
     @ManyToOne(fetch = FetchType.LAZY)

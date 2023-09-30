@@ -18,6 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -73,6 +74,22 @@ public class CustomContentControllerTest {
                 .andExpect(jsonPath("$.data[0].title").value(mockResponse.get(0).getTitle()))
                 .andExpect(jsonPath("$.data[0].subTitle").value(mockResponse.get(0).getSubTitle()));
     }
+
+    @Test
+    @DisplayName("자체 콘텐츠 리스트 조회 : 등록된 자체 콘텐츠 없는 경우")
+    @WithMockUser()
+    public void getAllCustomContentIfNotRegisteredContent() throws Exception {
+        // given
+        when(customContentService.getAllCustomContent()).thenReturn(new ArrayList<>());
+
+        // when
+        ResultActions result = mvc.perform(get("/content"));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(new ArrayList<>()));
+    }
+
 
     @Test
     @DisplayName("자체 콘텐츠 상세 조회")

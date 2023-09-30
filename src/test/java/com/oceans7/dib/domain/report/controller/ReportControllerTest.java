@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ReportController.class)
@@ -97,5 +98,24 @@ public class ReportControllerTest {
                         .content(content));
 
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[exception] 신고 시 필수 파라미터를 누락한 경우")
+    @WithMockUser(username = TEST_USER_ID, roles = "USER")
+    public void reportInvalidArgumentException() throws Exception {
+        // given
+        User user = makeUser();
+        String content = objectMapper.writeValueAsString(MockRequest.testReportInvalidArgumentExceptionReq());
+
+        // when
+        ResultActions result = mvc.perform(post("/report")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content));
+
+        result.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.code").value("C0002"))
+                .andExpect(jsonPath("$.message").value("organismName은(는) 올바르지 않은 요청 값입니다."));
     }
 }

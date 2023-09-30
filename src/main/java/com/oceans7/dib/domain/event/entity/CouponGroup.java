@@ -19,7 +19,7 @@ public class CouponGroup {
     @Column(name = "coupon_group_id")
     private Long couponGroupId;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "region")
@@ -29,16 +29,16 @@ public class CouponGroup {
     @Enumerated(EnumType.STRING)
     private CouponType couponType;
 
-    @Column(name = "check_code", length = 4)
+    @Column(name = "check_code", length = 4,  nullable = false)
     private String checkCode;
 
     @Column(name = "discount_percentage")
     private int discountPercentage;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "closing_date")
+    @Column(name = "closing_date", nullable = false)
     private LocalDate closingDate;
 
     @Column(name = "coupon_image_url", length = 2100)

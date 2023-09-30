@@ -55,10 +55,20 @@ public class EventServiceTest {
         List<EventResponseDto> eventList = eventService.getAllEvent();
 
         // then
-        // 이벤트는 단일 레코드로 존재함.
+        // 이벤트는 단일 레코드로 존재한다고 가정
         EventResponseDto response = eventList.get(0);
         assertThat(response.getEventId()).isEqualTo(event.getEventId());
         assertThat(response.getBannerImageUrl()).isEqualTo(event.getBannerImageUrl());
+    }
+
+    @Test
+    @DisplayName("이벤트 리스트 조회 : 진행중인 이벤트 없는 경우")
+    public void getAllEventIfNoEventsInProgress() {
+        // when
+        List<EventResponseDto> response = eventService.getAllEvent();
+
+        // then
+        assertThat(response).isEmpty();
     }
 
     @Test

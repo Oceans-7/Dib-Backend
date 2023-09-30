@@ -6,10 +6,12 @@ import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.EventRepository;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,10 @@ public class EventService {
      */
     public List<EventResponseDto> getAllEvent() {
         List<Event> eventList = eventRepository.findAll();
+
+        if(ValidatorUtil.isEmpty(eventList)) {
+            return new ArrayList<>();
+        }
 
         return eventList.stream().map(event -> EventResponseDto.of(
                 event.getEventId(),
