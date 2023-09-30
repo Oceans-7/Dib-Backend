@@ -12,7 +12,7 @@ public class BaseTimeUtil {
         String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         // 자정
-        if (now.getHour() == 0 && now.getMinute() < callableTime) {
+        if (now.getHour() < 2 && now.getMinute() < callableTime) {
             baseDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         }
 

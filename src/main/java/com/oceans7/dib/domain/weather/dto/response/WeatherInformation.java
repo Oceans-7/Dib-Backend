@@ -32,13 +32,13 @@ public class WeatherInformation {
     @Schema(description = "수온", example = "15.00")
     private Double waterTemperature;
 
-    @Schema(description = "풍속", example = "5.00")
+    @Schema(description = "풍속(m/s)", example = "5.00")
     private Double windSpeed;
 
-    @Schema(description = "파고", example = "1.00")
+    @Schema(description = "파고(m)", example = "1.00")
     private Double waveHeight;
 
-    @Schema(description = "다이빙 지수", example = "GOOD")
+    @Schema(description = "다이빙 지수", example = "GOOD", implementation = DivingIndicator.class)
     private DivingIndicator divingIndicator;
 
     @ArraySchema(schema = @Schema(description = "조수 정보", implementation = TideEvent.class))

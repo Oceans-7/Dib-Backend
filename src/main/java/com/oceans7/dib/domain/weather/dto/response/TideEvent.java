@@ -19,10 +19,10 @@ public class TideEvent {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime time;
 
-    @Schema(description = "높이", example = "1.00")
+    @Schema(description = "높이(cm)", example = "1.00")
     private double height;
 
-    @Schema(description = "조수 타입(만조, 간조)", example = "HIGH")
+    @Schema(description = "조수 타입(만조, 간조)", example = "HIGH", implementation = TideType.class)
     private TideType type;
 
     public static TideEvent of(LocalDateTime time, double height, String type) {
