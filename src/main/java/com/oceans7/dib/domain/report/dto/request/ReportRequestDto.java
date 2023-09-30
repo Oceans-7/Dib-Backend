@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.report.dto.request;
 
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,9 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class ReportRequestDto {
+    @NotBlank
     @Schema(description = "유해 생물 이름", example = "갯주풀 / 영국 갯끈풀")
     private String organismName;
 
+    @NotBlank
     @Schema(description = "발견 위치", example = "강원 강릉시 강문동")
     private String foundLocation;
 
