@@ -8,6 +8,7 @@ import com.oceans7.dib.domain.custom_content.repository.CustomContentRepository;
 import com.oceans7.dib.global.api.service.OpenAPIService;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import com.oceans7.dib.global.util.ValidatorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,10 @@ public class CustomContentService extends OpenAPIService {
     @Transactional(readOnly = true)
     public List<ContentResponseDto> getAllCustomContent() {
         List<CustomContent> customContentList = customContentRepository.findAll();
+
+        if(ValidatorUtil.isEmpty(customContentList)) {
+            return null;
+        }
 
         return customContentList.stream()
                 .map(content -> ContentResponseDto.of(

@@ -36,9 +36,6 @@ public enum ErrorCode {
     // Event
     ALREADY_ISSUED_EXCEPTION(HttpStatus.BAD_REQUEST, "E0000", "이미 발급된 쿠폰입니다."),
 
-    // Mypage
-    ALREADY_USED_NICKNAME_EXCEPTION(HttpStatus.BAD_REQUEST, "M0000", "이미 사용중인 닉네임입니다."),
-
     // Report
     IMAGE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "R0000", "이미지 개수가 최대 허용치를 초과했습니다."),
     ;
