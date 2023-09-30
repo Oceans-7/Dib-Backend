@@ -18,16 +18,16 @@ public class Event {
     @Column(name = "event_id")
     private Long eventId;
 
-    @Column(name = "main_color")
+    @Column(name = "main_color", length = 10)
     private String mainColor;
 
-    @Column(name = "sub_color")
+    @Column(name = "sub_color", length = 10)
     private String subColor;
 
-    @Column(name = "first_image_url", length = 2100)
+    @Column(name = "first_image_url", length = 2100,  nullable = false)
     private String firstImageUrl;
 
-    @Column(name = "banner_image_url", length = 2100)
+    @Column(name = "banner_image_url", length = 2100,  nullable = false)
     private String bannerImageUrl;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
