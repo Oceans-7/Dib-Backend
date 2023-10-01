@@ -19,9 +19,13 @@ public class NoticeResponseDto {
     @Schema(description = "제목", example = "[특보] 보름달물해파리 경남 주의단계")
     private String title;
 
-    @Schema(description = "생성 날짜/시각", example = "2023.06.29∙12:00")
-    @JsonFormat(pattern = "yyyy.MM.dd ∙ HH:mm")
-    private LocalDateTime createDateTime;
+    @Schema(description = "생성 날짜", example = "2023.06.29")
+    @JsonFormat(pattern = "yyyy.MM.dd")
+    private LocalDateTime createDate;
+
+    @Schema(description = "생성 시각", example = "12:00")
+    @JsonFormat(pattern = "HH:mm")
+    private LocalDateTime createTime;
 
     @Schema(description = "내용", example = "안녕하세요, DIB 입니다.\n\n6월 22일부터 28일 간 총 16건의 해파리 웹 신고가 들어왔으며, 그 중 8건이 보름달물해파리였습니다. 해파리 발견 지역은 강원 2건, 경남 7건, 경북 1건, 전남 5건, 전북 1건, 제주 2건이었습니다.")
     private String content;
@@ -31,7 +35,8 @@ public class NoticeResponseDto {
 
         noticeResponseDto.noticeId = marineNotice.getNoticeId();
         noticeResponseDto.title = String.format("[%s] %s", marineNotice.getCategory(), marineNotice.getTitle());
-        noticeResponseDto.createDateTime = marineNotice.getCreatedAt();
+        noticeResponseDto.createDate = marineNotice.getCreatedAt();
+        noticeResponseDto.createTime = marineNotice.getCreatedAt();
         noticeResponseDto.content = marineNotice.getContent();
 
         return noticeResponseDto;

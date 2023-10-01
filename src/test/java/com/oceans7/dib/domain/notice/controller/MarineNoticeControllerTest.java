@@ -64,7 +64,8 @@ public class MarineNoticeControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].noticeId").value(mockResponse.get(0).getNoticeId()))
                 .andExpect(jsonPath("$.data[0].title").value(mockResponse.get(0).getTitle()))
-                .andExpect(jsonPath("$.data[0].createDateTime").value(mockResponse.get(0).getCreateDateTime().format(DateTimeFormatter.ofPattern("yyyy.MM.dd ∙ HH:mm"))))
+                .andExpect(jsonPath("$.data[0].createDate").value(mockResponse.get(0).getCreateDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))))
+                .andExpect(jsonPath("$.data[0].createTime").value(mockResponse.get(0).getCreateTime().format(DateTimeFormatter.ofPattern("HH:mm"))))
                 .andExpect(jsonPath("$.data[0].content").value(mockResponse.get(0).getContent()));
     }
 }

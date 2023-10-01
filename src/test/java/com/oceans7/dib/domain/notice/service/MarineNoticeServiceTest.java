@@ -41,6 +41,7 @@ public class MarineNoticeServiceTest {
         // then
         assertThat(response.get(0).getNoticeId()).isEqualTo(marineNotice.getNoticeId());
         assertThat(response.get(0).getTitle()).isEqualTo(String.format("[%s] %s", marineNotice.getCategory(), marineNotice.getTitle()));
-        assertThat(response.get(0).getCreateDateTime()).isEqualTo(marineNotice.getCreatedAt());
+        assertThat(response.get(0).getCreateDate()).isEqualTo(marineNotice.getCreatedAt());
+        assertThat(response.get(0).getCreateDate()).isEqualTo(marineNotice.getCreatedAt());
     }
 }
