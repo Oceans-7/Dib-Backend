@@ -202,7 +202,8 @@ public class EventControllerTest {
                 .with(csrf()));
 
         // then
-        result.andExpect(status().isOk());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(""));
         Coupon findCoupon = couponRepository.findByUserAndCouponGroup(user, firstCouponGroup).orElseThrow();
 
         assertThat(findCoupon.getStatus()).isEqualTo(coupon.getStatus());

@@ -105,7 +105,7 @@ public class EventServiceTest {
         // 협력 업체 검증
         PartnerSectionResponseDto partnerSection = response.getPartnerSection();
         String partnerSectionKeyword = String.format("%s, %s", firstCouponGroup.getCouponType().getKeyword(), secondCouponGroup.getCouponType().getKeyword());
-        String partnerSectionTitle = String.format("%s %s \n할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
+        String partnerSectionTitle = String.format("%s %s 할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
 
         assertThat(partnerSection.getKeyword()).isEqualTo(partnerSectionKeyword);
         assertThat(partnerSection.getTitle()).isEqualTo(partnerSectionTitle);
