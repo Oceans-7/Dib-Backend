@@ -68,6 +68,7 @@ public class CustomContentServiceTest {
 
         // then
         assertThat(response.getCustomContentId()).isEqualTo(customContent.getCustomContentId());
+        assertThat(response.getContentTitle()).isEqualTo(String.format("%s %s", customContent.getTitle(), "콘텐츠"));
 
         // 제목 섹션
         TitleSection titleSection = response.getContent().getTitleSection();
