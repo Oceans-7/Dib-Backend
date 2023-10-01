@@ -456,7 +456,7 @@ public class MockResponse {
 
     public static PartnerSectionResponseDto testPartnerSectionRes(CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
         String partnerSectionKeyword = String.format("%s, %s", firstCouponGroup.getCouponType().getKeyword(), secondCouponGroup.getCouponType().getKeyword());
-        String partnerSectionTitle = String.format("%s %s \n할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
+        String partnerSectionTitle = String.format("%s %s 할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
 
         return PartnerSectionResponseDto.of(
                 partnerSectionTitle,
