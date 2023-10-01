@@ -146,9 +146,10 @@ public class CustomContentControllerTest {
                 // 맛집 소개 섹션
                 .andExpect(jsonPath("$.data.content.restaurantSection.title").value(mockRestaurantSection.getTitle()))
                 .andExpect(jsonPath("$.data.content.restaurantSection.keyword").value(mockRestaurantSection.getKeyword()))
-                // 맛집 소개 섹션 > 할인 쿠폰
+                // 할인 쿠폰 섹션
                 .andExpect(jsonPath("$.data.content.couponSection.title").value(mockCouponSection.getTitle()))
                 .andExpect(jsonPath("$.data.content.couponSection.content").value(mockCouponSection.getContent()))
+                .andExpect(jsonPath("$.data.content.couponSection.couponImageUrl").value(mockCouponSection.getCouponImageUrl()))
                 .andExpect(jsonPath("$.data.content.couponSection.eventId").value(mockCouponSection.getEventId()));
 
         // 맛집 소개 섹션 > 식당/카페 정보
