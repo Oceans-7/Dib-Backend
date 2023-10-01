@@ -534,7 +534,7 @@ public class MockResponse {
     }
 
     public static DetailContentResponseDto testDetailCustomContentRes() {
-        return DetailContentResponseDto.of(1L, testContentRes());
+        return DetailContentResponseDto.of(1L, "제주 서귀포 콘텐츠", testContentRes());
     }
 
     public static List<SimpleOrganismResponseDto> testSimpleOrganismRes(List<? extends Organism> organismList) {

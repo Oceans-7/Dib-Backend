@@ -114,6 +114,7 @@ public class CustomContentControllerTest {
         result.andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.data.customContentId").value(mockResponse.getCustomContentId()))
+                .andExpect(jsonPath("$.data.contentTitle").value(mockResponse.getContentTitle()))
                 // 제목 섹션
                 .andExpect(jsonPath("$.data.content.titleSection.thumbnailUrl").value(mockTitleSection.getThumbnailUrl()))
                 .andExpect(jsonPath("$.data.content.titleSection.title").value(mockTitleSection.getTitle()))

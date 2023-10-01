@@ -46,8 +46,10 @@ public class CustomContentService extends OpenAPIService {
         CustomContent customContent = customContentRepository.findById(customContentId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_EXCEPTION));
 
+        String titleSuffix = "콘텐츠";
         return DetailContentResponseDto.of(
                 customContent.getCustomContentId(),
+                String.format("%s %s", customContent.getTitle(), titleSuffix),
                 parseDetailContentResponseDto(customContent.getJsonContent())
         );
     }
