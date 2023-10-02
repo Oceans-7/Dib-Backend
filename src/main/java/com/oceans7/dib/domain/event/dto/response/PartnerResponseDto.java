@@ -24,13 +24,13 @@ public class PartnerResponseDto {
     @Schema(description = "쿠폰 사용 가능 날짜", example = "2023.11.01")
     private String couponOpenDate;
 
-    public static PartnerResponseDto from(CouponGroup couponGroup) {
+    public static PartnerResponseDto of(String description, String partnerType, String partnerImageUrl, String couponOpenDate) {
         PartnerResponseDto partnerResponseDto = new PartnerResponseDto();
 
-        partnerResponseDto.description = couponGroup.getRegion();
-        partnerResponseDto.partnerType = couponGroup.getCouponType().getKeyword();
-        partnerResponseDto.partnerImageUrl = couponGroup.getPartnerImageUrl();
-        partnerResponseDto.couponOpenDate = couponGroup.getStartDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        partnerResponseDto.description = description;
+        partnerResponseDto.partnerType = partnerType;
+        partnerResponseDto.partnerImageUrl = partnerImageUrl;
+        partnerResponseDto.couponOpenDate = couponOpenDate;
 
         return partnerResponseDto;
     }

@@ -8,6 +8,7 @@ import com.oceans7.dib.domain.organism.repository.HarmfulOrganismRepository;
 import com.oceans7.dib.domain.organism.repository.MarineOrganismImageRepository;
 import com.oceans7.dib.domain.organism.repository.MarineOrganismRepository;
 import com.oceans7.dib.global.MockEntity;
+import com.oceans7.dib.global.MockResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,12 +82,13 @@ public class OrganismServiceTest {
         List<SimpleOrganismResponseDto> response = organismService.getAllMarineOrganism();
 
         // then
+        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleOrganismRes(marineOrganism);
         for(int i = 0; i < response.size(); i++) {
-            assertThat(response.get(i).getOrganismId()).isEqualTo(marineOrganism.get(i).getOrganismId());
-            assertThat(response.get(i).getIllustrationUrl()).isEqualTo(marineOrganism.get(i).getIllustrationImageUrl());
-            assertThat(response.get(i).getKoreanName()).isEqualTo(marineOrganism.get(i).getKoreanName());
-            assertThat(response.get(i).getEnglishName()).isEqualTo(marineOrganism.get(i).getEnglishName());
-            assertThat(response.get(i).getDescription()).isEqualTo(marineOrganism.get(i).getDescription());
+            assertThat(response.get(i).getOrganismId()).isEqualTo(mockResponse.get(i).getOrganismId());
+            assertThat(response.get(i).getIllustrationUrl()).isEqualTo(mockResponse.get(i).getIllustrationUrl());
+            assertThat(response.get(i).getKoreanName()).isEqualTo(mockResponse.get(i).getKoreanName());
+            assertThat(response.get(i).getEnglishName()).isEqualTo(mockResponse.get(i).getEnglishName());
+            assertThat(response.get(i).getDescription()).isEqualTo(mockResponse.get(i).getDescription());
         }
     }
 
@@ -101,29 +103,28 @@ public class OrganismServiceTest {
         OrganismResponseDto response = organismService.getMarineOrganismDetail(marineOrganism.get(0).getOrganismId());
 
         // then
-        assertThat(response.getOrganismId()).isEqualTo(marineOrganism.get(0).getOrganismId());
-        assertThat(response.getFirstImageUrl()).isEqualTo(marineOrganism.get(0).getFirstImageUrl());
-        assertThat(response.getKoreanName()).isEqualTo(marineOrganism.get(0).getKoreanName());
-        assertThat(response.getEnglishName()).isEqualTo(marineOrganism.get(0).getEnglishName());
-        assertThat(response.getDescription()).isEqualTo(marineOrganism.get(0).getDescription());
-        assertThat(response.getBasicAppearance()).isEqualTo(marineOrganism.get(0).getBasicAppearance());
-        assertThat(response.getDetailDescription()).isEqualTo(marineOrganism.get(0).getDetailDescription());
+        OrganismResponseDto mockResponse = MockResponse.testMarineOrganismRes(marineOrganism.get(0), marineOrganism.subList(1, marineOrganism.size()));
+        assertThat(response.getOrganismId()).isEqualTo(mockResponse.getOrganismId());
+        assertThat(response.getFirstImageUrl()).isEqualTo(mockResponse.getFirstImageUrl());
+        assertThat(response.getKoreanName()).isEqualTo(mockResponse.getKoreanName());
+        assertThat(response.getEnglishName()).isEqualTo(mockResponse.getEnglishName());
+        assertThat(response.getDescription()).isEqualTo(mockResponse.getDescription());
+        assertThat(response.getBasicAppearance()).isEqualTo(mockResponse.getBasicAppearance());
+        assertThat(response.getDetailDescription()).isEqualTo(mockResponse.getDetailDescription());
 
         // 해양 생물 이미지
         for(int i = 0; i < marineOrganismImageList.size(); i++) {
             assertThat(response.getImageUrlList().get(i))
-                    .isEqualTo(marineOrganism.get(0).getMarineOrganismImageList().get(i).getUrl());
+                    .isEqualTo(mockResponse.getImageUrlList().get(i));
         }
 
         // 다른 해양 생물
-        assertThat(response.getOtherOrganismList().size()).isEqualTo(marineOrganism.size()-1);
-
-        for(int i = 0; i < marineOrganism.size()-1; i++) {
-            assertThat(response.getOtherOrganismList().get(i).getOrganismId()).isEqualTo(marineOrganism.get(i+1).getOrganismId());
-            assertThat(response.getOtherOrganismList().get(i).getIllustrationUrl()).isEqualTo(marineOrganism.get(i+1).getIllustrationImageUrl());
-            assertThat(response.getOtherOrganismList().get(i).getKoreanName()).isEqualTo(marineOrganism.get(i+1).getKoreanName());
-            assertThat(response.getOtherOrganismList().get(i).getEnglishName()).isEqualTo(marineOrganism.get(i+1).getEnglishName());
-            assertThat(response.getOtherOrganismList().get(i).getDescription()).isEqualTo(marineOrganism.get(i+1).getDescription());        }
+        for(int i = 0; i < response.getOtherOrganismList().size(); i++) {
+            assertThat(response.getOtherOrganismList().get(i).getOrganismId()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getOrganismId());
+            assertThat(response.getOtherOrganismList().get(i).getIllustrationUrl()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getIllustrationUrl());
+            assertThat(response.getOtherOrganismList().get(i).getKoreanName()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getKoreanName());
+            assertThat(response.getOtherOrganismList().get(i).getEnglishName()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getEnglishName());
+            assertThat(response.getOtherOrganismList().get(i).getDescription()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getDescription());        }
     }
 
     @Test
@@ -136,12 +137,13 @@ public class OrganismServiceTest {
         List<SimpleOrganismResponseDto> response = organismService.getAllHarmfulOrganism();
 
         // then
+        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleOrganismRes(harmfulOrganism);
         for(int i = 0; i < response.size(); i++) {
-            assertThat(response.get(i).getOrganismId()).isEqualTo(harmfulOrganism.get(i).getOrganismId());
-            assertThat(response.get(i).getIllustrationUrl()).isEqualTo(harmfulOrganism.get(i).getIllustrationImageUrl());
-            assertThat(response.get(i).getKoreanName()).isEqualTo(harmfulOrganism.get(i).getKoreanName());
-            assertThat(response.get(i).getEnglishName()).isEqualTo(harmfulOrganism.get(i).getEnglishName());
-            assertThat(response.get(i).getDescription()).isEqualTo(harmfulOrganism.get(i).getDescription());
+            assertThat(response.get(i).getOrganismId()).isEqualTo(mockResponse.get(i).getOrganismId());
+            assertThat(response.get(i).getIllustrationUrl()).isEqualTo(mockResponse.get(i).getIllustrationUrl());
+            assertThat(response.get(i).getKoreanName()).isEqualTo(mockResponse.get(i).getKoreanName());
+            assertThat(response.get(i).getEnglishName()).isEqualTo(mockResponse.get(i).getEnglishName());
+            assertThat(response.get(i).getDescription()).isEqualTo(mockResponse.get(i).getDescription());
         }
     }
 
@@ -156,28 +158,27 @@ public class OrganismServiceTest {
         OrganismResponseDto response = organismService.getHarmfulOrganismDetail(harmfulOrganism.get(0).getOrganismId());
 
         // then
-        assertThat(response.getOrganismId()).isEqualTo(harmfulOrganism.get(0).getOrganismId());
-        assertThat(response.getFirstImageUrl()).isEqualTo(harmfulOrganism.get(0).getFirstImageUrl());
-        assertThat(response.getKoreanName()).isEqualTo(harmfulOrganism.get(0).getKoreanName());
-        assertThat(response.getEnglishName()).isEqualTo(harmfulOrganism.get(0).getEnglishName());
-        assertThat(response.getDescription()).isEqualTo(harmfulOrganism.get(0).getDescription());
-        assertThat(response.getBasicAppearance()).isEqualTo(harmfulOrganism.get(0).getBasicAppearance());
-        assertThat(response.getDetailDescription()).isEqualTo(harmfulOrganism.get(0).getDetailDescription());
+        OrganismResponseDto mockResponse = MockResponse.testHarmfulOrganismRes(harmfulOrganism.get(0), harmfulOrganism.subList(1, harmfulOrganism.size()));
+        assertThat(response.getOrganismId()).isEqualTo(mockResponse.getOrganismId());
+        assertThat(response.getFirstImageUrl()).isEqualTo(mockResponse.getFirstImageUrl());
+        assertThat(response.getKoreanName()).isEqualTo(mockResponse.getKoreanName());
+        assertThat(response.getEnglishName()).isEqualTo(mockResponse.getEnglishName());
+        assertThat(response.getDescription()).isEqualTo(mockResponse.getDescription());
+        assertThat(response.getBasicAppearance()).isEqualTo(mockResponse.getBasicAppearance());
+        assertThat(response.getDetailDescription()).isEqualTo(mockResponse.getDetailDescription());
 
         // 해양 생물 이미지
         for(int i = 0; i < harmfulOrganismImageList.size(); i++) {
             assertThat(response.getImageUrlList().get(i))
-                    .isEqualTo(harmfulOrganism.get(0).getHarmfulOrganismImageList().get(i).getUrl());
+                    .isEqualTo(mockResponse.getImageUrlList().get(i));
         }
 
         // 다른 해양 생물
-        assertThat(response.getOtherOrganismList().size()).isEqualTo(harmfulOrganism.size()-1);
-
-        for(int i = 0; i < harmfulOrganism.size()-1; i++) {
-            assertThat(response.getOtherOrganismList().get(i).getOrganismId()).isEqualTo(harmfulOrganism.get(i+1).getOrganismId());
-            assertThat(response.getOtherOrganismList().get(i).getIllustrationUrl()).isEqualTo(harmfulOrganism.get(i+1).getIllustrationImageUrl());
-            assertThat(response.getOtherOrganismList().get(i).getKoreanName()).isEqualTo(harmfulOrganism.get(i+1).getKoreanName());
-            assertThat(response.getOtherOrganismList().get(i).getEnglishName()).isEqualTo(harmfulOrganism.get(i+1).getEnglishName());
-            assertThat(response.getOtherOrganismList().get(i).getDescription()).isEqualTo(harmfulOrganism.get(i+1).getDescription());        }
+        for(int i = 0; i < response.getOtherOrganismList().size(); i++) {
+            assertThat(response.getOtherOrganismList().get(i).getOrganismId()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getOrganismId());
+            assertThat(response.getOtherOrganismList().get(i).getIllustrationUrl()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getIllustrationUrl());
+            assertThat(response.getOtherOrganismList().get(i).getKoreanName()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getKoreanName());
+            assertThat(response.getOtherOrganismList().get(i).getEnglishName()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getEnglishName());
+            assertThat(response.getOtherOrganismList().get(i).getDescription()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getDescription());        }
     }
 }

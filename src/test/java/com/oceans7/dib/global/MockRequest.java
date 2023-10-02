@@ -120,12 +120,12 @@ public class MockRequest {
     }
 
     public static UpdateProfileRequestDto testUpdateProfileReq() {
-        return new UpdateProfileRequestDto("변경 닉네임", "http://tong.visitkorea.or.kr/cms/resource/49/2947649_image2_1.jpg");
+        return new UpdateProfileRequestDto("변경 닉네임", "https://dib-file-bucket.s3.ap-northeast-2.amazonaws.com/images/f70e5dc3-7ccc-47d5-a28e-a36340b69388300px-2011_Ferrari_458_Italia_DCT_S-A_4.5_Front.jpg");
     }
 
     public static ReportRequestDto testReportReq() {
         List<String> imageUrlList = new ArrayList<>();
-        imageUrlList.add("https://images/2");
+        imageUrlList.add("https://dib-file-bucket.s3.ap-northeast-2.amazonaws.com/images/f70e5dc3-7ccc-47d5-a28e-a36340b69388300px-2011_Ferrari_458_Italia_DCT_S-A_4.5_Front.jpg");
         return new ReportRequestDto("갯주풀 / 영국 갯끈풀", "강원 강릉시 강문동", imageUrlList);
     }
 

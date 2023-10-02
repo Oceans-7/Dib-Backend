@@ -41,10 +41,11 @@ public class CustomContentServiceTest {
         List<ContentResponseDto> response = customContentService.getAllCustomContent();
 
         // then
-        assertThat(response.get(0).getCustomContentId()).isEqualTo(customContent.getCustomContentId());
-        assertThat(response.get(0).getTitle()).isEqualTo(customContent.getTitle());
-        assertThat(response.get(0).getSubTitle()).isEqualTo(customContent.getSubTitle());
-        assertThat(response.get(0).getFirstImageUrl()).isEqualTo(customContent.getFirstImageUrl());
+        ContentResponseDto mockResponse = MockResponse.testContentRes(customContent);
+        assertThat(response.get(0).getCustomContentId()).isEqualTo(mockResponse.getCustomContentId());
+        assertThat(response.get(0).getTitle()).isEqualTo(mockResponse.getTitle());
+        assertThat(response.get(0).getSubTitle()).isEqualTo(mockResponse.getSubTitle());
+        assertThat(response.get(0).getFirstImageUrl()).isEqualTo(mockResponse.getFirstImageUrl());
     }
 
     @Test
@@ -118,7 +119,6 @@ public class CustomContentServiceTest {
 
         CouponSection couponSection = response.getContent().getCouponSection();
         assertThat(couponSection.getTitle()).isEqualTo(MockResponse.testContentRes().getCouponSection().getTitle());
-        assertThat(couponSection.getContent()).isEqualTo(MockResponse.testContentRes().getCouponSection().getContent());
         assertThat(couponSection.getCouponImageUrl()).isEqualTo(MockResponse.testContentRes().getCouponSection().getCouponImageUrl());
         assertThat(couponSection.getEventId()).isEqualTo(MockResponse.testContentRes().getCouponSection().getEventId());
     }

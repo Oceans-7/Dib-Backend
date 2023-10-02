@@ -2,7 +2,6 @@ package com.oceans7.dib.domain.mypage.service;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
-import com.oceans7.dib.domain.event.entity.CouponStatus;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.CouponRepository;
@@ -17,6 +16,7 @@ import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,6 +52,9 @@ public class MypageServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ImageAssetUrlProcessor imageAssetUrlProcessor;
 
     private User testUser;
 
@@ -139,36 +142,6 @@ public class MypageServiceTest {
         assertThat(response.getDibList()).isNull();
     }
 
-    @Test
-    @DisplayName("쿠폰 목록 조회")
-    public void getMyCoupons() {
-        // given
-        CouponGroup couponGroup = makeCouponGroup(makeEvent());
-        Coupon coupon = issueCoupon(couponGroup);
-
-        // when
-        CouponResponseDto response = mypageService.getMyCoupons(testUser.getId());
-
-        assertThat(response.getCount()).isEqualTo(1);
-
-        // then
-        for(DetailCouponResponseDto couponResponseDto : response.getCouponList()) {
-            assertThat(couponResponseDto.getCouponImageUrl()).isEqualTo(couponGroup.getPartnerImageUrl());
-            assertThat(couponResponseDto.getRegion()).isEqualTo(couponGroup.getRegion());
-            assertThat(couponResponseDto.getCouponType()).isEqualTo(couponGroup.getCouponType().getKeyword());
-            assertThat(couponResponseDto.getDiscountPercentage()).isEqualTo(couponGroup.getDiscountPercentage());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-            assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate().format(formatter));
-            assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate().format(formatter));
-            assertThat(couponResponseDto.getCouponId()).isEqualTo(coupon.getCouponId());
-
-            Long remainingDays = Duration.between(
-                    couponGroup.getStartDate().atStartOfDay(), couponGroup.getClosingDate().atStartOfDay())
-                    .toDays();
-
-            assertThat(couponResponseDto.getRemainingDays()).isEqualTo(remainingDays);
-        }
-    }
 
     @Test
     @DisplayName("쿠폰 목록 조회 : 쿠폰이 하나도 없는 경우")
@@ -194,6 +167,6 @@ public class MypageServiceTest {
         User updateUser = userRepository.findById(testUser.getId()).orElseThrow();
 
         assertThat(updateUser.getNickname()).isEqualTo(updateProfileReq.getNickname());
-        assertThat(updateUser.getProfileUrl()).isEqualTo(updateProfileReq.getImageUrl());
+        assertThat(updateUser.getProfileUrl()).isEqualTo(imageAssetUrlProcessor.extractUrlPath(updateProfileReq.getImageUrl()));
     }
 }

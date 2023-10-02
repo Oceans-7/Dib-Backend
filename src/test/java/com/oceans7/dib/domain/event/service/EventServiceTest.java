@@ -6,6 +6,7 @@ import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.EventRepository;
 import com.oceans7.dib.global.MockEntity;
+import com.oceans7.dib.global.MockResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +57,10 @@ public class EventServiceTest {
 
         // then
         // 이벤트는 단일 레코드로 존재한다고 가정
+        EventResponseDto mockResponse = MockResponse.testEventRes(event).get(0);
         EventResponseDto response = eventList.get(0);
-        assertThat(response.getEventId()).isEqualTo(event.getEventId());
-        assertThat(response.getBannerImageUrl()).isEqualTo(event.getBannerImageUrl());
+        assertThat(response.getEventId()).isEqualTo(mockResponse.getEventId());
+        assertThat(response.getBannerImageUrl()).isEqualTo(mockResponse.getBannerImageUrl());
     }
 
     @Test
@@ -84,44 +86,42 @@ public class EventServiceTest {
 
         // then
         // 이벤트 검증
-        assertThat(response.getEventId()).isEqualTo(event.getEventId());
-        assertThat(response.getMainColor()).isEqualTo(event.getMainColor());
-        assertThat(response.getSubColor()).isEqualTo(event.getSubColor());
-        assertThat(response.getFirstImageUrl()).isEqualTo(event.getFirstImageUrl());
+        DetailEventResponseDto detailEventMockResponse = MockResponse.testDetailEventRes(event, firstCouponGroup, secondCouponGroup);
+        assertThat(response.getEventId()).isEqualTo(detailEventMockResponse.getEventId());
+        assertThat(response.getMainColor()).isEqualTo(detailEventMockResponse.getMainColor());
+        assertThat(response.getSubColor()).isEqualTo(detailEventMockResponse.getSubColor());
+        assertThat(response.getFirstImageUrl()).isEqualTo(detailEventMockResponse.getFirstImageUrl());
 
         // 쿠폰 검증
         CouponSectionResponseDto firstCouponSection = response.getFirstCouponSection();
-        assertThat(firstCouponSection.getCouponGroupId()).isEqualTo(firstCouponGroup.getCouponGroupId());
-        assertThat(firstCouponSection.getTitle()).isEqualTo(firstCouponGroup.getName());
-        assertThat(firstCouponSection.getKeyword()).isEqualTo(firstCouponGroup.getCouponType().getKeyword());
-        assertThat(firstCouponSection.getCouponImageUrl()).isEqualTo(firstCouponGroup.getCouponImageUrl());
+        assertThat(firstCouponSection.getCouponGroupId()).isEqualTo(detailEventMockResponse.getFirstCouponSection().getCouponGroupId());
+        assertThat(firstCouponSection.getTitle()).isEqualTo(detailEventMockResponse.getFirstCouponSection().getTitle());
+        assertThat(firstCouponSection.getKeyword()).isEqualTo(detailEventMockResponse.getFirstCouponSection().getKeyword());
+        assertThat(firstCouponSection.getCouponImageUrl()).isEqualTo(detailEventMockResponse.getFirstCouponSection().getCouponImageUrl());
 
         CouponSectionResponseDto secondCouponSection = response.getSecondCouponSection();
-        assertThat(secondCouponSection.getCouponGroupId()).isEqualTo(secondCouponGroup.getCouponGroupId());
-        assertThat(secondCouponSection.getTitle()).isEqualTo(secondCouponGroup.getName());
-        assertThat(secondCouponSection.getKeyword()).isEqualTo(secondCouponGroup.getCouponType().getKeyword());
-        assertThat(secondCouponSection.getCouponImageUrl()).isEqualTo(secondCouponGroup.getCouponImageUrl());
+        assertThat(secondCouponSection.getCouponGroupId()).isEqualTo(detailEventMockResponse.getSecondCouponSection().getCouponGroupId());
+        assertThat(secondCouponSection.getTitle()).isEqualTo(detailEventMockResponse.getSecondCouponSection().getTitle());
+        assertThat(secondCouponSection.getKeyword()).isEqualTo(detailEventMockResponse.getSecondCouponSection().getKeyword());
+        assertThat(secondCouponSection.getCouponImageUrl()).isEqualTo(detailEventMockResponse.getSecondCouponSection().getCouponImageUrl());
 
         // 협력 업체 검증
         PartnerSectionResponseDto partnerSection = response.getPartnerSection();
-        String partnerSectionKeyword = String.format("%s, %s", firstCouponGroup.getCouponType().getKeyword(), secondCouponGroup.getCouponType().getKeyword());
-        String partnerSectionTitle = String.format("%s %s 할인 참여 업체", firstCouponGroup.getRegion(), partnerSectionKeyword);
-
-        assertThat(partnerSection.getKeyword()).isEqualTo(partnerSectionKeyword);
-        assertThat(partnerSection.getTitle()).isEqualTo(partnerSectionTitle);
+        assertThat(partnerSection.getKeyword()).isEqualTo(detailEventMockResponse.getPartnerSection().getKeyword());
+        assertThat(partnerSection.getTitle()).isEqualTo(detailEventMockResponse.getPartnerSection().getTitle());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
         PartnerResponseDto firstPartnerResponse = partnerSection.getFirstPartner();
-        assertThat(firstPartnerResponse.getDescription()).isEqualTo(firstCouponGroup.getRegion());
-        assertThat(firstPartnerResponse.getPartnerType()).isEqualTo(firstCouponGroup.getCouponType().getKeyword());
-        assertThat(firstPartnerResponse.getPartnerImageUrl()).isEqualTo(firstCouponGroup.getPartnerImageUrl());
-        assertThat(firstPartnerResponse.getCouponOpenDate()).isEqualTo(firstCouponGroup.getStartDate().format(formatter));
+        assertThat(firstPartnerResponse.getDescription()).isEqualTo(detailEventMockResponse.getPartnerSection().getFirstPartner().getDescription());
+        assertThat(firstPartnerResponse.getPartnerType()).isEqualTo(detailEventMockResponse.getPartnerSection().getFirstPartner().getPartnerType());
+        assertThat(firstPartnerResponse.getPartnerImageUrl()).isEqualTo(detailEventMockResponse.getPartnerSection().getFirstPartner().getPartnerImageUrl());
+        assertThat(firstPartnerResponse.getCouponOpenDate()).isEqualTo(detailEventMockResponse.getPartnerSection().getFirstPartner().getCouponOpenDate());
 
         PartnerResponseDto secondPartnerResponse = partnerSection.getSecondPartner();
-        assertThat(secondPartnerResponse.getDescription()).isEqualTo(secondCouponGroup.getRegion());
-        assertThat(secondPartnerResponse.getPartnerType()).isEqualTo(secondCouponGroup.getCouponType().getKeyword());
-        assertThat(secondPartnerResponse.getPartnerImageUrl()).isEqualTo(secondCouponGroup.getPartnerImageUrl());
-        assertThat(secondPartnerResponse.getCouponOpenDate()).isEqualTo(secondCouponGroup.getStartDate().format(formatter));
+        assertThat(secondPartnerResponse.getDescription()).isEqualTo(detailEventMockResponse.getPartnerSection().getSecondPartner().getDescription());
+        assertThat(secondPartnerResponse.getPartnerType()).isEqualTo(detailEventMockResponse.getPartnerSection().getSecondPartner().getPartnerType());
+        assertThat(secondPartnerResponse.getPartnerImageUrl()).isEqualTo(detailEventMockResponse.getPartnerSection().getSecondPartner().getPartnerImageUrl());
+        assertThat(secondPartnerResponse.getCouponOpenDate()).isEqualTo(detailEventMockResponse.getPartnerSection().getSecondPartner().getCouponOpenDate());
     }
 }

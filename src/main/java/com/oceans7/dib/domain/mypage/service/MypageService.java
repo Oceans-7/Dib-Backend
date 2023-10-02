@@ -10,13 +10,13 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
-import com.oceans7.dib.global.util.ValidatorUtil;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +26,8 @@ public class MypageService {
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
     private final DibRepository dibRepository;
+
+    private final ImageAssetUrlProcessor imageAssetUrlProcessor;
 
     private User findUser(Long userId) {
         return userRepository.findById(userId)
@@ -39,7 +41,12 @@ public class MypageService {
         Long dibCount = dibRepository.countByUser(user);
         Long couponCount = couponRepository.countByPossibleCoupon(userId);
 
-        return MypageResponseDto.of(user.getProfileUrl(), user.getNickname(), dibCount, couponCount);
+        return MypageResponseDto.of(
+                imageAssetUrlProcessor.prependCloudFrontHost(user.getProfileUrl()),
+                user.getNickname(),
+                dibCount,
+                couponCount
+        );
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +67,16 @@ public class MypageService {
         List<Coupon> couponList = couponRepository.findPossibleCouponsOrderByClosingDateAsc(userId);
 
         List<DetailCouponResponseDto> detailCouponResponseDtoList = couponList.stream()
-                .map(DetailCouponResponseDto :: from)
+                .map(coupon -> DetailCouponResponseDto.of(
+                        coupon.getCouponId(),
+                        imageAssetUrlProcessor.prependCloudFrontHost(coupon.getCouponGroup().getPartnerImageUrl()),
+                        coupon.getCouponGroup().getRegion(),
+                        coupon.getCouponGroup().getCouponType().getKeyword(),
+                        coupon.getCouponGroup().getDiscountPercentage(),
+                        coupon.getCouponGroup().getStartDate(),
+                        coupon.getCouponGroup().getClosingDate(),
+                        Duration.between(coupon.getCouponGroup().getStartDate().atStartOfDay(), coupon.getCouponGroup().getClosingDate().atStartOfDay()).toDays()
+                ))
                 .collect(Collectors.toList());
 
         return CouponResponseDto.from(detailCouponResponseDtoList);
@@ -70,6 +86,6 @@ public class MypageService {
     public void updateMyProfile(Long userId, UpdateProfileRequestDto request) {
         User user = findUser(userId);
 
-        user.updateProfile(request.getNickname(), request.getImageUrl());
+        user.updateProfile(request.getNickname(), imageAssetUrlProcessor.extractUrlPath(request.getImageUrl()));
     }
 }
