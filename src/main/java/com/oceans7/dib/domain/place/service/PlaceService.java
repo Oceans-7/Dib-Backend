@@ -264,6 +264,9 @@ public class PlaceService {
         String sigunguCode = filterOption.isEmptySigungu() ?
                 "" : fetchAreaCodeAPI(areaCode, filterOption.getSigungu());
 
+        // 초기 area, sigungu 값 초기화가 ""
+        LocalResponse localResponse = fetchSearchAddressLocalAPI(filterOption.getArea() + filterOption.getSigungu());
+
         PlaceFilterOptions areaFilterOption = filterOption.withAreaCodeAndSigunguCode(areaCode, sigunguCode);
 
         TourAPICommonListResponse tourAPIResponse = fetchAreaBasedTourAPI(request, areaFilterOption);
@@ -275,7 +278,9 @@ public class PlaceService {
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize(),
-                request.getArrangeType()
+                request.getArrangeType(),
+                localResponse.getAddressItems().get(0).getX(),
+                localResponse.getAddressItems().get(0).getY()
         );
     }
 
@@ -373,8 +378,12 @@ public class PlaceService {
      * 키워드의 지역명 여부
      */
     private boolean isLocationKeyword(String keyword) {
-        LocalResponse localResponse = kakaoLocalAPIService.getSearchAddressLocalApi(keyword);
+        LocalResponse localResponse = fetchSearchAddressLocalAPI(keyword);
         return ValidatorUtil.isNotEmpty(localResponse.getAddressItems());
+    }
+
+    private LocalResponse fetchSearchAddressLocalAPI(String keyword) {
+        return kakaoLocalAPIService.getSearchAddressLocalApi(keyword);
     }
 
     /**

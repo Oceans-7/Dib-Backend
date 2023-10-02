@@ -4,6 +4,7 @@ import com.oceans7.dib.domain.place.dto.ArrangeType;
 import com.oceans7.dib.global.api.response.tourapi.list.TourAPICommonListResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,12 @@ public class PlaceResponseDto {
     @Schema(description = "정렬 형식", example = "TITLE")
     private ArrangeType arrangeType;
 
+    @Schema(description = "사용자 경도", example = "126.9779692")
+    private Double mapX;
+
+    @Schema(description = "사용자 위도", example = "37.566535")
+    private Double mapY;
+
     public static PlaceResponseDto of(List<SimplePlaceInformationDto> simpleDto, int count, int page, int pageSize, ArrangeType arrangeType) {
         PlaceResponseDto place = new PlaceResponseDto();
 
@@ -36,6 +43,21 @@ public class PlaceResponseDto {
         place.page = page;
         place.pageSize = pageSize;
         place.arrangeType = arrangeType;
+
+        return place;
+    }
+
+    public static PlaceResponseDto of(List<SimplePlaceInformationDto> simpleDto, int count, int page, int pageSize, ArrangeType arrangeType,
+                                      Double mapX, Double mapY) {
+        PlaceResponseDto place = new PlaceResponseDto();
+
+        place.places = simpleDto;
+        place.count = count;
+        place.page = page;
+        place.pageSize = pageSize;
+        place.arrangeType = arrangeType;
+        place.mapX = mapX;
+        place.mapY = mapY;
 
         return place;
     }
