@@ -57,12 +57,16 @@ public class TextManipulatorUtil {
     }
 
     public static String replaceBrWithNewLine(String input) {
-        String brTag = "<br>";
+        String[] brTag = {"<br>", "<br />", "<br/>"};
         String newLine = "\n";
 
         if(ValidatorUtil.isNotEmpty(input)) {
-            return input.replace(brTag, newLine);
+            for(String br : brTag) {
+                input = input.replace(br, newLine);
+            }
+            return input;
         }
+
         return input;
     }
 
