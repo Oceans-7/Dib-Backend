@@ -58,46 +58,43 @@ public class WeatherService {
         double longitude = getLocationWeatherRequestDto.getLongitude();
         String addressName = getAddressName(latitude, longitude);
 
-        try {
-            WeatherVO currentWeather = getCurrentWeatherInfo(latitude, longitude, localDateTime);
+        WeatherVO currentWeather = getCurrentWeatherInfo(latitude, longitude, localDateTime);
 
-            if (ValidatorUtil.isEmpty(currentWeather)) {
-                return GetCurrentWeatherResponseDto.of(
-                        addressName,
-                        null
-                );
-            }
-
-            WeatherInformation weatherInformation = WeatherInformation.of(
-                    LocalDate.now(),
-                    currentWeather.getWeatherType(),
-                    currentWeather.getAirTemperature(),
-                    currentWeather.getWaterTemperature(),
-                    currentWeather.getWindSpeed(),
-                    currentWeather.getWaveHeight(),
-                    currentWeather.getDivingIndicator(),
-                    currentWeather.getTideEvents()
-            );
-
-
+        if (ValidatorUtil.isEmpty(currentWeather)) {
             return GetCurrentWeatherResponseDto.of(
                     addressName,
-                    weatherInformation
+                    null
             );
-
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION);
         }
+
+        WeatherInformation weatherInformation = WeatherInformation.of(
+                LocalDate.now(),
+                currentWeather.getWeatherType(),
+                currentWeather.getAirTemperature(),
+                currentWeather.getWaterTemperature(),
+                currentWeather.getWindSpeed(),
+                currentWeather.getWaveHeight(),
+                currentWeather.getDivingIndicator(),
+                currentWeather.getTideEvents()
+        );
+
+
+        return GetCurrentWeatherResponseDto.of(
+                addressName,
+                weatherInformation
+        );
 
     }
 
-    public WeatherVO getCurrentWeatherInfo(double latitude, double longitude, LocalDateTime now) throws ExecutionException, InterruptedException {
+    public WeatherVO getCurrentWeatherInfo(double latitude, double longitude, LocalDateTime now) {
 
         String baseDate = BaseTimeUtil.calculateBaseDate(now, NCST_CALLABLE_TIME);
         String baseTime = BaseTimeUtil.calculateBaseTime(now, NCST_CALLABLE_TIME);
-        String forecastBaseDate = BaseTimeUtil.calculateBaseDate(now, FCST_CALLABLE_TIME);
-        String forecastBaseTime = BaseTimeUtil.calculateBaseTime(now, FCST_CALLABLE_TIME);
+        String ultraForecastBaseDate = BaseTimeUtil.calculateBaseDate(now, FCST_CALLABLE_TIME);
+        String ultraForecastBaseTime = BaseTimeUtil.calculateBaseTime(now, FCST_CALLABLE_TIME);
+        ForecastBaseDateTime forecastBaseDateTime = getForecastBaseDateTime(now);
+        String forecastBaseDate = forecastBaseDateTime.getForecastBaseDate();
+        String forecastBaseTime = forecastBaseDateTime.getForecastBaseTime();
 
         ObsCode nearestObsCode = getNearestObsCode(longitude, latitude);
 
@@ -109,7 +106,10 @@ public class WeatherService {
         CompletableFuture<FcstAPICommonListResponse> nowCast = vilageFcstAPIService.getNowCast(nearestObsCode.getNx(), nearestObsCode.getNy(), baseDate, baseTime);
 
         // 초단기 예측
-        CompletableFuture<FcstAPICommonListResponse> ultraFcst = vilageFcstAPIService.getUltraForecast(nearestObsCode.getNx(), nearestObsCode.getNy(), forecastBaseDate, forecastBaseTime);
+        CompletableFuture<FcstAPICommonListResponse> ultraFcst = vilageFcstAPIService.getUltraForecast(nearestObsCode.getNx(), nearestObsCode.getNy(), ultraForecastBaseDate, ultraForecastBaseTime);
+
+        // 단기 예측
+        CompletableFuture<FcstAPICommonListResponse> commonFcst = vilageFcstAPIService.getForecastInfo(nearestObsCode.getNx(), nearestObsCode.getNy(), forecastBaseDate, forecastBaseTime);
 
         // 조석
         CompletableFuture<TidePredictionListResponse> tidePrediction = khoaGoKrAPIService.getTidePrediction(nearestObsCode, baseDate);
@@ -117,18 +117,21 @@ public class WeatherService {
         // 수온
         CompletableFuture<WaterTemperatureResponse> waterTemperature = khoaGoKrAPIService.getCurrentWaterTemperature(nearestObsCode, baseDate);
 
-        // 파고
-        CompletableFuture<GetCurrentWaveHeightResponse> waveHeight = khoaGoKrAPIService.getCurrentWaveHeight(nearestObsCode, baseDate);
-
         //다이빙 지수
         CompletableFuture<OceanIndexPredictionResponse> divingIndex = khoaGoKrAPIService.getOceanIndexPrediction();
 
         // 비동기 blocking
-        CompletableFuture.allOf(nowCast, ultraFcst, tidePrediction, waterTemperature, waveHeight, divingIndex).join();
+        CompletableFuture.allOf(nowCast, ultraFcst, commonFcst, tidePrediction, waterTemperature, /* waveHeight,*/ divingIndex).join();
 
+        // 초단기 실황
         List<FcstAPICommonItemResponse> items = nowCast.exceptionally(
                 throwable -> null
-        ).get().getFcstAPICommonItemResponseList();
+        ).join().getFcstAPICommonItemResponseList();
+
+        // 단기 예보
+        List<FcstAPICommonItemResponse> villageFcstAPICommonItemResponseList = commonFcst.exceptionally(
+                throwable -> null
+        ).join().getFcstAPICommonItemResponseList();
 
         // 기온
         Double airTemperature = getCurrentTemperature(items);
@@ -136,35 +139,32 @@ public class WeatherService {
         // 하늘 상태
         List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList = ultraFcst.exceptionally(
                 throwable -> null
-        ).get().getFcstAPICommonItemResponseList();
+        ).join().getFcstAPICommonItemResponseList();
 
         WeatherType weatherType = getWeatherType(fcstAPICommonItemResponseList);
 
         // 조석
         List<TidePredictionListResponse.TideData> tideEventData = tidePrediction.exceptionally(
                 throwable -> null
-        ).get().getResult().getData();
+        ).join().getResult().getData();
         List<TideEvent> currentTideEvent = getCurrentTideEvent(tideEventData);
 
         // 풍속
         Double currentWindSpeed = getCurrentWindSpeed(items);
 
         // 파고
-        List<GetCurrentWaveHeightResponse.WaveHeight> waveHeightData = waveHeight.exceptionally(
-                throwable -> null
-        ).get().getResult().getData();
-        Double currentWaveHeight = getCurrentWaveHeight(waveHeightData);
+        Double currentWaveHeight = getCurrentWaveHeight(villageFcstAPICommonItemResponseList);
 
         // 수온
         LinkedList<WaterTemperatureResponse.WaterTemperatureData> waterTemperatureData = waterTemperature.exceptionally(
                 throwable -> null
-        ).get().getResult().getData();
+        ).join().getResult().getData();
         Double currentWaterTemperature = getCurrentWaterTemperature(waterTemperatureData);
 
         // 다이빙 지수
         List<OceanIndexPredictionResponse.IndexInfo> indexInfoData = divingIndex.exceptionally(
                 throwable -> null
-        ).get().getResult().getData();
+        ).join().getResult().getData();
         DivingIndicator divingIndicator = getCurrentDivingIndex(indexInfoData, latitude, longitude);
 
         return WeatherVO.of(
@@ -303,16 +303,19 @@ public class WeatherService {
 
         return Double.parseDouble(windSpeedResponse.getObsrValue());
     }
-    private Double getCurrentWaveHeight(List<GetCurrentWaveHeightResponse.WaveHeight> waveHeightList) {
-        if (ValidatorUtil.isEmpty(waveHeightList)) {
+    private Double getCurrentWaveHeight(List<FcstAPICommonItemResponse> items) {
+
+        String nowTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH00"));
+        FcstAPICommonItemResponse fcstAPICommonItemResponse = items.stream().filter(
+                item -> item.getCategory().equals(FcstType.WAV.name()) && item.getFcstTime().equals(nowTime)
+        ).findFirst().orElseGet(() -> null);
+
+        if (ValidatorUtil.isEmpty(fcstAPICommonItemResponse)) {
             return null;
         }
 
-        int lastIndex = waveHeightList.size() - 1;
-        if (ValidatorUtil.isEmpty(waveHeightList.get(lastIndex).getWaveHeight())) {
-            return null;
-        }
-        return Double.parseDouble(waveHeightList.get(lastIndex).getWaveHeight());
+        return Double.parseDouble(fcstAPICommonItemResponse.getFcstValue());
+
     }
 
     private Double getCurrentWaterTemperature(LinkedList<WaterTemperatureResponse.WaterTemperatureData> waterTemperatureDataList) {
