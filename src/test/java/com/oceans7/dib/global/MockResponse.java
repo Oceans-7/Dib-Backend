@@ -487,7 +487,7 @@ public class MockResponse {
 
         eventList.add(EventResponseDto.of(
                 event.getEventId(),
-                event.getBannerImageUrl()
+                "https://d1eyu1qyl365gv.cloudfront.net" + event.getBannerImageUrl()
         ));
 
         return eventList;
@@ -536,13 +536,17 @@ public class MockResponse {
 
     public static List<ContentResponseDto> testCustomContentRes(CustomContent customContent) {
         List<ContentResponseDto> customContentResponse = new ArrayList<>();
-        customContentResponse.add(ContentResponseDto.of(
+        customContentResponse.add(testContentRes(customContent));
+        return customContentResponse;
+    }
+
+    public static ContentResponseDto testContentRes(CustomContent customContent) {
+        return ContentResponseDto.of(
                 customContent.getCustomContentId(),
-                        "https://d1eyu1qyl365gv.cloudfront.net" + customContent.getFirstImageUrl(),
+                "https://d1eyu1qyl365gv.cloudfront.net" + customContent.getFirstImageUrl(),
                 customContent.getTitle(),
                 customContent.getSubTitle()
-        ));
-        return customContentResponse;
+        );
     }
 
     public static DetailContentResponseDto testDetailCustomContentRes() {

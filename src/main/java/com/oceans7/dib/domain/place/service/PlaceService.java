@@ -265,7 +265,7 @@ public class PlaceService {
                 "" : fetchAreaCodeAPI(areaCode, filterOption.getSigungu());
 
         // 초기 area, sigungu 값 초기화가 ""
-        LocalResponse localResponse = fetchSearchAddressLocalAPI(filterOption.getArea() + filterOption.getSigungu());
+        LocalResponse localResponse = fetchSearchAddressLocalAPI(String.format("%s %s", filterOption.getArea(), filterOption.getSigungu()));
 
         PlaceFilterOptions areaFilterOption = filterOption.withAreaCodeAndSigunguCode(areaCode, sigunguCode);
 

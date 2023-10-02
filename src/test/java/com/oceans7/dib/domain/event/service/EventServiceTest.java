@@ -57,9 +57,10 @@ public class EventServiceTest {
 
         // then
         // 이벤트는 단일 레코드로 존재한다고 가정
+        EventResponseDto mockResponse = MockResponse.testEventRes(event).get(0);
         EventResponseDto response = eventList.get(0);
-        assertThat(response.getEventId()).isEqualTo(event.getEventId());
-        assertThat(response.getBannerImageUrl()).isEqualTo(event.getBannerImageUrl());
+        assertThat(response.getEventId()).isEqualTo(mockResponse.getEventId());
+        assertThat(response.getBannerImageUrl()).isEqualTo(mockResponse.getBannerImageUrl());
     }
 
     @Test

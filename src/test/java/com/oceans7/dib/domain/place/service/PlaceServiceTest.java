@@ -108,6 +108,9 @@ public class PlaceServiceTest {
         String areaCode = "1";
         String sigunguCode = "24";
 
+        when(kakaoLocalAPIService.getSearchAddressLocalApi(filterOption.getArea() + " " + filterOption.getSigungu()))
+                .thenReturn(MockResponse.testSearchAddressRes());
+
         when(tourAPIService.getAreaCodeApi("")).thenReturn(MockResponse.testPlaceAreaCodeRes());
         when(tourAPIService.getAreaCodeApi(areaCode)).thenReturn(MockResponse.testPlaceSigunguCodeRes());
         when(tourAPIService.getAreaBasedTourApi(areaCode, sigunguCode, placeWithAreaReq.getPage(), placeWithAreaReq.getPageSize(), filterOption.getContentType(), filterOption.getArrangeType()))
