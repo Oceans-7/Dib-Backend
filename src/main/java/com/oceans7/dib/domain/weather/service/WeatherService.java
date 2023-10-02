@@ -251,10 +251,6 @@ public class WeatherService {
         return localDate.toString().replaceAll("-", "");
     }
 
-    private String getBaseTime(LocalDateTime localDateTime) {
-        return localDateTime.format(DateTimeFormatter.ofPattern("HHmm"));
-    }
-
     private ObsCode getNearestObsCode(double x, double y) {
 
         // TODO : 최대 거리는 추후에 변경
@@ -287,7 +283,7 @@ public class WeatherService {
 
     private WeatherType getWeatherType(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList) {
         LocalDateTime now = LocalDateTime.now();
-        String baseTime = calculateBaseTime(now, FCST_CALLABLE_TIME);
+        String baseTime = calculateBaseTime(now, NCST_CALLABLE_TIME);
         boolean isDay = now.getHour() >= 6 && now.getHour() < 18;
         int sky = getFcstItem(fcstAPICommonItemResponseList, FcstType.SKY, baseTime);
         int precipitation = getFcstItem(fcstAPICommonItemResponseList, FcstType.PTY, baseTime);
@@ -369,8 +365,9 @@ public class WeatherService {
 
     private List<WeatherVO> getForecastWeatherInfo(double latitude, double longitude, LocalDateTime now) {
 
-        String forecastBaseDate = BaseTimeUtil.calculateBaseDate(now, FCST_CALLABLE_TIME);
-        String forecastBaseTime = BaseTimeUtil.calculateBaseTime(now, FCST_CALLABLE_TIME);
+        ForecastBaseDateTime forecastBaseDateTime = getForecastBaseDateTime(now);
+        String forecastBaseDate = forecastBaseDateTime.getForecastBaseDate();
+        String forecastBaseTime = forecastBaseDateTime.getForecastBaseTime();
         List<LocalDate> forcastDateList = getForecastDateList(now);
 
         ObsCode nearestObsCode = getNearestObsCode(longitude, latitude);
