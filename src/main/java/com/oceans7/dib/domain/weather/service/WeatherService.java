@@ -398,7 +398,7 @@ public class WeatherService {
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
-        // 단치 예측
+        // 단기 예측
         List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList = commonFcst.exceptionally(
                 throwable -> null
         ).join().getFcstAPICommonItemResponseList();
