@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,12 @@ public class MypageService {
         Long dibCount = dibRepository.countByUser(user);
         Long couponCount = couponRepository.countByPossibleCoupon(userId);
 
-        return MypageResponseDto.of(user.getProfileUrl(), user.getNickname(), dibCount, couponCount);
+        return MypageResponseDto.of(
+                imageAssetUrlProcessor.prependCloudFrontHost(user.getProfileUrl()),
+                user.getNickname(),
+                dibCount,
+                couponCount
+        );
     }
 
     @Transactional(readOnly = true)
@@ -61,7 +67,16 @@ public class MypageService {
         List<Coupon> couponList = couponRepository.findPossibleCouponsOrderByClosingDateAsc(userId);
 
         List<DetailCouponResponseDto> detailCouponResponseDtoList = couponList.stream()
-                .map(DetailCouponResponseDto :: from)
+                .map(coupon -> DetailCouponResponseDto.of(
+                        coupon.getCouponId(),
+                        imageAssetUrlProcessor.prependCloudFrontHost(coupon.getCouponGroup().getPartnerImageUrl()),
+                        coupon.getCouponGroup().getRegion(),
+                        coupon.getCouponGroup().getCouponType().getKeyword(),
+                        coupon.getCouponGroup().getDiscountPercentage(),
+                        coupon.getCouponGroup().getStartDate(),
+                        coupon.getCouponGroup().getClosingDate(),
+                        Duration.between(coupon.getCouponGroup().getStartDate().atStartOfDay(), coupon.getCouponGroup().getClosingDate().atStartOfDay()).toDays()
+                ))
                 .collect(Collectors.toList());
 
         return CouponResponseDto.from(detailCouponResponseDtoList);

@@ -1,6 +1,5 @@
 package com.oceans7.dib.domain.event.dto.response;
 
-import com.oceans7.dib.domain.event.entity.CouponGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,13 +20,13 @@ public class CouponSectionResponseDto {
     @Schema(description = "쿠폰 이미지 URL", example = "https://picsum.photos/296/154")
     private String couponImageUrl;
 
-    public static CouponSectionResponseDto from(CouponGroup couponGroup) {
+    public static CouponSectionResponseDto of(Long couponGroupId, String title, String keyword, String couponImageUrl) {
         CouponSectionResponseDto couponSectionResponseDto = new CouponSectionResponseDto();
 
-        couponSectionResponseDto.couponGroupId = couponGroup.getCouponGroupId();
-        couponSectionResponseDto.title = couponGroup.getName();
-        couponSectionResponseDto.keyword = couponGroup.getCouponType().getKeyword();
-        couponSectionResponseDto.couponImageUrl = couponGroup.getCouponImageUrl();
+        couponSectionResponseDto.couponGroupId = couponGroupId;
+        couponSectionResponseDto.title = title;
+        couponSectionResponseDto.keyword = keyword;
+        couponSectionResponseDto.couponImageUrl = couponImageUrl;
 
         return couponSectionResponseDto;
     }

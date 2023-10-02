@@ -41,6 +41,7 @@ import com.oceans7.dib.global.api.response.tourapi.detail.intro.DetailIntroRespo
 import com.oceans7.dib.global.ResponseWrapper.Response;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import com.oceans7.dib.global.util.ValidatorUtil;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
@@ -48,6 +49,7 @@ import org.springframework.util.FileCopyUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -451,7 +453,12 @@ public class MockResponse {
     }
 
     public static PartnerResponseDto testPartnerRes(CouponGroup couponGroup) {
-        return PartnerResponseDto.from(couponGroup);
+        return PartnerResponseDto.of(
+                couponGroup.getRegion(),
+                couponGroup.getCouponType().getKeyword(),
+                "https://d1eyu1qyl365gv.cloudfront.net" + couponGroup.getPartnerImageUrl(),
+                couponGroup.getStartDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+        );
     }
 
     public static PartnerSectionResponseDto testPartnerSectionRes(CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
@@ -467,7 +474,12 @@ public class MockResponse {
     }
 
     public static CouponSectionResponseDto testCouponSectionRes(CouponGroup couponGroup) {
-        return CouponSectionResponseDto.from(couponGroup);
+        return CouponSectionResponseDto.of(
+                couponGroup.getCouponGroupId(),
+                couponGroup.getName(),
+                couponGroup.getCouponType().getKeyword(),
+                "https://d1eyu1qyl365gv.cloudfront.net" + couponGroup.getCouponImageUrl()
+        );
     }
 
     public static List<EventResponseDto> testEventRes(Event event) {
@@ -484,7 +496,7 @@ public class MockResponse {
     public static DetailEventResponseDto testDetailEventRes(Event event, CouponGroup firstCouponGroup, CouponGroup secondCouponGroup) {
         return DetailEventResponseDto.of(
                 event.getEventId(),
-                event.getFirstImageUrl(),
+                "https://d1eyu1qyl365gv.cloudfront.net" + event.getFirstImageUrl(),
                 event.getMainColor(),
                 event.getSubColor(),
                 testCouponSectionRes(firstCouponGroup),
@@ -526,7 +538,7 @@ public class MockResponse {
         List<ContentResponseDto> customContentResponse = new ArrayList<>();
         customContentResponse.add(ContentResponseDto.of(
                 customContent.getCustomContentId(),
-                customContent.getFirstImageUrl(),
+                        "https://d1eyu1qyl365gv.cloudfront.net" + customContent.getFirstImageUrl(),
                 customContent.getTitle(),
                 customContent.getSubTitle()
         ));
@@ -541,7 +553,7 @@ public class MockResponse {
         return organismList.stream().map(organism ->
             SimpleOrganismResponseDto.of(
                     organism.getOrganismId(),
-                    organism.getIllustrationImageUrl(),
+                    "https://d1eyu1qyl365gv.cloudfront.net" + organism.getIllustrationImageUrl(),
                     organism.getKoreanName(),
                     organism.getEnglishName(),
                     organism.getDescription())
@@ -551,7 +563,7 @@ public class MockResponse {
     public static OrganismResponseDto testMarineOrganismRes(MarineOrganism marineOrganism, List<MarineOrganism> otherMarineOrganism) {
         return OrganismResponseDto.of(
                 marineOrganism.getOrganismId(),
-                marineOrganism.getFirstImageUrl(),
+                "https://d1eyu1qyl365gv.cloudfront.net" + marineOrganism.getFirstImageUrl(),
                 marineOrganism.getKoreanName(),
                 marineOrganism.getEnglishName(),
                 marineOrganism.getDescription(),
@@ -563,13 +575,13 @@ public class MockResponse {
     }
 
     private static List<String> testMarineOrganismImageUrlRes() {
-        return MockEntity.testMarineOrganismImage().stream().map(image -> image.getUrl()).collect(Collectors.toList());
+        return MockEntity.testMarineOrganismImage().stream().map(image -> "https://d1eyu1qyl365gv.cloudfront.net" + image.getUrl()).collect(Collectors.toList());
     }
 
     public static OrganismResponseDto testHarmfulOrganismRes(HarmfulOrganism harmfulOrganism, List<HarmfulOrganism> otherHarmfulOrganism) {
         return OrganismResponseDto.of(
                 harmfulOrganism.getOrganismId(),
-                harmfulOrganism.getFirstImageUrl(),
+                "https://d1eyu1qyl365gv.cloudfront.net" + harmfulOrganism.getFirstImageUrl(),
                 harmfulOrganism.getKoreanName(),
                 harmfulOrganism.getEnglishName(),
                 harmfulOrganism.getDescription(),

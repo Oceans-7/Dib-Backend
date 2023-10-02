@@ -8,6 +8,7 @@ import com.oceans7.dib.domain.organism.repository.MarineOrganismRepository;
 import com.oceans7.dib.global.base_entity.BaseImageEntity;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ public class OrganismService {
 
     private final MarineOrganismRepository marineOrganismRepository;
     private final HarmfulOrganismRepository harmfulOrganismRepository;
+
+    private final ImageAssetUrlProcessor imageAssetUrlProcessor;
 
     /**
      * 해양 생물 전체 조회
@@ -48,7 +51,7 @@ public class OrganismService {
         return organismList.stream()
                 .map(organism -> SimpleOrganismResponseDto.of(
                         organism.getOrganismId(),
-                        organism.getIllustrationImageUrl(),
+                        imageAssetUrlProcessor.prependCloudFrontHost(organism.getIllustrationImageUrl()),
                         organism.getKoreanName(),
                         organism.getEnglishName(),
                         organism.getDescription()
@@ -64,7 +67,7 @@ public class OrganismService {
 
         return OrganismResponseDto.of(
                 marineOrganism.getOrganismId(),
-                marineOrganism.getFirstImageUrl(),
+                imageAssetUrlProcessor.prependCloudFrontHost(marineOrganism.getFirstImageUrl()),
                 marineOrganism.getKoreanName(),
                 marineOrganism.getEnglishName(),
                 marineOrganism.getDescription(),
@@ -93,7 +96,7 @@ public class OrganismService {
 
         return OrganismResponseDto.of(
                 harmfulOrganism.getOrganismId(),
-                harmfulOrganism.getFirstImageUrl(),
+                imageAssetUrlProcessor.prependCloudFrontHost(harmfulOrganism.getFirstImageUrl()),
                 harmfulOrganism.getKoreanName(),
                 harmfulOrganism.getEnglishName(),
                 harmfulOrganism.getDescription(),
@@ -118,6 +121,6 @@ public class OrganismService {
      */
     private List<String> extractImageUrl(List<? extends BaseImageEntity> imageList) {
         return imageList.stream()
-                .map(item -> item.getUrl()).collect(Collectors.toList());
+                .map(item -> imageAssetUrlProcessor.prependCloudFrontHost(item.getUrl())).collect(Collectors.toList());
     }
 }

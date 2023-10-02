@@ -140,16 +140,16 @@ public class OrganismControllerTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.organismId").value(detailTargetOrganism.getOrganismId()))
-                .andExpect(jsonPath("$.data.firstImageUrl").value(detailTargetOrganism.getFirstImageUrl()))
-                .andExpect(jsonPath("$.data.koreanName").value(detailTargetOrganism.getKoreanName()))
-                .andExpect(jsonPath("$.data.englishName").value(detailTargetOrganism.getEnglishName()))
-                .andExpect(jsonPath("$.data.description").value(detailTargetOrganism.getDescription()))
-                .andExpect(jsonPath("$.data.basicAppearance").value(detailTargetOrganism.getBasicAppearance()))
-                .andExpect(jsonPath("$.data.detailDescription").value(detailTargetOrganism.getDetailDescription()));
+                .andExpect(jsonPath("$.data.organismId").value(mockResponse.getOrganismId()))
+                .andExpect(jsonPath("$.data.firstImageUrl").value(mockResponse.getFirstImageUrl()))
+                .andExpect(jsonPath("$.data.koreanName").value(mockResponse.getKoreanName()))
+                .andExpect(jsonPath("$.data.englishName").value(mockResponse.getEnglishName()))
+                .andExpect(jsonPath("$.data.description").value(mockResponse.getDescription()))
+                .andExpect(jsonPath("$.data.basicAppearance").value(mockResponse.getBasicAppearance()))
+                .andExpect(jsonPath("$.data.detailDescription").value(mockResponse.getDetailDescription()));
 
         for(int i = 0; i < mockResponse.getImageUrlList().size(); i++) {
-            result.andExpect(jsonPath("$.data.imageUrlList["+ i + "]").value(marineOrganismImageList.get(i).getUrl()));
+            result.andExpect(jsonPath("$.data.imageUrlList["+ i + "]").value(mockResponse.getImageUrlList().get(i)));
         }
 
         for(int i = 0; i < mockResponse.getOtherOrganismList().size(); i++) {
@@ -203,16 +203,16 @@ public class OrganismControllerTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.organismId").value(detailTargetOrganism.getOrganismId()))
-                .andExpect(jsonPath("$.data.firstImageUrl").value(detailTargetOrganism.getFirstImageUrl()))
-                .andExpect(jsonPath("$.data.koreanName").value(detailTargetOrganism.getKoreanName()))
-                .andExpect(jsonPath("$.data.englishName").value(detailTargetOrganism.getEnglishName()))
-                .andExpect(jsonPath("$.data.description").value(detailTargetOrganism.getDescription()))
-                .andExpect(jsonPath("$.data.basicAppearance").value(detailTargetOrganism.getBasicAppearance()))
-                .andExpect(jsonPath("$.data.detailDescription").value(detailTargetOrganism.getDetailDescription()));
+                .andExpect(jsonPath("$.data.organismId").value(mockResponse.getOrganismId()))
+                .andExpect(jsonPath("$.data.firstImageUrl").value(mockResponse.getFirstImageUrl()))
+                .andExpect(jsonPath("$.data.koreanName").value(mockResponse.getKoreanName()))
+                .andExpect(jsonPath("$.data.englishName").value(mockResponse.getEnglishName()))
+                .andExpect(jsonPath("$.data.description").value(mockResponse.getDescription()))
+                .andExpect(jsonPath("$.data.basicAppearance").value(mockResponse.getBasicAppearance()))
+                .andExpect(jsonPath("$.data.detailDescription").value(mockResponse.getDetailDescription()));
 
         for(int i = 0; i < mockResponse.getImageUrlList().size(); i++) {
-            result.andExpect(jsonPath("$.data.imageUrlList["+ i + "]").value(harmfulOrganismImageList.get(i).getUrl()));
+            result.andExpect(jsonPath("$.data.imageUrlList["+ i + "]").value(mockResponse.getImageUrlList().get(i)));
         }
 
         for(int i = 0; i < mockResponse.getOtherOrganismList().size(); i++) {

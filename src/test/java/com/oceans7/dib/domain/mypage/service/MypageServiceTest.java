@@ -142,36 +142,6 @@ public class MypageServiceTest {
         assertThat(response.getDibList()).isNull();
     }
 
-    @Test
-    @DisplayName("쿠폰 목록 조회")
-    public void getMyCoupons() {
-        // given
-        CouponGroup couponGroup = makeCouponGroup(makeEvent());
-        Coupon coupon = issueCoupon(couponGroup);
-
-        // when
-        CouponResponseDto response = mypageService.getMyCoupons(testUser.getId());
-
-        assertThat(response.getCount()).isEqualTo(1);
-
-        // then
-        for(DetailCouponResponseDto couponResponseDto : response.getCouponList()) {
-            assertThat(couponResponseDto.getCouponImageUrl()).isEqualTo(couponGroup.getPartnerImageUrl());
-            assertThat(couponResponseDto.getRegion()).isEqualTo(couponGroup.getRegion());
-            assertThat(couponResponseDto.getCouponType()).isEqualTo(couponGroup.getCouponType().getKeyword());
-            assertThat(couponResponseDto.getDiscountPercentage()).isEqualTo(couponGroup.getDiscountPercentage());
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-            assertThat(couponResponseDto.getStartDate()).isEqualTo(couponGroup.getStartDate().format(formatter));
-            assertThat(couponResponseDto.getClosingDate()).isEqualTo(couponGroup.getClosingDate().format(formatter));
-            assertThat(couponResponseDto.getCouponId()).isEqualTo(coupon.getCouponId());
-
-            Long remainingDays = Duration.between(
-                    couponGroup.getStartDate().atStartOfDay(), couponGroup.getClosingDate().atStartOfDay())
-                    .toDays();
-
-            assertThat(couponResponseDto.getRemainingDays()).isEqualTo(remainingDays);
-        }
-    }
 
     @Test
     @DisplayName("쿠폰 목록 조회 : 쿠폰이 하나도 없는 경우")

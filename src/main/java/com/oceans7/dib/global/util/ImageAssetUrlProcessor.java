@@ -38,7 +38,7 @@ public class ImageAssetUrlProcessor {
                 return path;
             } else {
                 // 대상 호스트 주소와 일치하지 않으면 null 반환
-                return null;
+                return input;
             }
         } catch (MalformedURLException e) {
             // 유효한 URL이 아닌 경우 예외 처리
@@ -54,7 +54,11 @@ public class ImageAssetUrlProcessor {
      * 그렇지 않은 경우 입력 문자열 그대로 반환합니다.
      */
     public String prependCloudFrontHost(String input) {
-        return input.startsWith(s3ImageDirectory) ? cloudFrontHostDomain + input : null;
+        if(input.startsWith(s3ImageDirectory)) {
+            return cloudFrontHostDomain + input;
+        } else {
+            return input;
+        }
     }
 
 }

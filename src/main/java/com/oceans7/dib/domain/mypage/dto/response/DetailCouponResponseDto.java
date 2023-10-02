@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.mypage.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.CouponStatus;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -31,28 +33,29 @@ public class DetailCouponResponseDto {
     private int discountPercentage;
 
     @Schema(description = "쿠폰 사용 시작일", example = "2023.09.01")
-    private String startDate;
+    @JsonFormat(pattern = "yyyy.MM.dd")
+    private LocalDate startDate;
 
     @Schema(description = "쿠폰 사용 마감일", example = "2023.10.01")
-    private String closingDate;
+    @JsonFormat(pattern = "yyyy.MM.dd")
+    private LocalDate closingDate;
 
     @Schema(description = "쿠폰 남은 기간(만료 쿠폰은 null)", example = "8")
     private Long remainingDays;
 
-    public static DetailCouponResponseDto from(Coupon coupon) {
-        CouponGroup couponGroup = coupon.getCouponGroup();
+    public static DetailCouponResponseDto of(Long couponId, String couponImageUrl, String region, String couponType,
+                                             int discountPercentage, LocalDate startDate, LocalDate closingDate, Long remainingDays) {
         DetailCouponResponseDto couponResponseDto = new DetailCouponResponseDto();
 
-        couponResponseDto.couponId = coupon.getCouponId();
-        couponResponseDto.couponImageUrl = couponGroup.getPartnerImageUrl();
-        couponResponseDto.region = couponGroup.getRegion();
-        couponResponseDto.couponType = couponGroup.getCouponType().getKeyword();
-        couponResponseDto.discountPercentage = couponGroup.getDiscountPercentage();
+        couponResponseDto.couponId = couponId;
+        couponResponseDto.couponImageUrl = couponImageUrl;
+        couponResponseDto.region = region;
+        couponResponseDto.couponType = couponType;
+        couponResponseDto.discountPercentage = discountPercentage;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-        couponResponseDto.startDate = couponGroup.getStartDate().format(formatter);
-        couponResponseDto.closingDate = couponGroup.getClosingDate().format(formatter);
-        couponResponseDto.remainingDays = Duration.between(couponGroup.getStartDate().atStartOfDay(), couponGroup.getClosingDate().atStartOfDay()).toDays();
+        couponResponseDto.startDate = startDate;
+        couponResponseDto.closingDate = closingDate;
+        couponResponseDto.remainingDays = remainingDays;
 
         return couponResponseDto;
     }
