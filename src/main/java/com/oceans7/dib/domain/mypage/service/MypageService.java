@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,7 @@ public class MypageService {
                         coupon.getCouponGroup().getDiscountPercentage(),
                         coupon.getCouponGroup().getStartDate(),
                         coupon.getCouponGroup().getClosingDate(),
-                        Duration.between(coupon.getCouponGroup().getStartDate().atStartOfDay(), coupon.getCouponGroup().getClosingDate().atStartOfDay()).toDays()
+                        Duration.between(LocalDate.now().atStartOfDay(), coupon.getCouponGroup().getClosingDate().atStartOfDay()).toDays()
                 ))
                 .collect(Collectors.toList());
 

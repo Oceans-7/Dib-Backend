@@ -6,9 +6,12 @@ import com.oceans7.dib.domain.custom_content.dto.response.detail.Content;
 import com.oceans7.dib.domain.custom_content.dto.response.detail.DetailContentResponseDto;
 import com.oceans7.dib.domain.custom_content.entity.CustomContent;
 import com.oceans7.dib.domain.event.dto.response.*;
+import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.location.dto.response.LocationResponseDto;
+import com.oceans7.dib.domain.mypage.dto.response.CouponResponseDto;
+import com.oceans7.dib.domain.mypage.dto.response.DetailCouponResponseDto;
 import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.domain.notice.dto.response.NoticeResponseDto;
 import com.oceans7.dib.domain.notice.entity.MarineNotice;
@@ -49,6 +52,8 @@ import org.springframework.util.FileCopyUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -594,5 +599,26 @@ public class MockResponse {
                 testMarineOrganismImageUrlRes(),
                 testSimpleOrganismRes(otherHarmfulOrganism)
         );
+    }
+
+    private static DetailCouponResponseDto testDetailCouponRes(Coupon coupon) {
+        return DetailCouponResponseDto.of(
+                coupon.getCouponId(),
+                "https://d1eyu1qyl365gv.cloudfront.net" + coupon.getCouponGroup().getCouponImageUrl(),
+                coupon.getCouponGroup().getRegion(),
+                coupon.getCouponGroup().getCouponType().getKeyword(),
+                coupon.getCouponGroup().getDiscountPercentage(),
+                coupon.getCouponGroup().getStartDate(),
+                coupon.getCouponGroup().getClosingDate(),
+                Duration.between(LocalDate.now().atStartOfDay(), coupon.getCouponGroup().getClosingDate().atStartOfDay()).toDays()
+        );
+    }
+
+    public static CouponResponseDto testCouponRes(Coupon coupon) {
+        List<DetailCouponResponseDto> couponResponse = new ArrayList<>();
+
+        couponResponse.add(testDetailCouponRes(coupon));
+
+        return CouponResponseDto.from(couponResponse);
     }
 }
