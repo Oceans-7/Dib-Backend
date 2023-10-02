@@ -369,8 +369,9 @@ public class WeatherService {
 
     private List<WeatherVO> getForecastWeatherInfo(double latitude, double longitude, LocalDateTime now) {
 
-        String forecastBaseDate = BaseTimeUtil.calculateBaseDate(now, FCST_CALLABLE_TIME);
-        String forecastBaseTime = BaseTimeUtil.calculateBaseTime(now, FCST_CALLABLE_TIME);
+        ForecastBaseDateTime forecastBaseDateTime = getForecastBaseDateTime(now);
+        String forecastBaseDate = forecastBaseDateTime.getForecastBaseDate();
+        String forecastBaseTime = forecastBaseDateTime.getForecastBaseTime();
         List<LocalDate> forcastDateList = getForecastDateList(now);
 
         ObsCode nearestObsCode = getNearestObsCode(longitude, latitude);
