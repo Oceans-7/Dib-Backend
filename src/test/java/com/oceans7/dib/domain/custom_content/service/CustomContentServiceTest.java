@@ -118,7 +118,6 @@ public class CustomContentServiceTest {
 
         CouponSection couponSection = response.getContent().getCouponSection();
         assertThat(couponSection.getTitle()).isEqualTo(MockResponse.testContentRes().getCouponSection().getTitle());
-        assertThat(couponSection.getContent()).isEqualTo(MockResponse.testContentRes().getCouponSection().getContent());
         assertThat(couponSection.getCouponImageUrl()).isEqualTo(MockResponse.testContentRes().getCouponSection().getCouponImageUrl());
         assertThat(couponSection.getEventId()).isEqualTo(MockResponse.testContentRes().getCouponSection().getEventId());
     }

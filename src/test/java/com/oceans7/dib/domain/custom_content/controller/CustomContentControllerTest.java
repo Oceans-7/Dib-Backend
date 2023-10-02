@@ -148,7 +148,6 @@ public class CustomContentControllerTest {
                 .andExpect(jsonPath("$.data.content.restaurantSection.keyword").value(mockRestaurantSection.getKeyword()))
                 // 할인 쿠폰 섹션
                 .andExpect(jsonPath("$.data.content.couponSection.title").value(mockCouponSection.getTitle()))
-                .andExpect(jsonPath("$.data.content.couponSection.content").value(mockCouponSection.getContent()))
                 .andExpect(jsonPath("$.data.content.couponSection.couponImageUrl").value(mockCouponSection.getCouponImageUrl()))
                 .andExpect(jsonPath("$.data.content.couponSection.eventId").value(mockCouponSection.getEventId()));
 
