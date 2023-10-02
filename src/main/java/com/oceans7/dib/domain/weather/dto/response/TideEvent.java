@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.weather.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oceans7.dib.domain.weather.dto.TideType;
+import com.oceans7.dib.global.util.CommonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class TideEvent {
     public static TideEvent of(LocalDateTime time, double height, String type) {
         TideEvent tideEvent = new TideEvent();
         tideEvent.time = time;
-        tideEvent.height = height;
+        tideEvent.height = CommonUtil.round(height, 1);
         tideEvent.type = TideType.getTideType(type);
         return tideEvent;
     }

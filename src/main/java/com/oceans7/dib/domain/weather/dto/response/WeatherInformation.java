@@ -3,6 +3,7 @@ package com.oceans7.dib.domain.weather.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
 import com.oceans7.dib.domain.weather.service.vo.DivingIndicator;
+import com.oceans7.dib.global.util.CommonUtil;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -16,7 +17,6 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(staticName = "of")
 public class WeatherInformation {
 
     @Schema(description = "날짜", example = "2021-07-01")
@@ -43,4 +43,17 @@ public class WeatherInformation {
 
     @ArraySchema(schema = @Schema(description = "조수 정보", implementation = TideEvent.class))
     private List<TideEvent> tideEvents;
+
+    public static WeatherInformation of(LocalDate localDate, WeatherType weatherType, Double airTemperature, Double waterTemperature, Double windSpeed, Double waveHeight, DivingIndicator divingIndicator, List<TideEvent> tideEvents) {
+        WeatherInformation weatherInformation = new WeatherInformation();
+        weatherInformation.localDate = localDate;
+        weatherInformation.weatherType = weatherType;
+        weatherInformation.airTemperature = CommonUtil.round(airTemperature, 1);
+        weatherInformation.waterTemperature = CommonUtil.round(waterTemperature, 1);
+        weatherInformation.windSpeed = CommonUtil.round(windSpeed, 1);
+        weatherInformation.waveHeight = CommonUtil.round(waveHeight, 1);
+        weatherInformation.divingIndicator = divingIndicator;
+        weatherInformation.tideEvents = tideEvents;
+        return weatherInformation;
+    }
 }
