@@ -63,7 +63,7 @@ public class WeatherService {
 
             if (ValidatorUtil.isEmpty(currentWeather)) {
                 return GetCurrentWeatherResponseDto.of(
-                        null,
+                        addressName,
                         null
                 );
             }
