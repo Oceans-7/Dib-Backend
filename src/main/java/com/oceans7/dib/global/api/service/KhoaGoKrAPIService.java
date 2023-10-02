@@ -1,5 +1,6 @@
 package com.oceans7.dib.global.api.service;
 
+import com.oceans7.dib.domain.weather.WaterTemperatureObsCode;
 import com.oceans7.dib.domain.weather.dto.ObsCode;
 import com.oceans7.dib.global.api.http.KhoaDataType.KhoaDataType;
 import com.oceans7.dib.global.api.http.KhoaGoKrApi;
@@ -30,7 +31,7 @@ public class KhoaGoKrAPIService extends OpenAPIService{
     }
 
     @Async
-    public CompletableFuture<WaterTemperatureResponse> getCurrentWaterTemperature(ObsCode obsCode, String date) {
+    public CompletableFuture<WaterTemperatureResponse> getCurrentWaterTemperature(WaterTemperatureObsCode obsCode, String date) {
         String dataType = "json";
         String result = khoaGoKrApi.getValue(KhoaDataType.tideObsTemp.getValue(), serviceKey, obsCode.getValue(), date, dataType);
 
