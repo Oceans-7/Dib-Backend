@@ -16,19 +16,17 @@ public class BaseTimeUtil {
         String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         // 자정
-        if (now.getHour() < 2 && now.getMinute() < callableTime) {
+        if (now.getHour() == 0 && now.getMinute() < callableTime) {
             baseDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         }
 
         return baseDate;
     }
 
-    //TODO 이거 locationService에서 그대로 가져온 건데, 1시간 전 시간을 못가져오는 경우가 있어서 2시간 전 시간을 가져오도록 수정해서 사용
-    //ex) 16:11에 basetime 1500 조회 불가한 경우 발생
     public static String calculateBaseTime(LocalDateTime now, int callableTime) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH00");
         return now.getMinute() < callableTime ?
-                now.minusHours(2).format(timeFormatter) : now.format(timeFormatter);
+                now.minusHours(1).format(timeFormatter) : now.format(timeFormatter);
     }
 
     public static ForecastBaseDateTime getForecastBaseDateTime(LocalDateTime now) {
