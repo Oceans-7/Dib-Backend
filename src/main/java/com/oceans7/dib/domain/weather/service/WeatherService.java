@@ -1,5 +1,6 @@
 package com.oceans7.dib.domain.weather.service;
 
+import com.oceans7.dib.domain.weather.WaterTemperatureObsCode;
 import com.oceans7.dib.domain.weather.dto.FcstType;
 import com.oceans7.dib.domain.weather.dto.ObsCode;
 import com.oceans7.dib.domain.weather.dto.WeatherType;
@@ -34,7 +35,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -97,6 +97,7 @@ public class WeatherService {
         String forecastBaseTime = forecastBaseDateTime.getForecastBaseTime();
 
         ObsCode nearestObsCode = getNearestObsCode(longitude, latitude);
+        WaterTemperatureObsCode nearestWaterTemperatureObsCode = getNearestWaterTemperatureObsCode(longitude, latitude);
 
         if (nearestObsCode == null) {
             return null;
@@ -115,13 +116,13 @@ public class WeatherService {
         CompletableFuture<TidePredictionListResponse> tidePrediction = khoaGoKrAPIService.getTidePrediction(nearestObsCode, baseDate);
 
         // 수온
-        CompletableFuture<WaterTemperatureResponse> waterTemperature = khoaGoKrAPIService.getCurrentWaterTemperature(nearestObsCode, baseDate);
+        CompletableFuture<WaterTemperatureResponse> waterTemperature = khoaGoKrAPIService.getCurrentWaterTemperature(nearestWaterTemperatureObsCode, baseDate);
 
         //다이빙 지수
         CompletableFuture<OceanIndexPredictionResponse> divingIndex = khoaGoKrAPIService.getOceanIndexPrediction();
 
         // 비동기 blocking
-        CompletableFuture.allOf(nowCast, ultraFcst, commonFcst, tidePrediction, waterTemperature, /* waveHeight,*/ divingIndex).join();
+        CompletableFuture.allOf(nowCast, ultraFcst, commonFcst, tidePrediction, waterTemperature, divingIndex).join();
 
         // 초단기 실황
         List<FcstAPICommonItemResponse> items = nowCast.exceptionally(
@@ -253,12 +254,28 @@ public class WeatherService {
 
     private ObsCode getNearestObsCode(double x, double y) {
 
-        // TODO : 최대 거리는 추후에 변경
         double maximumDistance = 26;
 
         ObsCode obsCode = Stream.of(ObsCode.values())
                 .min(Comparator.comparingDouble(o -> CoordinateUtil.calculateDistance(o.getX(), o.getY(), x, y)))
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
+
+        double distance = CoordinateUtil.calculateDistance(obsCode.getX(), obsCode.getY(), x, y);
+
+        if (distance > maximumDistance) {
+            return null;
+        }
+
+        return obsCode;
+    }
+
+    private WaterTemperatureObsCode getNearestWaterTemperatureObsCode(double x, double y) {
+        double maximumDistance = 70;
+
+        WaterTemperatureObsCode obsCode = Stream.of(WaterTemperatureObsCode.values())
+                .min(Comparator.comparingDouble(o -> CoordinateUtil.calculateDistance(o.getX(), o.getY(), x, y)))
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
+
 
         double distance = CoordinateUtil.calculateDistance(obsCode.getX(), obsCode.getY(), x, y);
 
