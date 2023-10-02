@@ -190,7 +190,7 @@ public class WeatherService {
 
         if (ValidatorUtil.isEmpty(forecastWeather)) {
             return GetForeCastWeatherResponseDto.of(
-                    null,
+                    addressName,
                     null
             );
         }
@@ -226,10 +226,11 @@ public class WeatherService {
     }
 
     private String getAddressName(double latitude, double longitude) {
-        LocalResponse addressItems = kakaoLocalAPIService.getGeoAddressLocalApi(latitude, longitude);
+        LocalResponse addressItems = kakaoLocalAPIService.getGeoAddressLocalApi(longitude, latitude);
         int firstIndex = 0;
-        if (!ValidatorUtil.isEmpty(addressItems.getAddressItems())) {
-            return addressItems.getAddressItems().get(firstIndex).getAddressName();
+        if (!ValidatorUtil.isEmpty(addressItems.getAddressItems())
+                && !ValidatorUtil.isEmpty(addressItems.getAddressItems().get(0).getAddress().getAddressName())) {
+            return addressItems.getAddressItems().get(firstIndex).getAddress().getAddressName();
         }
 
         ObsCode nearestObsCode = getNearestObsCode(longitude, latitude);
