@@ -101,6 +101,8 @@ public class CustomContentServiceTest {
         assertThat(divingShopSection.getFirstShopInfo().getTitle()).isEqualTo(MockResponse.testContentRes().getDivingShopSection().getFirstShopInfo().getTitle());
         assertThat(divingShopSection.getFirstShopInfo().getImageUrl()).isEqualTo(MockResponse.testContentRes().getDivingShopSection().getFirstShopInfo().getImageUrl());
         assertThat(divingShopSection.getFirstShopInfo().getContentId()).isEqualTo(MockResponse.testContentRes().getDivingShopSection().getFirstShopInfo().getContentId());
+        assertThat(divingShopSection.getFirstShopInfo().getContentType()).isEqualTo(MockResponse.testContentRes().getDivingShopSection().getFirstShopInfo().getContentType());
+
         assertThat(divingShopSection.getSecondShopInfo().getTitle()).isEqualTo(MockResponse.testContentRes().getDivingShopSection().getSecondShopInfo().getTitle());
         assertThat(divingShopSection.getSecondShopInfo().getImageUrl()).isEqualTo(MockResponse.testContentRes().getDivingShopSection().getSecondShopInfo().getImageUrl());
         assertThat(divingShopSection.getSecondShopInfo().getContentId()).isEqualTo(MockResponse.testContentRes().getDivingShopSection().getSecondShopInfo().getContentId());
@@ -115,6 +117,7 @@ public class CustomContentServiceTest {
             assertThat(restaurantList.get(i).getImageUrl()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getRestaurantList().get(i).getImageUrl());
             assertThat(restaurantList.get(i).getContent()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getRestaurantList().get(i).getContent());
             assertThat(restaurantList.get(i).getContentId()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getRestaurantList().get(i).getContentId());
+            assertThat(restaurantList.get(i).getContentType()).isEqualTo(MockResponse.testContentRes().getRestaurantSection().getRestaurantList().get(i).getContentType());
         }
 
         CouponSection couponSection = response.getContent().getCouponSection();
