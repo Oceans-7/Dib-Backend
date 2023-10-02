@@ -5,7 +5,8 @@ public enum DivingIndicator {
     GOOD("좋음"),
     NORMAL("보통"),
     BAD("나쁨"),
-    VERY_BAD("매우나쁨");
+    VERY_BAD("매우나쁨"),
+    NONE("서비스기간 아님");
 
     private String value;
 
