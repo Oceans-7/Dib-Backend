@@ -9,6 +9,7 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ public class ReportService {
     private final UserRepository userRepository;
     private final ReportRepository reportRepository;
     private final ReportImageRepository reportImageRepository;
+
+    private final ImageAssetUrlProcessor imageAssetUrlProcessor;
 
     private final static int MAX_IMAGE_LIMIT = 3;
 
@@ -55,7 +58,7 @@ public class ReportService {
 
     private void createReportImages(Report report, List<String> imageUrlList) {
         List<ReportImage> reportImageList = imageUrlList.stream()
-                .map(ReportImage::of)
+                .map(imageUrl -> ReportImage.of(imageAssetUrlProcessor.extractUrlPath(imageUrl)))
                 .collect(Collectors.toList());
 
         reportImageList.forEach(reportImage -> {

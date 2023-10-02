@@ -10,13 +10,12 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.exception.ErrorCode;
-import com.oceans7.dib.global.util.ValidatorUtil;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +25,8 @@ public class MypageService {
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
     private final DibRepository dibRepository;
+
+    private final ImageAssetUrlProcessor imageAssetUrlProcessor;
 
     private User findUser(Long userId) {
         return userRepository.findById(userId)
@@ -70,6 +71,6 @@ public class MypageService {
     public void updateMyProfile(Long userId, UpdateProfileRequestDto request) {
         User user = findUser(userId);
 
-        user.updateProfile(request.getNickname(), request.getImageUrl());
+        user.updateProfile(request.getNickname(), imageAssetUrlProcessor.extractUrlPath(request.getImageUrl()));
     }
 }

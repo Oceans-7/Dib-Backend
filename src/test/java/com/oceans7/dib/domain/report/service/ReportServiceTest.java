@@ -6,7 +6,7 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockRequest;
-import org.junit.jupiter.api.AfterEach;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +30,9 @@ public class ReportServiceTest {
     @Autowired
     private ReportRepository reportRepository;
 
+    @Autowired
+    private ImageAssetUrlProcessor imageAssetUrlProcessor;
+
     private User testUser;
 
     @BeforeEach
@@ -50,7 +53,7 @@ public class ReportServiceTest {
         assertThat(report.getFoundLocation()).isEqualTo(MockRequest.testReportReq().getFoundLocation());
         for(int i = 0; i < report.getReportImageList().size(); i++) {
             assertThat(report.getReportImageList().get(i).getUrl())
-                    .isEqualTo(MockRequest.testReportReq().getImageUrlList().get(i));
+                    .isEqualTo(imageAssetUrlProcessor.extractUrlPath(MockRequest.testReportReq().getImageUrlList().get(i)));
         }
     }
 }

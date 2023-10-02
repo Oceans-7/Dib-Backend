@@ -2,7 +2,6 @@ package com.oceans7.dib.domain.mypage.service;
 
 import com.oceans7.dib.domain.event.entity.Coupon;
 import com.oceans7.dib.domain.event.entity.CouponGroup;
-import com.oceans7.dib.domain.event.entity.CouponStatus;
 import com.oceans7.dib.domain.event.entity.Event;
 import com.oceans7.dib.domain.event.repository.CouponGroupRepository;
 import com.oceans7.dib.domain.event.repository.CouponRepository;
@@ -17,6 +16,7 @@ import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockRequest;
 import com.oceans7.dib.global.exception.ApplicationException;
+import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,6 +52,9 @@ public class MypageServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ImageAssetUrlProcessor imageAssetUrlProcessor;
 
     private User testUser;
 
@@ -194,6 +197,6 @@ public class MypageServiceTest {
         User updateUser = userRepository.findById(testUser.getId()).orElseThrow();
 
         assertThat(updateUser.getNickname()).isEqualTo(updateProfileReq.getNickname());
-        assertThat(updateUser.getProfileUrl()).isEqualTo(updateProfileReq.getImageUrl());
+        assertThat(updateUser.getProfileUrl()).isEqualTo(imageAssetUrlProcessor.extractUrlPath(updateProfileReq.getImageUrl()));
     }
 }
