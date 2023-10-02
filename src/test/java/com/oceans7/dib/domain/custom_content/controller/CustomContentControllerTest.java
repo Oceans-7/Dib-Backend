@@ -139,6 +139,7 @@ public class CustomContentControllerTest {
                 .andExpect(jsonPath("$.data.content.divingShopSection.firstShopInfo.title").value(mockDivingShopSection.getFirstShopInfo().getTitle()))
                 .andExpect(jsonPath("$.data.content.divingShopSection.firstShopInfo.imageUrl").value(mockDivingShopSection.getFirstShopInfo().getImageUrl()))
                 .andExpect(jsonPath("$.data.content.divingShopSection.firstShopInfo.contentId").value(mockDivingShopSection.getFirstShopInfo().getContentId()))
+                .andExpect(jsonPath("$.data.content.divingShopSection.firstShopInfo.contentType").value(mockDivingShopSection.getFirstShopInfo().getContentType().name()))
                 // 다이빙 업체 소개 섹션 > 2번 다이빙 업체 정보
                 .andExpect(jsonPath("$.data.content.divingShopSection.secondShopInfo.title").value(mockDivingShopSection.getSecondShopInfo().getTitle()))
                 .andExpect(jsonPath("$.data.content.divingShopSection.secondShopInfo.imageUrl").value(mockDivingShopSection.getSecondShopInfo().getImageUrl()))
@@ -157,6 +158,8 @@ public class CustomContentControllerTest {
             result.andExpect(jsonPath("$.data.content.restaurantSection.restaurantList[" + i + "].imageUrl").value(mockRestaurantSection.getRestaurantList().get(i).getImageUrl()));
             result.andExpect(jsonPath("$.data.content.restaurantSection.restaurantList[" + i + "].content").value(mockRestaurantSection.getRestaurantList().get(i).getContent()));
             result.andExpect(jsonPath("$.data.content.restaurantSection.restaurantList[" + i + "].contentId").value(mockRestaurantSection.getRestaurantList().get(i).getContentId()));
+            result.andExpect(jsonPath("$.data.content.restaurantSection.restaurantList[" + i + "].contentType").value(mockRestaurantSection.getRestaurantList().get(i).getContentType().name()));
+
         }
     }
 }

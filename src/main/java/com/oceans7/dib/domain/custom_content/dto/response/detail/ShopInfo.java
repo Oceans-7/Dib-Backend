@@ -2,6 +2,7 @@ package com.oceans7.dib.domain.custom_content.dto.response.detail;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oceans7.dib.domain.place.ContentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,4 +22,8 @@ public class ShopInfo {
     @JsonProperty("contentId")
     @Schema(description = "콘텐츠 ID", example = "2755013")
     private Long contentId;
+
+    @JsonProperty("contentType")
+    @Schema(description = "콘텐츠 타입", example = "LEPORTS")
+    private ContentType contentType;
 }
