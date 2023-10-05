@@ -15,6 +15,7 @@ import com.oceans7.dib.domain.user.entity.User;
 import com.oceans7.dib.domain.user.repository.UserRepository;
 import com.oceans7.dib.global.MockEntity;
 import com.oceans7.dib.global.MockRequest;
+import com.oceans7.dib.global.MockResponse;
 import com.oceans7.dib.global.exception.ApplicationException;
 import com.oceans7.dib.global.util.ImageAssetUrlProcessor;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,6 +143,30 @@ public class MypageServiceTest {
         assertThat(response.getDibList()).isNull();
     }
 
+    @Test
+    @DisplayName("쿠폰 목록 조회")
+    public void getMyCoupons() {
+        // given
+        CouponGroup couponGroup = makeCouponGroup(makeEvent());
+        Coupon coupon = issueCoupon(couponGroup);
+
+        // when
+        CouponResponseDto response = mypageService.getMyCoupons(testUser.getId());
+
+        // then
+        CouponResponseDto mockResponse = MockResponse.testCouponRes(coupon);
+        assertThat(response.getCount()).isEqualTo(mockResponse.getCount());
+        for(int i = 0; i < response.getCount(); i++) {
+            assertThat(response.getCouponList().get(i).getCouponId()).isEqualTo(mockResponse.getCouponList().get(i).getCouponId());
+            assertThat(response.getCouponList().get(i).getCouponType()).isEqualTo(mockResponse.getCouponList().get(i).getCouponType());
+            assertThat(response.getCouponList().get(i).getRegion()).isEqualTo(mockResponse.getCouponList().get(i).getRegion());
+            assertThat(response.getCouponList().get(i).getCouponImageUrl()).isEqualTo(mockResponse.getCouponList().get(i).getCouponImageUrl());
+            assertThat(response.getCouponList().get(i).getStartDate()).isEqualTo(mockResponse.getCouponList().get(i).getStartDate());
+            assertThat(response.getCouponList().get(i).getClosingDate()).isEqualTo(mockResponse.getCouponList().get(i).getClosingDate());
+            assertThat(response.getCouponList().get(i).getRemainingDays()).isEqualTo(mockResponse.getCouponList().get(i).getRemainingDays());
+            assertThat(response.getCouponList().get(i).getDiscountPercentage()).isEqualTo(mockResponse.getCouponList().get(i).getDiscountPercentage());
+        }
+    }
 
     @Test
     @DisplayName("쿠폰 목록 조회 : 쿠폰이 하나도 없는 경우")
