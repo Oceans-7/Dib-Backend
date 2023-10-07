@@ -483,6 +483,10 @@ public class PlaceService {
     public DetailPlaceInformationResponseDto getPlaceDetail(Long userId, GetPlaceDetailRequestDto request) {
         Long contentId = request.getContentId();
         ContentType contentType = request.getContentType();
+        if(contentType == ContentType.DIVING) {
+            // 다이빙 필터로 요청한 경우, API 통신은 LEPORTS로
+            contentType = ContentType.LEPORTS;
+        }
 
         DetailCommonItemResponse commonAPIItem = getCommonItem(contentId, contentType);
         DetailIntroItemResponse introAPIItem = getIntroItem(contentId, contentType);
