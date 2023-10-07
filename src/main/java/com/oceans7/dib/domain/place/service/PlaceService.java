@@ -216,9 +216,10 @@ public class PlaceService {
         if(filterOption.isEmptyContentType()) {
             removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
         }
+        List<TourAPICommonItemResponse> removedDivingContentTourAPIItemList = removeDivingContent(removedTourCourseTourAPIItemList);
 
         return TourAPICommonListResponse.of(
-                removedTourCourseTourAPIItemList,
+                removedDivingContentTourAPIItemList,
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize()
@@ -241,6 +242,17 @@ public class PlaceService {
         List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
 
         filteredItemList.removeIf(item -> item.getContentTypeId() == REMOVE_TARGET_CONTENT_TYPE_ID);
+
+        return filteredItemList;
+    }
+
+    /**
+     * TOUR API 통신 데이터에서 Diving Content 콘텐츠 타입의 데이터를 제외
+     */
+    private List<TourAPICommonItemResponse> removeDivingContent(List<TourAPICommonItemResponse> tourAPIItemList) {
+        List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
+
+        filteredItemList.removeIf(item -> DivingContent.isDivingContent(item.getContentId()));
 
         return filteredItemList;
     }
@@ -316,9 +328,10 @@ public class PlaceService {
         if(filterOption.isEmptyContentType()) {
             removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
         }
+        List<TourAPICommonItemResponse> removedDivingContentTourAPIItemList = removeDivingContent(removedTourCourseTourAPIItemList);
 
         return TourAPICommonListResponse.of(
-                removedTourCourseTourAPIItemList,
+                removedDivingContentTourAPIItemList,
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize()
@@ -454,9 +467,10 @@ public class PlaceService {
 
         validateTourAPIResponse(tourAPIResponse.getTotalCount());
         List<TourAPICommonItemResponse> removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
+        List<TourAPICommonItemResponse> removedDivingContentTourAPIItemList = removeDivingContent(removedTourCourseTourAPIItemList);
 
         return TourAPICommonListResponse.of(
-                removedTourCourseTourAPIItemList,
+                removedDivingContentTourAPIItemList,
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize()
@@ -485,7 +499,7 @@ public class PlaceService {
 
         return DetailPlaceInformationResponseDto.of(
                 request.getContentId(),
-                request.getContentType(),
+                DivingContent.isDivingContent(contentId) ? ContentType.DIVING : request.getContentType(),
                 commonAPIItem.getTitle(),
                 commonAPIItem.getAddress(),
                 commonAPIItem.getMapX(),
@@ -639,7 +653,7 @@ public class PlaceService {
 
         dibRepository.save(Dib.of(
                 contentId,
-                DivingContent.getDivingContent(contentId) == null ? commonItem.getContentTypeId() : ContentType.DIVING.getCode(),
+                DivingContent.isDivingContent(contentId) ? ContentType.DIVING.getCode() : commonItem.getContentTypeId(),
                 commonItem.getTitle(),
                 commonItem.getAddress(),
                 commonItem.getTel(),

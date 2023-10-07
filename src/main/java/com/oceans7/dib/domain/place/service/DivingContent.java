@@ -21,11 +21,9 @@ public enum DivingContent {
     private Long contentId;
 
     // Long 타입의 contentId와 매칭하는 enum 값을 반환하는 함수
-    public static DivingContent getDivingContent(Long contentId) {
+    public static boolean isDivingContent(Long contentId) {
         return Stream.of(values())
-                .filter(d -> d.contentId.equals(contentId))
-                .findFirst()
-                .orElse(null);
+                .anyMatch(d -> d.contentId.equals(contentId));
        }
 
     // enum의 contentId를 Long 타입의 리스트로 반환하는 함수
