@@ -639,7 +639,7 @@ public class PlaceService {
 
         dibRepository.save(Dib.of(
                 contentId,
-                commonItem.getContentTypeId(),
+                DivingContent.getDivingContent(contentId) == null ? commonItem.getContentTypeId() : ContentType.DIVING.getCode(),
                 commonItem.getTitle(),
                 commonItem.getAddress(),
                 commonItem.getTel(),
