@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.netty.http.client.HttpClient;
+import reactor.netty.resources.ConnectionProvider;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +44,15 @@ public class OpenApiConfig {
 
     private final static String kakaoHeader = "KakaoAK ";
 
+    private ConnectionProvider myConnectionProvider() {
+        return ConnectionProvider.builder("myConnectionProvider")
+                .maxConnections(50) // 최대 연결 수
+                .maxIdleTime(Duration.ofSeconds(60)) // 연결 유지 시간
+                .build();
+    }
+
     private HttpClient httpClient() {
-        return HttpClient.create()
+        return HttpClient.create(myConnectionProvider())
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 50000)
                 .responseTimeout(Duration.ofMillis(50000))
                 .doOnConnected(conn ->

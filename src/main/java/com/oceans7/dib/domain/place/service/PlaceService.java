@@ -52,9 +52,6 @@ public class PlaceService {
     private final UserRepository userRepository;
     private final DibRepository dibRepository;
 
-    private final static String[] KEYWORD_FOR_DIVING_FILTER = { "다이빙", "다이브" };
-    private final static int PAGE_FOR_DIVING_FILTER = 1;
-    private final static int PAGE_SIZE_FOR_DIVING_FILTER = 4;
     private final static int RADIUS_KM = 20;
     private final static int REMOVE_TARGET_CONTENT_TYPE_ID = 25;
 
@@ -92,17 +89,10 @@ public class PlaceService {
     private TourAPICommonListResponse fetchDivingFilteredTourAPI(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
         List<TourAPICommonItemResponse> tourAPIItemList = new ArrayList<>();
 
-        for (String keyword : KEYWORD_FOR_DIVING_FILTER) {
-            SearchPlaceRequestDto searchRequest = SearchPlaceRequestDto.builder()
-                    .keyword(keyword)
-                    .mapX(request.getMapX())
-                    .mapY(request.getMapY())
-                    .page(PAGE_FOR_DIVING_FILTER)
-                    .pageSize(PAGE_SIZE_FOR_DIVING_FILTER)
-                    .build();
-            TourAPICommonListResponse tourAPIResponse = fetchSearchKeywordTourAPI(searchRequest);
-            tourAPIItemList.addAll(tourAPIResponse.getTourAPICommonItemResponseList());
-        }
+        DivingContent.getAllContentIds().forEach(contentId -> {
+            TourAPICommonItemResponse tourAPIItem = getCommonItem(contentId, ContentType.LEPORTS);
+            tourAPIItemList.add(TourAPICommonItemResponse.fromDivingContentItem(tourAPIItem));
+        });
 
         validateTourAPIResponse(tourAPIItemList.size());
 
@@ -111,7 +101,7 @@ public class PlaceService {
 
         return TourAPICommonListResponse.of(
                         paginateTourAPIItemList,
-                        tourAPIItemList.size(),
+                        paginateTourAPIItemList.size(),
                         request.getPage(),
                         request.getPageSize()
                 );
@@ -345,7 +335,7 @@ public class PlaceService {
     }
 
     /**
-     * 로그인 여부에 따라 찜하기 정보를 달리하여 SimplePlaceInformationDto 생성
+     * SimplePlaceInformationDto 생성
      */
     private SimplePlaceInformationDto createSimpleInfo(TourAPICommonItemResponse tourAPIItem, Long userId, double reqX, double reqY) {
         boolean existsDib = isDibbedByUser(tourAPIItem.getContentId(), userId);

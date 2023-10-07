@@ -2,6 +2,7 @@ package com.oceans7.dib.global.api.response.tourapi.list;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oceans7.dib.domain.place.ContentType;
 import com.oceans7.dib.global.util.CoordinateUtil;
 import lombok.*;
 
@@ -82,6 +83,27 @@ public class TourAPICommonItemResponse {
         this.areaCode = item.getAreaCode();
         this.sigunguCode = item.getSigunguCode();
         this.modifiedTime = item.getModifiedTime();
+    }
+
+    public static TourAPICommonItemResponse fromDivingContentItem(TourAPICommonItemResponse item) {
+        TourAPICommonItemResponse tourAPICommonItemResponse = new TourAPICommonItemResponse();
+
+        tourAPICommonItemResponse.contentId = item.getContentId();
+        tourAPICommonItemResponse.contentTypeId = ContentType.DIVING.getCode();
+        tourAPICommonItemResponse.title = item.getTitle();
+        tourAPICommonItemResponse.tel = item.getTel();
+        tourAPICommonItemResponse.thumbnail = item.getThumbnail();
+        tourAPICommonItemResponse.addr1 = item.getAddr1();
+        tourAPICommonItemResponse.addr2 = item.getAddr2();
+        tourAPICommonItemResponse.address = item.getAddress();
+        tourAPICommonItemResponse.mapX = item.getMapX();
+        tourAPICommonItemResponse.mapY = item.getMapY();
+        tourAPICommonItemResponse.distance = item.getDistance();
+        tourAPICommonItemResponse.areaCode = item.getAreaCode();
+        tourAPICommonItemResponse.sigunguCode = item.getSigunguCode();
+        tourAPICommonItemResponse.modifiedTime = item.getModifiedTime();
+
+        return tourAPICommonItemResponse;
     }
 
     public String getAddress() {
