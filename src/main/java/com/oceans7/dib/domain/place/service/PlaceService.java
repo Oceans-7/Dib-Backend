@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,24 +88,32 @@ public class PlaceService {
     }
 
     private TourAPICommonListResponse fetchDivingFilteredTourAPI(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
-        List<TourAPICommonItemResponse> tourAPIItemList = new ArrayList<>();
+        // 다이빙 아이템에 대한 getCommonItem 호출을 비동기적으로 시행
+        List<CompletableFuture<DetailCommonItemResponse>> divingItemList = DivingContent.getAllContentIds().stream()
+                .map(contentId -> CompletableFuture.supplyAsync(() -> getCommonItem(contentId, ContentType.LEPORTS)))
+                .collect(Collectors.toList());
 
-        DivingContent.getAllContentIds().forEach(contentId -> {
-            TourAPICommonItemResponse tourAPIItem = getCommonItem(contentId, ContentType.LEPORTS);
-            tourAPIItemList.add(TourAPICommonItemResponse.fromDivingContentItem(tourAPIItem));
-        });
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(divingItemList.toArray(new CompletableFuture[0]));
 
-        validateTourAPIResponse(tourAPIItemList.size());
+        CompletableFuture<List<TourAPICommonItemResponse>> allDivingItemList = allOf.thenApply(v ->
+                divingItemList.stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList())
+        );
 
-        List<TourAPICommonItemResponse> applyFilteredTourAPIItemList = applyFilterOption(tourAPIItemList, request, filterOption);
-        List<TourAPICommonItemResponse> paginateTourAPIItemList = paginateItems(applyFilteredTourAPIItemList, request);
+        return allDivingItemList.thenApply(tourAPIItemList -> {
+            validateTourAPIResponse(tourAPIItemList.size());
 
-        return TourAPICommonListResponse.of(
-                        paginateTourAPIItemList,
-                        paginateTourAPIItemList.size(),
-                        request.getPage(),
-                        request.getPageSize()
-                );
+            List<TourAPICommonItemResponse> applyFilteredTourAPIItemList = applyFilterOption(tourAPIItemList, request, filterOption);
+            List<TourAPICommonItemResponse> paginateTourAPIItemList = paginateItems(applyFilteredTourAPIItemList, request);
+
+            return TourAPICommonListResponse.of(
+                    paginateTourAPIItemList,
+                    paginateTourAPIItemList.size(),
+                    request.getPage(),
+                    request.getPageSize()
+            );
+        }).join();
     }
 
     /**
