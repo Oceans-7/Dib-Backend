@@ -527,8 +527,8 @@ public class WeatherService {
         }
 
         String name = indexInfoList.stream().min((o1, o2) -> {
-            double o1Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o1.getLat()), Double.parseDouble(o1.getLon()), latitude, longitude);
-            double o2Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o2.getLat()), Double.parseDouble(o2.getLat()), latitude, longitude);
+            double o1Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o1.getLon()), Double.parseDouble(o1.getLat()), longitude, latitude);
+            double o2Distance = CoordinateUtil.calculateDistance(Double.parseDouble(o2.getLon()), Double.parseDouble(o2.getLat()), longitude, latitude);
 
             return Double.compare(o1Distance, o2Distance);
         }).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_WEATHER_INFO)).getName();
