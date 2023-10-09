@@ -106,7 +106,7 @@ public class WeatherService {
         // 초단기 실황
         CompletableFuture<FcstAPICommonListResponse> nowCast = vilageFcstAPIService.getNowCast(nearestObsCode.getNx(), nearestObsCode.getNy(), baseDate, baseTime);
 
-        // 초단기 예측
+        // 초단기 예보
         CompletableFuture<FcstAPICommonListResponse> ultraFcst = vilageFcstAPIService.getUltraForecast(nearestObsCode.getNx(), nearestObsCode.getNy(), ultraForecastBaseDate, ultraForecastBaseTime);
 
         // 단기 예측
@@ -300,7 +300,7 @@ public class WeatherService {
 
     private WeatherType getWeatherType(List<FcstAPICommonItemResponse> fcstAPICommonItemResponseList) {
         LocalDateTime now = LocalDateTime.now();
-        String baseTime = calculateBaseTime(now, NCST_CALLABLE_TIME);
+        String baseTime = calculateUltraFcstTime(now);
         boolean isDay = now.getHour() >= 6 && now.getHour() < 18;
         int sky = getFcstItem(fcstAPICommonItemResponseList, FcstType.SKY, baseTime);
         int precipitation = getFcstItem(fcstAPICommonItemResponseList, FcstType.PTY, baseTime);

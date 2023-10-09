@@ -29,6 +29,11 @@ public class BaseTimeUtil {
                 now.minusHours(1).format(timeFormatter) : now.format(timeFormatter);
     }
 
+    public static String calculateUltraFcstTime(LocalDateTime now) {
+
+        return now.format(DateTimeFormatter.ofPattern("HH00"));
+    }
+
     public static ForecastBaseDateTime getForecastBaseDateTime(LocalDateTime now) {
         // 매 3시간 간격으로 발표
         int forecastDurationHour = 3;
