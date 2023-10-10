@@ -76,11 +76,20 @@ public class MypageService {
                         coupon.getCouponGroup().getDiscountPercentage(),
                         coupon.getCouponGroup().getStartDate(),
                         coupon.getCouponGroup().getClosingDate(),
-                        Duration.between(LocalDate.now().atStartOfDay(), coupon.getCouponGroup().getClosingDate().atStartOfDay()).toDays()
+                        calculateRemainingDay(coupon.getCouponGroup().getStartDate(), coupon.getCouponGroup().getClosingDate())
                 ))
                 .collect(Collectors.toList());
 
         return CouponResponseDto.from(detailCouponResponseDtoList);
+    }
+
+    /**
+     * 쿠폰 유효 기간을 계산
+     * 시작 날짜가 오늘보다 미래라면 null 반환
+     */
+    private Long calculateRemainingDay(LocalDate startDate, LocalDate closingDate) {
+        return startDate.isAfter(LocalDate.now()) ?
+                null :  Duration.between(LocalDate.now().atStartOfDay(), closingDate.atStartOfDay()).toDays();
     }
 
     @Transactional
