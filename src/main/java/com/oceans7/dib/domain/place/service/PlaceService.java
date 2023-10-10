@@ -651,6 +651,8 @@ public class PlaceService {
         boolean flagOfDisable = false;
 
         for(DetailInfoItemResponse infoItem : infoAPIItemList) {
+            if(ValidatorUtil.isEmpty(infoItem.getInfoName())) { break; }
+
             if(infoItem.getInfoName().contains(restroomName)) { flagOfRestroom = true; }
             if(infoItem.getInfoName().contains(disableName)) { flagOfDisable = true; }
         }
