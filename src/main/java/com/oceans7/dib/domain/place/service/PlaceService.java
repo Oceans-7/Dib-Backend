@@ -104,34 +104,46 @@ public class PlaceService {
         return allDivingItemList.thenApply(tourAPIItemList -> {
             validateTourAPIResponse(tourAPIItemList.size());
 
-            List<TourAPICommonItemResponse> applyFilteredTourAPIItemList = applyFilterOption(tourAPIItemList, request, filterOption);
-            List<TourAPICommonItemResponse> paginateTourAPIItemList = paginateItems(applyFilteredTourAPIItemList, request);
+            List<TourAPICommonItemResponse> filteredTourAPIItemList = applyFilterAndPagenate(tourAPIItemList, request, filterOption);
+            List<TourAPICommonItemResponse> divingTourAPIItemList = convertContentType(filteredTourAPIItemList);
 
             return TourAPICommonListResponse.of(
-                    paginateTourAPIItemList,
-                    paginateTourAPIItemList.size(),
+                    divingTourAPIItemList,
+                    divingTourAPIItemList.size(),
                     request.getPage(),
                     request.getPageSize()
             );
         }).join();
     }
+    /**
+     * contentType을 Diving으로 변경
+     */
+    private List<TourAPICommonItemResponse> convertContentType(List<TourAPICommonItemResponse> tourAPIItemList) {
+        return tourAPIItemList.stream().map(TourAPICommonItemResponse::fromDivingContentItem).collect(Collectors.toList());
+    }
 
     /**
      * filterOption에 따라 필터를 적용
      */
-    private  List<TourAPICommonItemResponse> applyFilterOption(List<TourAPICommonItemResponse> tourAPIItemList, GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
+    private  List<TourAPICommonItemResponse> applyFilterAndPagenate(List<TourAPICommonItemResponse> tourAPIItemList, GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
+        List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
+
         if(filterOption.isEmptyArea()) {
-            return filterItemsByLocation(tourAPIItemList, request);
+            filteredItemList = filterItemsByLocation(tourAPIItemList, request);
+            return paginateItems(filteredItemList, request);
         }
 
         if(!filterOption.isEmptyArea()) {
-            return filterItemsByArea(tourAPIItemList, request);
+            filteredItemList = filterItemsByArea(tourAPIItemList, request);
+            return paginateItems(filteredItemList, request);
         }
 
         if(!filterOption.isEmptyArrangeType()) {
-            return filterItemsByArrangeType(tourAPIItemList, filterOption);
+            filteredItemList = filterItemsByArrangeType(tourAPIItemList, filterOption);
+            return paginateItems(filteredItemList, request);
         }
-        return null;
+
+        return filteredItemList;
     }
 
     /**
