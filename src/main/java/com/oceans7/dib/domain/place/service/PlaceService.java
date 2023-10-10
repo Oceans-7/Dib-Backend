@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,9 +53,6 @@ public class PlaceService {
     private final UserRepository userRepository;
     private final DibRepository dibRepository;
 
-    private final static String[] KEYWORD_FOR_DIVING_FILTER = { "다이빙", "다이브" };
-    private final static int PAGE_FOR_DIVING_FILTER = 1;
-    private final static int PAGE_SIZE_FOR_DIVING_FILTER = 4;
     private final static int RADIUS_KM = 20;
     private final static int REMOVE_TARGET_CONTENT_TYPE_ID = 25;
 
@@ -90,31 +88,32 @@ public class PlaceService {
     }
 
     private TourAPICommonListResponse fetchDivingFilteredTourAPI(GetPlaceRequestDto request, PlaceFilterOptions filterOption) {
-        List<TourAPICommonItemResponse> tourAPIItemList = new ArrayList<>();
+        // 다이빙 아이템에 대한 getCommonItem 호출을 비동기적으로 시행
+        List<CompletableFuture<DetailCommonItemResponse>> divingItemList = DivingContent.getAllContentIds().stream()
+                .map(contentId -> CompletableFuture.supplyAsync(() -> getCommonItem(contentId, ContentType.LEPORTS)))
+                .collect(Collectors.toList());
 
-        for (String keyword : KEYWORD_FOR_DIVING_FILTER) {
-            SearchPlaceRequestDto searchRequest = SearchPlaceRequestDto.builder()
-                    .keyword(keyword)
-                    .mapX(request.getMapX())
-                    .mapY(request.getMapY())
-                    .page(PAGE_FOR_DIVING_FILTER)
-                    .pageSize(PAGE_SIZE_FOR_DIVING_FILTER)
-                    .build();
-            TourAPICommonListResponse tourAPIResponse = fetchSearchKeywordTourAPI(searchRequest);
-            tourAPIItemList.addAll(tourAPIResponse.getTourAPICommonItemResponseList());
-        }
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(divingItemList.toArray(new CompletableFuture[0]));
 
-        validateTourAPIResponse(tourAPIItemList.size());
+        CompletableFuture<List<TourAPICommonItemResponse>> allDivingItemList = allOf.thenApply(v ->
+                divingItemList.stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList())
+        );
 
-        List<TourAPICommonItemResponse> applyFilteredTourAPIItemList = applyFilterOption(tourAPIItemList, request, filterOption);
-        List<TourAPICommonItemResponse> paginateTourAPIItemList = paginateItems(applyFilteredTourAPIItemList, request);
+        return allDivingItemList.thenApply(tourAPIItemList -> {
+            validateTourAPIResponse(tourAPIItemList.size());
 
-        return TourAPICommonListResponse.of(
-                        paginateTourAPIItemList,
-                        tourAPIItemList.size(),
-                        request.getPage(),
-                        request.getPageSize()
-                );
+            List<TourAPICommonItemResponse> applyFilteredTourAPIItemList = applyFilterOption(tourAPIItemList, request, filterOption);
+            List<TourAPICommonItemResponse> paginateTourAPIItemList = paginateItems(applyFilteredTourAPIItemList, request);
+
+            return TourAPICommonListResponse.of(
+                    paginateTourAPIItemList,
+                    paginateTourAPIItemList.size(),
+                    request.getPage(),
+                    request.getPageSize()
+            );
+        }).join();
     }
 
     /**
@@ -226,9 +225,10 @@ public class PlaceService {
         if(filterOption.isEmptyContentType()) {
             removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
         }
+        List<TourAPICommonItemResponse> removedDivingContentTourAPIItemList = removeDivingContent(removedTourCourseTourAPIItemList);
 
         return TourAPICommonListResponse.of(
-                removedTourCourseTourAPIItemList,
+                removedDivingContentTourAPIItemList,
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize()
@@ -251,6 +251,17 @@ public class PlaceService {
         List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
 
         filteredItemList.removeIf(item -> item.getContentTypeId() == REMOVE_TARGET_CONTENT_TYPE_ID);
+
+        return filteredItemList;
+    }
+
+    /**
+     * TOUR API 통신 데이터에서 Diving Content 콘텐츠 타입의 데이터를 제외
+     */
+    private List<TourAPICommonItemResponse> removeDivingContent(List<TourAPICommonItemResponse> tourAPIItemList) {
+        List<TourAPICommonItemResponse> filteredItemList = new ArrayList<>(tourAPIItemList);
+
+        filteredItemList.removeIf(item -> DivingContent.isDivingContent(item.getContentId()));
 
         return filteredItemList;
     }
@@ -326,9 +337,10 @@ public class PlaceService {
         if(filterOption.isEmptyContentType()) {
             removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
         }
+        List<TourAPICommonItemResponse> removedDivingContentTourAPIItemList = removeDivingContent(removedTourCourseTourAPIItemList);
 
         return TourAPICommonListResponse.of(
-                removedTourCourseTourAPIItemList,
+                removedDivingContentTourAPIItemList,
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize()
@@ -345,7 +357,7 @@ public class PlaceService {
     }
 
     /**
-     * 로그인 여부에 따라 찜하기 정보를 달리하여 SimplePlaceInformationDto 생성
+     * SimplePlaceInformationDto 생성
      */
     private SimplePlaceInformationDto createSimpleInfo(TourAPICommonItemResponse tourAPIItem, Long userId, double reqX, double reqY) {
         boolean existsDib = isDibbedByUser(tourAPIItem.getContentId(), userId);
@@ -464,9 +476,10 @@ public class PlaceService {
 
         validateTourAPIResponse(tourAPIResponse.getTotalCount());
         List<TourAPICommonItemResponse> removedTourCourseTourAPIItemList = removeTourCourse(tourAPIResponse.getTourAPICommonItemResponseList());
+        List<TourAPICommonItemResponse> removedDivingContentTourAPIItemList = removeDivingContent(removedTourCourseTourAPIItemList);
 
         return TourAPICommonListResponse.of(
-                removedTourCourseTourAPIItemList,
+                removedDivingContentTourAPIItemList,
                 tourAPIResponse.getTotalCount(),
                 tourAPIResponse.getPage(),
                 tourAPIResponse.getPageSize()
@@ -479,6 +492,10 @@ public class PlaceService {
     public DetailPlaceInformationResponseDto getPlaceDetail(Long userId, GetPlaceDetailRequestDto request) {
         Long contentId = request.getContentId();
         ContentType contentType = request.getContentType();
+        if(contentType == ContentType.DIVING) {
+            // 다이빙 필터로 요청한 경우, API 통신은 LEPORTS로
+            contentType = ContentType.LEPORTS;
+        }
 
         DetailCommonItemResponse commonAPIItem = getCommonItem(contentId, contentType);
         DetailIntroItemResponse introAPIItem = getIntroItem(contentId, contentType);
@@ -495,7 +512,7 @@ public class PlaceService {
 
         return DetailPlaceInformationResponseDto.of(
                 request.getContentId(),
-                request.getContentType(),
+                DivingContent.isDivingContent(contentId) ? ContentType.DIVING : request.getContentType(),
                 commonAPIItem.getTitle(),
                 commonAPIItem.getAddress(),
                 commonAPIItem.getMapX(),
@@ -649,7 +666,7 @@ public class PlaceService {
 
         dibRepository.save(Dib.of(
                 contentId,
-                commonItem.getContentTypeId(),
+                DivingContent.isDivingContent(contentId) ? ContentType.DIVING.getCode() : commonItem.getContentTypeId(),
                 commonItem.getTitle(),
                 commonItem.getAddress(),
                 commonItem.getTel(),
