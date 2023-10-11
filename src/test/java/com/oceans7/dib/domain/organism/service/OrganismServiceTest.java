@@ -82,7 +82,7 @@ public class OrganismServiceTest {
         List<SimpleOrganismResponseDto> response = organismService.getAllMarineOrganism();
 
         // then
-        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleOrganismRes(marineOrganism);
+        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleMarineOrganismRes(marineOrganism);
         for(int i = 0; i < response.size(); i++) {
             assertThat(response.get(i).getOrganismId()).isEqualTo(mockResponse.get(i).getOrganismId());
             assertThat(response.get(i).getIllustrationUrl()).isEqualTo(mockResponse.get(i).getIllustrationUrl());
@@ -137,18 +137,19 @@ public class OrganismServiceTest {
         List<SimpleOrganismResponseDto> response = organismService.getAllHarmfulOrganism();
 
         // then
-        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleOrganismRes(harmfulOrganism);
+        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleHarmfulOrganismRes(harmfulOrganism);
         for(int i = 0; i < response.size(); i++) {
             assertThat(response.get(i).getOrganismId()).isEqualTo(mockResponse.get(i).getOrganismId());
             assertThat(response.get(i).getIllustrationUrl()).isEqualTo(mockResponse.get(i).getIllustrationUrl());
             assertThat(response.get(i).getKoreanName()).isEqualTo(mockResponse.get(i).getKoreanName());
             assertThat(response.get(i).getEnglishName()).isEqualTo(mockResponse.get(i).getEnglishName());
             assertThat(response.get(i).getDescription()).isEqualTo(mockResponse.get(i).getDescription());
+            assertThat(response.get(i).getReportNumber()).isEqualTo(mockResponse.get(i).getReportNumber());
         }
     }
 
     @Test
-    @DisplayName("해양 생물 상세 조회")
+    @DisplayName("유해 생물 상세 조회")
     public void getHarmfulOrganismDetail() {
         // given
         List<HarmfulOrganism> harmfulOrganism = makeHarmfulOrganism();
@@ -179,6 +180,8 @@ public class OrganismServiceTest {
             assertThat(response.getOtherOrganismList().get(i).getIllustrationUrl()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getIllustrationUrl());
             assertThat(response.getOtherOrganismList().get(i).getKoreanName()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getKoreanName());
             assertThat(response.getOtherOrganismList().get(i).getEnglishName()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getEnglishName());
-            assertThat(response.getOtherOrganismList().get(i).getDescription()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getDescription());        }
+            assertThat(response.getOtherOrganismList().get(i).getDescription()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getDescription());
+            assertThat(response.getOtherOrganismList().get(i).getReportNumber()).isEqualTo(mockResponse.getOtherOrganismList().get(i).getReportNumber());
+        }
     }
 }

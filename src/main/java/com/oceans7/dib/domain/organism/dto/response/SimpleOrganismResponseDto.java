@@ -23,6 +23,9 @@ public class SimpleOrganismResponseDto {
     @Schema(description = "설명", example = "부산, 제주도 등 우리나라 남부 얕은 해역의 암초와 모래질로 된 바닥에 주로 서식하며, 해면체 군집, 산호초 등 다양한 환경에서 발견됩니다.")
     private String description;
 
+    @Schema(description = "신고 전화번호(해양 생물인 경우 null로 전달)", example = "122")
+    private String reportNumber;
+
     public static SimpleOrganismResponseDto of(Long organismId, String illustrationUrl, String koreanName, String englishName, String description) {
         SimpleOrganismResponseDto simpleOrganism = new SimpleOrganismResponseDto();
 
@@ -31,6 +34,19 @@ public class SimpleOrganismResponseDto {
         simpleOrganism.koreanName = koreanName;
         simpleOrganism.englishName = englishName;
         simpleOrganism.description = description;
+
+        return simpleOrganism;
+    }
+
+    public static SimpleOrganismResponseDto of(Long organismId, String illustrationUrl, String koreanName, String englishName, String description, String reportNumber) {
+        SimpleOrganismResponseDto simpleOrganism = new SimpleOrganismResponseDto();
+
+        simpleOrganism.organismId = organismId;
+        simpleOrganism.illustrationUrl = illustrationUrl;
+        simpleOrganism.koreanName = koreanName;
+        simpleOrganism.englishName = englishName;
+        simpleOrganism.description = description;
+        simpleOrganism.reportNumber = reportNumber;
 
         return simpleOrganism;
     }

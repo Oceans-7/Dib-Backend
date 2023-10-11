@@ -104,7 +104,7 @@ public class OrganismControllerTest {
     public void getAllMarineOrganism() throws Exception {
         // given
         List<MarineOrganism> marineOrganism = makeMarineOrganism();
-        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleOrganismRes(marineOrganism);
+        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleMarineOrganismRes(marineOrganism);
         when(organismService.getAllMarineOrganism()).thenReturn(mockResponse);
 
         // when
@@ -167,7 +167,7 @@ public class OrganismControllerTest {
     public void getAllHarmfulOrganism() throws Exception {
         // given
         List<HarmfulOrganism> harmfulOrganism = makeHarmfulOrganism();
-        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleOrganismRes(harmfulOrganism);
+        List<SimpleOrganismResponseDto> mockResponse = MockResponse.testSimpleHarmfulOrganismRes(harmfulOrganism);
         when(organismService.getAllHarmfulOrganism()).thenReturn(mockResponse);
 
         // when

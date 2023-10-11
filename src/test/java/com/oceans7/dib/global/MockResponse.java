@@ -558,7 +558,7 @@ public class MockResponse {
         return DetailContentResponseDto.of(1L, "제주 서귀포 콘텐츠", testContentRes());
     }
 
-    public static List<SimpleOrganismResponseDto> testSimpleOrganismRes(List<? extends Organism> organismList) {
+    public static List<SimpleOrganismResponseDto> testSimpleMarineOrganismRes(List<MarineOrganism> organismList) {
         return organismList.stream().map(organism ->
             SimpleOrganismResponseDto.of(
                     organism.getOrganismId(),
@@ -566,6 +566,18 @@ public class MockResponse {
                     organism.getKoreanName(),
                     organism.getEnglishName(),
                     organism.getDescription())
+        ).collect(Collectors.toList());
+    }
+
+    public static List<SimpleOrganismResponseDto> testSimpleHarmfulOrganismRes(List<HarmfulOrganism> organismList) {
+        return organismList.stream().map(organism ->
+                SimpleOrganismResponseDto.of(
+                        organism.getOrganismId(),
+                        "https://d1eyu1qyl365gv.cloudfront.net" + organism.getIllustrationImageUrl(),
+                        organism.getKoreanName(),
+                        organism.getEnglishName(),
+                        organism.getDescription(),
+                        organism.getReportNumber())
         ).collect(Collectors.toList());
     }
 
@@ -579,7 +591,7 @@ public class MockResponse {
                 marineOrganism.getBasicAppearance(),
                 marineOrganism.getDetailDescription(),
                 testMarineOrganismImageUrlRes(),
-                testSimpleOrganismRes(otherMarineOrganism)
+                testSimpleMarineOrganismRes(otherMarineOrganism)
         );
     }
 
@@ -597,7 +609,7 @@ public class MockResponse {
                 harmfulOrganism.getBasicAppearance(),
                 harmfulOrganism.getDetailDescription(),
                 testMarineOrganismImageUrlRes(),
-                testSimpleOrganismRes(otherHarmfulOrganism)
+                testSimpleHarmfulOrganismRes(otherHarmfulOrganism)
         );
     }
 
