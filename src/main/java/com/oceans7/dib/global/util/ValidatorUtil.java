@@ -30,7 +30,7 @@ public class ValidatorUtil {
     }
 
     public static boolean checkAvailability(String value) {
-        if(isEmpty(value) || value.contains("없음") || value.contains("불가")) {
+        if(isEmpty(value) || value.contains("없음") || value.contains("불가") || value.contains("금연")) {
             return false;
         } else {
             return true;
