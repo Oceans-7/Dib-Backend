@@ -59,8 +59,7 @@ public class MockEntity {
     public static List<MarineOrganism> testMarineOrganism() {
         List<MarineOrganism> marineOrganism = new ArrayList<>();
 
-        marineOrganism.add(Organism.of(
-                MarineOrganism.class,
+        marineOrganism.add(MarineOrganism.of(
                 "빨간 씬벵이",
                 "Striated frogfish",
                 "일반적인 몸길이는 10cm이며 눈이 작고, 입이 위를 향하며, 피부에는 작은 가시가 있습니다.",
@@ -69,8 +68,7 @@ public class MockEntity {
                 "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
                 "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png"
         ));
-        marineOrganism.add(Organism.of(
-                MarineOrganism.class,
+        marineOrganism.add(MarineOrganism.of(
                 "붉은 멍게",
                 "Sea Peach",
                 "몸이 위아래로 길쭉하며 납작한 원통으로 이루어져 있으며, 사람의 주먹 정도의 크기를 가집니다.",
@@ -80,8 +78,7 @@ public class MockEntity {
                 "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
                 "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png"
         ));
-        marineOrganism.add(Organism.of(
-                MarineOrganism.class,
+        marineOrganism.add(MarineOrganism.of(
                 "용치놀래기",
                 "Multicolorfin rainbowfish",
                 "몸길이는 25cm 정도이며 옆으로 길고 평평한 모양입니다.",
@@ -105,19 +102,18 @@ public class MockEntity {
     public static List<HarmfulOrganism> testHarmfulOrganism() {
         List<HarmfulOrganism> harmfulOrganism = new ArrayList<>();
 
-        harmfulOrganism.add(Organism.of(
-                HarmfulOrganism.class,
+        harmfulOrganism.add(HarmfulOrganism.of(
                 "빨간 씬벵이",
                 "Striated frogfish",
                 "일반적인 몸길이는 10cm이며 눈이 작고, 입이 위를 향하며, 피부에는 작은 가시가 있습니다.",
                 "부산, 제주도 등 우리나라 남부 얕은 해역의 암초와 모래질로 된 바닥에 주로 서식하며, 해면체 군집, 산호초 등 다양한 환경에서 발견됩니다.",
                 "주로 암초 지대에 살면서 머리의 돌기를 흔들어 작은 물고기를 유인해 큰 입을 벌려 잡아 먹습니다.",
                 "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
-                "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png"
+                "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
+                "122"
         ));
 
-        harmfulOrganism.add(Organism.of(
-                HarmfulOrganism.class,
+        harmfulOrganism.add(HarmfulOrganism.of(
                 "붉은 멍게",
                 "Sea Peach",
                 "몸이 위아래로 길쭉하며 납작한 원통으로 이루어져 있으며, 사람의 주먹 정도의 크기를 가집니다.",
@@ -125,10 +121,10 @@ public class MockEntity {
                 "비단 멍게로도 불리며, 돌기 없이 붉은 복숭아의 겉면과 비슷해 영어로는 바다 복숭아라는 뜻을 가집니다. 멍게의 본래 명칭은 우렁쉥이지만, 경남 사투리인 멍게가 표준어로 인정받아 \n" +
                         "사용되고 있습니다. 또한 물을 빨아들이는 입수공과 배설물 및 물을 내보내는 출수공으로 이루어져 있는데, 출수공으로 물을 내뿜는 모습 때문에 영어권에서는 바다 물총이라고도 부릅니다.",
                 "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
-                "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png"
+                "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
+                "122"
         ));
-        harmfulOrganism.add(Organism.of(
-                HarmfulOrganism.class,
+        harmfulOrganism.add(HarmfulOrganism.of(
                 "용치놀래기",
                 "Multicolorfin rainbowfish",
                 "몸길이는 25cm 정도이며 옆으로 길고 평평한 모양입니다.",
@@ -136,7 +132,8 @@ public class MockEntity {
                 "지방에선 수멩이, 술맹이, 술뱅이, 용치, 이놀래기 등으로도 부릅니다. 모두 암컷으로 태어났다가 일부가 성전환하는 자성선숙 암수한몸입니다. 낮에는 먹이를 찾아 움직이며 밤에는 \n" +
                         "깊은 바다의 모래 바닥에 내려가 있습니다. 봄부터 가을까지는 연안의 암초가 많은 곳에서 살다가 겨울이 되어 추워지면 깊은 바다에서 겨울잠을 잡니다. 겨울잠을 잘 때 비늘에 나이테가 한 개 늘어납니다.",
                 "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
-                "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png"
+                "/images/0ece1ea4-f4ae-44a7-952c-1702e937422810_제주_서귀포_콘텐츠_상세페이지_이미지.png",
+                "122"
         ));
 
         return harmfulOrganism;

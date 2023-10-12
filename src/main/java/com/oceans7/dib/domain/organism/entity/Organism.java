@@ -31,24 +31,4 @@ public abstract class Organism {
 
     @Column(name = "illustration_image_url", length = 2100, nullable = false)
     protected String illustrationImageUrl;
-
-    public static <T extends Organism> T of(
-            Class<T> clazz, String koreanName, String englishName,
-            String basicAppearance, String description,
-            String detailDescription, String firstImageUrl,
-            String illustrationImageUrl) {
-        try {
-            T organism = clazz.getDeclaredConstructor().newInstance();
-            organism.koreanName = koreanName;
-            organism.englishName = englishName;
-            organism.basicAppearance = basicAppearance;
-            organism.description = description;
-            organism.detailDescription = detailDescription;
-            organism.firstImageUrl = firstImageUrl;
-            organism.illustrationImageUrl = illustrationImageUrl;
-            return organism;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create organism", e);
-        }
-    }
 }

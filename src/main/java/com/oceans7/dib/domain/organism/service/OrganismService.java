@@ -32,7 +32,21 @@ public class OrganismService {
     public List<SimpleOrganismResponseDto> getAllMarineOrganism() {
         List<MarineOrganism> marineOrganismList = marineOrganismRepository.findAll();
 
-        return convertOrganismToSimple(marineOrganismList);
+        return convertMarineOrganismToSimple(marineOrganismList);
+    }
+
+    /**
+     * MarineOrganism 객체 리스트를 Simple Dto로 변환
+     */
+    private List<SimpleOrganismResponseDto> convertMarineOrganismToSimple(List<MarineOrganism> organismList) {
+        return organismList.stream()
+                .map(organism -> SimpleOrganismResponseDto.of(
+                        organism.getOrganismId(),
+                        imageAssetUrlProcessor.prependCloudFrontHost(organism.getIllustrationImageUrl()),
+                        organism.getKoreanName(),
+                        organism.getEnglishName(),
+                        organism.getDescription()
+                )).collect(Collectors.toList());
     }
 
     /**
@@ -41,20 +55,21 @@ public class OrganismService {
     public List<SimpleOrganismResponseDto> getAllHarmfulOrganism() {
         List<HarmfulOrganism> harmfulOrganismList = harmfulOrganismRepository.findAll();
 
-        return convertOrganismToSimple(harmfulOrganismList);
+        return convertHarmfulOrganismToSimple(harmfulOrganismList);
     }
 
     /**
-     * Organism 하위 클래스의 객체 리스트를 Simple Dto로 변환
+     * Harmful Organism 객체 리스트를 Simple Dto로 변환
      */
-    private List<SimpleOrganismResponseDto> convertOrganismToSimple(List<? extends Organism> organismList) {
+    private List<SimpleOrganismResponseDto> convertHarmfulOrganismToSimple(List<HarmfulOrganism> organismList) {
         return organismList.stream()
                 .map(organism -> SimpleOrganismResponseDto.of(
                         organism.getOrganismId(),
                         imageAssetUrlProcessor.prependCloudFrontHost(organism.getIllustrationImageUrl()),
                         organism.getKoreanName(),
                         organism.getEnglishName(),
-                        organism.getDescription()
+                        organism.getDescription(),
+                        organism.getReportNumber()
                 )).collect(Collectors.toList());
     }
 
@@ -84,7 +99,7 @@ public class OrganismService {
     private List<SimpleOrganismResponseDto> getOtherMarineOrganism(Long organismId) {
         List<MarineOrganism> marineOrganismList = marineOrganismRepository.findAllByOrganismIdNot(organismId);
 
-        return convertOrganismToSimple(marineOrganismList);
+        return convertMarineOrganismToSimple(marineOrganismList);
     }
 
     /**
@@ -113,7 +128,7 @@ public class OrganismService {
     private List<SimpleOrganismResponseDto> getOtherHarmfulOrganism(Long organismId) {
         List<HarmfulOrganism> harmfulOrganismList = harmfulOrganismRepository.findAllByOrganismIdNot(organismId);
 
-        return convertOrganismToSimple(harmfulOrganismList);
+        return convertHarmfulOrganismToSimple(harmfulOrganismList);
     }
 
     /**
