@@ -270,18 +270,10 @@ public class WeatherService {
     }
 
     private WaterTemperatureObsCode getNearestWaterTemperatureObsCode(double x, double y) {
-        double maximumDistance = 70;
 
         WaterTemperatureObsCode obsCode = Stream.of(WaterTemperatureObsCode.values())
                 .min(Comparator.comparingDouble(o -> CoordinateUtil.calculateDistance(o.getX(), o.getY(), x, y)))
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INTERNAL_SERVER_EXCEPTION));
-
-
-        double distance = CoordinateUtil.calculateDistance(obsCode.getX(), obsCode.getY(), x, y);
-
-        if (distance > maximumDistance) {
-            return null;
-        }
 
         return obsCode;
     }
